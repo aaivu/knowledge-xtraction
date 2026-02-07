@@ -1,3 +1,21 @@
+"""
+Knowledge Graph Evaluation for STS Benchmarks
+
+This script evaluates knowledge graph-based semantic similarity against baseline methods
+on merged STS-B and STS12 datasets.
+
+Required files (in same directory):
+- stsb_merged.csv: Merged dataset with sentence pairs and human similarity scores
+- aa_kea_results.csv: Pre-computed KG similarity scores using AA-KEA algorithm
+
+Output:
+- output/stsb_merged_roc_comparison.png: ROC curves comparing all methods
+
+Usage:
+    cd src/evaluation
+    python kg_evaluation.py
+"""
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -352,6 +370,12 @@ def evaluate_roc_analysis(df, metrics, output_filename='stsb_roc_comparison.png'
     print("ROC CURVE ANALYSIS")
     print("="*70)
 
+    # Create output directory if it doesn't exist
+    output_dir = Path(output_filename).parent
+    if output_dir and str(output_dir) != '.':
+        output_dir.mkdir(parents=True, exist_ok=True)
+        print(f"✓ Output directory ensured: {output_dir}")
+
     human_scores = df['score_normalized'].values
 
     # Convert continuous human scores to binary labels
@@ -501,6 +525,18 @@ def main():
     print("KNOWLEDGE GRAPH EVALUATION FOR STS BENCHMARKS")
     print("="*70)
 
+    # Verify required files exist
+    required_files = ['stsb_merged.csv', 'aa_kea_results.csv']
+    missing_files = [f for f in required_files if not Path(f).exists()]
+
+    if missing_files:
+        print("\nERROR: Required files not found in current directory:")
+        for f in missing_files:
+            print(f"  - {f}")
+        print("\nPlease ensure you are running this script from: src/evaluation/")
+        print("Usage: cd src/evaluation && python kg_evaluation.py")
+        return None
+
     # Load models
     embedding_model = load_models()
 
@@ -521,7 +557,7 @@ def main():
     roc_results = evaluate_roc_analysis(
         dataset,
         correlation_metrics,
-        output_filename='stsb_merged_roc_comparison.png',
+        output_filename='output/stsb_merged_roc_comparison.png',
         threshold=0.7  # 0.7 = score ≥ 3.5/5 (balanced: 54% positive, 46% negative)
     )
 
@@ -529,7 +565,7 @@ def main():
     print("EVALUATION COMPLETE")
     print("="*70)
     print("\nResults saved:")
-    print("  - ROC plot: stsb_merged_roc_comparison.png")
+    print("  - ROC plot: output/stsb_merged_roc_comparison.png")
     print(f"\nEvaluated {len(dataset)} sentence pairs from merged STS-B + STS12 dataset")
     print("\nDataset composition:")
     print("  - Rows 0-99: STS-B data")
