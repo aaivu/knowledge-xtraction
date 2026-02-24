@@ -17,3 +17,4 @@ multi_method_similarity_results.csv
 
 # Logs
 *.log
+.venv/
