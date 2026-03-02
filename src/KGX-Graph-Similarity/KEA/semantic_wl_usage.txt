@@ -1,0 +1,60 @@
+Semantic WL Kernel - Enhanced Usage Guide
+=========================================
+
+## How to Run
+
+1. Open a terminal and navigate to the KEA directory:
+   cd "d:\FYP\aaivu\knowledge-xtraction\src\KGX-Graph-Similarity\KEA"
+
+2. Run the script with your desired options:
+
+# Run with enhanced method (default - balanced preset)
+python apply_semantic_wl.py
+
+# Run with original/legacy method
+python apply_semantic_wl.py --legacy
+
+# Use specific presets
+python apply_semantic_wl.py --preset fast       # Fastest, minimal computation
+python apply_semantic_wl.py --preset balanced   # Good balance (default)
+python apply_semantic_wl.py --preset accurate   # Best accuracy, slower
+
+# Specify custom CSV path
+python apply_semantic_wl.py --csv "path/to/your/file.csv"
+
+# Use a more powerful SBERT model
+python apply_semantic_wl.py --model accurate    # Uses all-mpnet-base-v2
+
+# For biomedical data (PubMed)
+python apply_semantic_wl.py --model biomedical --preset accurate
+
+Results will be saved to a new file like `mrpc_400_KGs_balanced.csv` (won't overwrite original).
+
+
+## Presets Explained
+
+| Preset   | Features                                      | Speed    |
+|----------|-----------------------------------------------|----------|
+| fast     | Mean pooling only                             | Fastest  |
+| balanced | Weighted pooling + edges + greedy alignment   | Medium   |
+| accurate | Attention pooling + weighted aggregation + Hungarian alignment | Slowest  |
+| legacy   | Original implementation                       | Fast     |
+
+- **fast**: Minimal computation, suitable for large datasets.
+- **balanced**: Good balance of speed and accuracy (default).
+- **accurate**: Maximum accuracy, slower (recommended for final results).
+- **legacy**: Original method for backward compatibility.
+
+
+## Additional Options
+
+--output-col <name>   # Set custom output column name
+--model <type>        # Choose SBERT model: default, accurate, biomedical, multilingual
+
+
+## Example for PubMed Biomedical Data
+python apply_semantic_wl.py --csv pubmedqa.csv --model biomedical --preset accurate
+
+
+## For Help
+python apply_semantic_wl.py --help
