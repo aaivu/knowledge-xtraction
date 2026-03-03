@@ -309,10 +309,19 @@ def parse_args():
     
     parser.add_argument(
         "--skip_verification",
-        action="store_false",
-        default=True,
+        dest="skip_verification",
+        action="store_true",
         help="Skip verification step"
     )
+
+    parser.add_argument(
+        "--run_verification",
+        dest="skip_verification",
+        action="store_false",
+        help="Run verification step"
+    )
+
+    parser.set_defaults(skip_verification=True)
     
     parser.add_argument(
         "--num_triplets",
