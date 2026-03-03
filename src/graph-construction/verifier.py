@@ -26,8 +26,9 @@ class TripletVerifier:
     def __init__(
         self, 
         verification_model1: str, 
-        verification_model2: str = None,  # Kept for backward compatibility
-        template_path: str = "templates/verification_batch.txt"
+        verification_model2: str = None,
+        template_path: str = "templates/verification_batch.txt",
+        temperature: float = 0.0
     ):
         """
         Initialize the verifier with LLM for batch verification.
@@ -36,9 +37,11 @@ class TripletVerifier:
             verification_model1: Name of the verification LLM
             verification_model2: Deprecated - kept for backward compatibility
             template_path: Path to the batch verification prompt template
+            temperature: Temperature for verification LLM (0.0-1.0)
         """
         self.model_name = verification_model1
         self.template_path = Path(template_path)
+        self.temperature = temperature
         
         self._llm = None
         

@@ -14,15 +14,20 @@ from llms.llm_factory import LLMFactorySelector
 class KGExtractor:
     """Extracts Knowledge Graphs from text paragraphs using LLMs."""
     
-    def __init__(self, model_name: str, template_path: str = "templates/extraction.txt"):
+    def __init__(self, model_name: str, template_path: str = "templates/extraction.txt",
+                 num_triplets: int = 10, temperature: float = 0.0):
         """
         Initialize the extractor.
         
         Args:
             model_name: Name of the LLM to use for extraction
             template_path: Path to the extraction prompt template
+            num_triplets: Target number of triplets per graph (~approximate)
+            temperature: Temperature for LLM sampling (0.0-1.0)
         """
         self.model_name = model_name
+        self.num_triplets = num_triplets
+        self.temperature = temperature
         self.llm = LLMFactorySelector.get_factory(model_name)
         self.template = self._load_template(template_path)
 
@@ -48,22 +53,22 @@ class KGExtractor:
         """Build extraction prompt with feedback from previous attempts."""
         n = len(paragraphs)
         
-        # Build the text inputs
         text_parts = []
         for i, para in enumerate(paragraphs, 1):
             text_parts.append(f"TEXT {i}:\n{para}")
         
         texts_section = "\n\n".join(text_parts)
         
-        # Format the template with number of texts
         prompt = self.template.replace("{n}", str(n))
+        prompt = prompt.replace("{num_triplets}", str(self.num_triplets))
         prompt += f"\n{texts_section}\n\n"
+        
+        prompt += f"Extract approximately {self.num_triplets} triplets per text.\n\n"
         
         # Add section for approved triplets that must be included
         if approved_triplets:
             prompt += "================ APPROVED TRIPLETS (MUST INCLUDE) ==================\n\n"
-            prompt += "The following triplets have been VERIFIED and MUST be included in your output. "
-            prompt += "Include these exactly as shown - do not modify or omit them:\n\n"
+            prompt += "The following triplets have been VERIFIED and MUST be included. Include these exactly:\n\n"
             for graph_key, triplets in approved_triplets.items():
                 graph_num = graph_key.replace("graph_", "")
                 prompt += f"Approved triplets for TEXT {graph_num} (include these):\n"
@@ -74,8 +79,7 @@ class KGExtractor:
         # Add cautionary section for failed triplets if provided
         if failed_triplets:
             prompt += "================ FORBIDDEN TRIPLETS (DO NOT USE) ==================\n\n"
-            prompt += "The following triplets have been previously extracted but FAILED verification. "
-            prompt += "Do NOT include these triplets. Generate alternative triplets that are properly grounded in the text:\n\n"
+            prompt += "The following triplets FAILED verification. Do NOT include these:\n\n"
             for graph_key, triplets in failed_triplets.items():
                 graph_num = graph_key.replace("graph_", "")
                 prompt += f"Forbidden triplets for TEXT {graph_num} (do not use):\n"

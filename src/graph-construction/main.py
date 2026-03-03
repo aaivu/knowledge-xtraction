@@ -36,6 +36,9 @@ class PipelineConfig:
     verification_llm2: str = "mistralai/Mistral-7B-Instruct-v0.2"
     output_dir: str = "output"
     skip_verification: bool = True
+    num_triplets: int = 10
+    extract_temperature: float = 0.0
+    verify_temperature: float = 0.0
 
 
 class KGCPipeline:
@@ -55,7 +58,11 @@ class KGCPipeline:
     def extractor(self) -> KGExtractor:
         """Lazy-load the extractor."""
         if self._extractor is None:
-            self._extractor = KGExtractor(self.config.extract_llm)
+            self._extractor = KGExtractor(
+                self.config.extract_llm,
+                num_triplets=self.config.num_triplets,
+                temperature=self.config.extract_temperature
+            )
         return self._extractor
     
     @property
@@ -64,7 +71,8 @@ class KGCPipeline:
         if self._verifier is None:
             self._verifier = TripletVerifier(
                 self.config.verification_llm1,
-                self.config.verification_llm2
+                self.config.verification_llm2,
+                temperature=self.config.verify_temperature
             )
         return self._verifier
     
@@ -306,6 +314,27 @@ def parse_args():
         help="Skip verification step"
     )
     
+    parser.add_argument(
+        "--num_triplets",
+        type=int,
+        default=10,
+        help="Target number of triplets per graph (default: 10)"
+    )
+    
+    parser.add_argument(
+        "--extract_temperature",
+        type=float,
+        default=0.0,
+        help="Temperature for extraction LLM (0.0-1.0, default: 0.0)"
+    )
+    
+    parser.add_argument(
+        "--verify_temperature",
+        type=float,
+        default=0.0,
+        help="Temperature for verification LLM (0.0-1.0, default: 0.0)"
+    )
+    
     return parser.parse_args()
 
 
@@ -344,7 +373,10 @@ def main():
         verification_llm1=args.verification_llm1,
         verification_llm2=args.verification_llm2,
         output_dir=args.output_dir,
-        skip_verification=args.skip_verification
+        skip_verification=args.skip_verification,
+        num_triplets=args.num_triplets,
+        extract_temperature=args.extract_temperature,
+        verify_temperature=args.verify_temperature
     )
     
     pipeline = KGCPipeline(config)
