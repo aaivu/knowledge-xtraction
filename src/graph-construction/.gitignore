@@ -1,0 +1,6 @@
+__pycache__/
+.env
+# log
+# input
+# output
+*.log

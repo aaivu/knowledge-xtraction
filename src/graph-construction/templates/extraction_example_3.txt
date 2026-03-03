@@ -1,0 +1,125 @@
+================ EXAMPLES ==================
+
+Note: Observe how the SAME entity names and standardized relation patterns are used across all graphs to enable comparison. Extract ALL information from each text.
+
+Example 1:
+Input Texts:
+TEXT 1: "Julius Tandler was a physician and politician who held citizenship in Austria. Austria maintains diplomatic relations with Japan and Bangladesh, and is a member of the Australia Group."
+TEXT 2: "Bangladesh has diplomatic relations with Papua New Guinea and is a member of both Interpol and the International Finance Corporation. Japan enjoys diplomatic relations with Greece, Armenia, and Algeria."
+TEXT 3: "Armenia shares a border with the Nakhchivan Autonomous Republic. Austria, located in Central Europe, has Vienna as its capital. Julius Tandler made significant contributions to social medicine in the early 20th century."
+
+Output KG:
+
+{
+"graph_1": {
+    "triples": [
+    ["Julius_Tandler", "occupation", "physician"],
+    ["Julius_Tandler", "occupation", "politician"],
+    ["Julius_Tandler", "citizen_of", "Austria"],
+    ["Austria", "diplomatic_relations_with", "Japan"],
+    ["Austria", "diplomatic_relations_with", "Bangladesh"],
+    ["Austria", "member_of", "Australia_Group"]
+    ]
+},
+"graph_2": {
+    "triples": [
+    ["Bangladesh", "diplomatic_relations_with", "Papua_New_Guinea"],
+    ["Bangladesh", "member_of", "Interpol"],
+    ["Bangladesh", "member_of", "International_Finance_Corporation"],
+    ["Japan", "diplomatic_relations_with", "Greece"],
+    ["Japan", "diplomatic_relations_with", "Armenia"],
+    ["Japan", "diplomatic_relations_with", "Algeria"]
+    ]
+},
+"graph_3": {
+    "triples": [
+    ["Armenia", "border_with", "Nakhchivan_Autonomous_Republic"],
+    ["Austria", "located_in", "Central_Europe"],
+    ["Austria", "capital", "Vienna"],
+    ["Julius_Tandler", "contributed_to", "social_medicine"],
+    ["Julius_Tandler", "active_in", "early_20th_century"]
+    ]
+}
+}
+
+
+Example 2:
+Input Texts:
+TEXT 1: "In 2008, Dr. Emily Carter discovered a novel biomarker for early detection of pancreatic cancer, revolutionizing diagnostic methods in oncology."
+TEXT 2: "Under Dr. Emily Carter's supervision, the research team developed a targeted therapy for pancreatic cancer in 2015, significantly improving patient survival rates."
+TEXT 3: "In 2020, Dr. Emily Carter collaborated with GenHealth Labs to conduct clinical trials on a new immunotherapy, which received FDA approval in 2023."
+
+Output KG:
+
+{
+"graph_1": {
+    "triples": [
+    ["Dr._Emily_Carter", "discovered", "novel_biomarker"],
+    ["novel_biomarker", "used_for", "early_detection_of_pancreatic_cancer"],
+    ["novel_biomarker", "discovered_in", "2008"],
+    ["Dr._Emily_Carter", "revolutionized", "diagnostic_methods_in_oncology"],
+    ["Dr._Emily_Carter", "field", "oncology"]
+    ]
+},
+"graph_2": {
+    "triples": [
+    ["Dr._Emily_Carter", "supervised", "research_team"],
+    ["research_team", "developed", "targeted_therapy"],
+    ["targeted_therapy", "treats", "pancreatic_cancer"],
+    ["targeted_therapy", "developed_in", "2015"],
+    ["targeted_therapy", "improved", "patient_survival_rates"]
+    ]
+},
+"graph_3": {
+    "triples": [
+    ["Dr._Emily_Carter", "collaborated_with", "GenHealth_Labs"],
+    ["Dr._Emily_Carter", "conducted", "clinical_trials"],
+    ["clinical_trials", "tested", "new_immunotherapy"],
+    ["clinical_trials", "conducted_in", "2020"],
+    ["new_immunotherapy", "received_approval_from", "FDA"],
+    ["new_immunotherapy", "approved_in", "2023"]
+    ]
+}
+}
+
+
+Example 3:
+Input Texts:
+TEXT 1: "The United States of America maintains diplomatic relations with Saudi Arabia, New Zealand, and Croatia. New Zealand has Wellington as its capital and is a member of the United Nations."
+TEXT 2: "Croatia recognizes Croatian as its official language and has diplomatic relations with Hungary and the Philippines. Christine Correa is a citizen of the United States employed by Columbia University."
+TEXT 3: "Christine Correa specializes in voice as her instrument and performs jazz music. Wellington is located on the North Island of New Zealand. The Philippines is an archipelago in Southeast Asia."
+
+Output KG:
+
+{
+"graph_1": {
+    "triples": [
+    ["United_States", "diplomatic_relations_with", "Saudi_Arabia"],
+    ["United_States", "diplomatic_relations_with", "New_Zealand"],
+    ["United_States", "diplomatic_relations_with", "Croatia"],
+    ["New_Zealand", "capital", "Wellington"],
+    ["New_Zealand", "member_of", "United_Nations"]
+    ]
+},
+"graph_2": {
+    "triples": [
+    ["Croatia", "official_language", "Croatian"],
+    ["Croatia", "diplomatic_relations_with", "Hungary"],
+    ["Croatia", "diplomatic_relations_with", "Philippines"],
+    ["Christine_Correa", "citizen_of", "United_States"],
+    ["Christine_Correa", "employed_by", "Columbia_University"]
+    ]
+},
+"graph_3": {
+    "triples": [
+    ["Christine_Correa", "instrument", "voice"],
+    ["Christine_Correa", "performs", "jazz_music"],
+    ["Wellington", "located_in", "North_Island"],
+    ["North_Island", "part_of", "New_Zealand"],
+    ["Philippines", "instance_of", "archipelago"],
+    ["Philippines", "located_in", "Southeast_Asia"]
+    ]
+}
+}
+
+"""
