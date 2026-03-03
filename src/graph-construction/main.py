@@ -36,7 +36,7 @@ class PipelineConfig:
     verification_llm2: str = "mistralai/Mistral-7B-Instruct-v0.2"
     output_dir: str = "output"
     skip_verification: bool = True
-    num_triplets: int = 10
+    num_triplets: Optional[int] = None
     extract_temperature: float = 0.0
     verify_temperature: float = 0.0
 
@@ -317,8 +317,8 @@ def parse_args():
     parser.add_argument(
         "--num_triplets",
         type=int,
-        default=10,
-        help="Target number of triplets per graph (default: 10)"
+        default=None,
+        help="Target number of triplets per graph (if not provided, LLM decides freely)"
     )
     
     parser.add_argument(

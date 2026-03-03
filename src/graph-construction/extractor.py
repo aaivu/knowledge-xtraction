@@ -15,14 +15,14 @@ class KGExtractor:
     """Extracts Knowledge Graphs from text paragraphs using LLMs."""
     
     def __init__(self, model_name: str, template_path: str = "templates/extraction.txt",
-                 num_triplets: int = 10, temperature: float = 0.0):
+                 num_triplets: Optional[int] = None, temperature: float = 0.0):
         """
         Initialize the extractor.
         
         Args:
             model_name: Name of the LLM to use for extraction
             template_path: Path to the extraction prompt template
-            num_triplets: Target number of triplets per graph (~approximate)
+            num_triplets: Target number of triplets per graph (if None, LLM decides freely)
             temperature: Temperature for LLM sampling (0.0-1.0)
         """
         self.model_name = model_name
@@ -60,10 +60,12 @@ class KGExtractor:
         texts_section = "\n\n".join(text_parts)
         
         prompt = self.template.replace("{n}", str(n))
-        prompt = prompt.replace("{num_triplets}", str(self.num_triplets))
+        if self.num_triplets is not None:
+            prompt = prompt.replace("{num_triplets}", str(self.num_triplets))
         prompt += f"\n{texts_section}\n\n"
         
-        prompt += f"Extract approximately {self.num_triplets} triplets per text.\n\n"
+        if self.num_triplets is not None:
+            prompt += f"Extract approximately {self.num_triplets} triplets per text.\n\n"
         
         # Add section for approved triplets that must be included
         if approved_triplets:
