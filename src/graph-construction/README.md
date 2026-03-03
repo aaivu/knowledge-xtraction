@@ -24,7 +24,7 @@ python main.py input.csv
 For quick results with minimal verification:
 
 ```bash
-python main.py input.csv \
+python main.py input.csv input/\
   --extract_llm llama-3.3-70b-versatile \
   --skip_verification \
   --max_time 1
