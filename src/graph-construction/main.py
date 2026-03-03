@@ -357,11 +357,18 @@ def main():
         logging.getLogger().setLevel(logging.DEBUG)
     
     if args.input_csv:
-        if not os.path.exists(args.input_csv):
-            logging.error(f"Input file not found: {args.input_csv}")
+        if os.path.isdir(args.input_csv):
+            input_files = get_all_csv_files(args.input_csv)
+            if not input_files:
+                logging.error(f"No CSV files found in {args.input_csv}")
+                sys.exit(1)
+        elif os.path.isfile(args.input_csv):
+            input_files = [args.input_csv]
+        else:
+            logging.error(f"Input path not found: {args.input_csv}")
             sys.exit(1)
-        input_files = [args.input_csv]
     else:
+        # Default to input/ folder if no argument provided
         input_files = get_all_csv_files("input")
         if not input_files:
             logging.error("No CSV files found in input/ folder")
