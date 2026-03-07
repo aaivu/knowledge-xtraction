@@ -1,15 +1,39 @@
 from typing import List, Any, Dict
+import re
 from pydantic import BaseModel, Field, field_validator, model_validator
+
+
+def normalize_text(text: str) -> str:
+    """Normalize text to lowercase with underscores separating words."""
+    text = text.lower()
+    text = re.sub(r'\s+', ' ', text)
+    text = text.replace(' ', '_')
+    text = re.sub(r'[^a-z0-9_]', '_', text)
+    text = re.sub(r'_+', '_', text)
+    text = text.strip('_')
+    return text
 
 
 class Triplet(BaseModel):
     subject: str = Field(..., description="Initiating entity or event")
     relation: str = Field(..., description="Standardized relationship label")
     object: str = Field(..., description="Target entity, attribute, or value")
+    
+    def normalize(self) -> 'Triplet':
+        """Return a normalized copy of this triplet."""
+        return Triplet(
+            subject=normalize_text(self.subject),
+            relation=normalize_text(self.relation),
+            object=normalize_text(self.object)
+        )
 
 
 class Graph(BaseModel):
     triples: List[Triplet] = Field(default_factory=list, description="List of triplets")
+
+    def normalize(self) -> 'Graph':
+        """Return a normalized copy of this graph with all triplets normalized."""
+        return Graph(triples=[t.normalize() for t in self.triples])
 
     @field_validator('triples', mode='before')
     @classmethod
@@ -67,6 +91,11 @@ class DynamicKnowledgeGraphs(BaseModel):
     def set_graph(self, index: int, graph: Graph):
         """Store graph at index (1-based)."""
         self.graphs[f'graph_{index}'] = graph
+    
+    def normalize(self) -> 'DynamicKnowledgeGraphs':
+        """Return a normalized copy of all graphs."""
+        normalized_graphs = {key: graph.normalize() for key, graph in self.graphs.items()}
+        return DynamicKnowledgeGraphs(graphs=normalized_graphs)
     
     def to_dict(self) -> Dict[str, Any]:
         """Serialize to dictionary for JSON output."""

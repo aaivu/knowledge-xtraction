@@ -197,6 +197,7 @@ class KGCPipeline:
         fieldnames: List[str]
     ):
         """Write processed row with knowledge graphs to output CSV."""
+        normalized_kgs = kgs.normalize()
         output_row = {'id': row.get('id', '')}
         
         # Copy paragraphs and add KGs
@@ -204,7 +205,7 @@ class KGCPipeline:
         while f"paragraph_{i}" in row:
             output_row[f"paragraph_{i}"] = row.get(f"paragraph_{i}", '')
             kg_col = f"kg_{i}"
-            graph = kgs.get_graph(i)
+            graph = normalized_kgs.get_graph(i)
             output_row[kg_col] = self.format_kg_for_output(graph)
             i += 1
         

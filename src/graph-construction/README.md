@@ -9,7 +9,8 @@ The pipeline performs the following steps:
 1. **Extraction**: Extracts triplets from paragraphs using a configured LLM
 2. **Verification**: Optionally verifies extracted triplets against source text
 3. **Refinement**: Re-generates graphs if verification fails (up to `max_time` iterations)
-4. **Output**: Saves verified knowledge graphs to CSV files
+4. **Normalization**: Normalizes entity and label names (lowercase with underscores)
+5. **Output**: Saves verified knowledge graphs to CSV files
 
 ## Quick Start
 
@@ -91,6 +92,44 @@ id,paragraph_1,paragraph_2,paragraph_3,...
 - First column must be `id` (unique identifier)
 - Paragraph columns must be named `paragraph_1`, `paragraph_2`, etc.
 - Supports dynamic number of paragraphs per row
+
+## Entity and Label Normalization
+
+The pipeline automatically normalizes all entity and label names before saving to ensure consistency:
+
+### Normalization Rules
+
+1. **Lowercase**: All text is converted to lowercase
+2. **Underscore Separation**: Spaces are replaced with underscores (`_`)
+3. **Special Characters**: Special characters are replaced with underscores
+4. **Multiple Underscores**: Consecutive underscores are collapsed to single underscore
+5. **Trimming**: Leading and trailing underscores are removed
+
+### Examples
+
+| Original | Normalized |
+|----------|------------|
+| `Barack Obama` | `barack_obama` |
+| `New York City` | `new_york_city` |
+| `was born in` | `was_born_in` |
+| `COVID-19 pandemic` | `covid_19_pandemic` |
+| `Machine Learning` | `machine_learning` |
+
+### Normalization Process
+
+- Normalization is applied **automatically** to all triplets before saving
+- Original text is extracted by LLM, normalization happens at output time
+- This ensures consistent entity/relation names across different knowledge graphs
+
+### Testing Normalization
+
+You can test the normalization functionality:
+
+```bash
+python test_normalization.py
+```
+
+This will demonstrate how various entity and label names are normalized.
 
 ## Output Format
 
