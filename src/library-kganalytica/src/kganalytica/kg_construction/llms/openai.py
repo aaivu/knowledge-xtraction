@@ -1,11 +1,11 @@
 import os
 import logging
 import json
-from dotenv import load_dotenv
 from openai import OpenAI
 from ..schemas import KnowledgeGraphs
+from ...utils.env_utils import load_environment
 
-load_dotenv()
+load_environment()
 
 class OpenAIFactory:
     def __init__(self, model_name: str):

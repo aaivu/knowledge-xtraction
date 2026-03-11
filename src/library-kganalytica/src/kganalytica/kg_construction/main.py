@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
-from dotenv import load_dotenv
+from ..utils.env_utils import load_environment
 
 from .config import ExtractionConfig, VerificationConfig
 from .extractor import KGExtractor
@@ -40,6 +40,8 @@ logging.basicConfig(
         logging.FileHandler('pipeline.log', encoding='utf-8')
     ]
 )
+
+load_environment()
 
 
 @dataclass

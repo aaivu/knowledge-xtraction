@@ -3,11 +3,11 @@ import logging
 import json
 import time
 import re
-from dotenv import load_dotenv
 from groq import Groq
 from ..schemas import KnowledgeGraphs
+from ...utils.env_utils import load_environment
 
-load_dotenv()
+load_environment()
 
 
 

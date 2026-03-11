@@ -6,9 +6,9 @@ import re
 from google import genai
 from ..schemas import KnowledgeGraphs
 from google.genai import types
-from dotenv import load_dotenv
+from ...utils.env_utils import load_environment
 
-load_dotenv()
+load_environment()
 
 class GeminiFactory():
     # Rate limit: 15 RPM = 1 request per 4 seconds
