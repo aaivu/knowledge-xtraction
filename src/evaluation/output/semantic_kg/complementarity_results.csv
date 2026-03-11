@@ -1,7 +1,0 @@
-method1,method2,m1_only,m2_only,both,neither
-AA-KEA (Our Method),BERTScore,24,2,66,0
-AA-KEA (Our Method),sentence-t5-base,14,2,76,0
-AA-KEA (Our Method),ROUGE-L,20,1,70,1
-BERTScore,sentence-t5-base,5,15,63,9
-BERTScore,ROUGE-L,10,13,58,11
-sentence-t5-base,ROUGE-L,17,10,61,4
