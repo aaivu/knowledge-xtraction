@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kganalytica"
+version = "0.1.5"
+description = "Knowledge graph construction, comparison, and similarity toolkit for LLM contextual understanding"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Kithuni", email = "kithuni.21@email.com" },
+  { name = "Chamath", email = "chamathg.21@cse.mrt.ac.lk" },
+  { name = "Mamta", email = "nallaretnam.21@cse.mrt.ac.lk" },
+  { name = "Subavarshana", email = "subavarshanaa.21@cse.mrt.ac.lk" }
+]
+keywords = [
+  "knowledge-graph",
+  "llm",
+  "evaluation",
+  "triplet-analysis",
+  "graph-similarity",
+  "information-extraction"
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+  "numpy>=1.24",
+  "networkx>=3.0",
+  "pandas>=2.0",
+  "python-dotenv>=1.0",
+  "sentence-transformers>=2.2.2",
+  "torch>=2.0",
+  "openai",
+  "google-genai",
+  "groq"
+]
+
+[project.optional-dependencies]
+graph = [
+  "grakel>=0.1.10"
+]
+dev = [
+  "pytest>=7.0",
+  "build>=1.0",
+  "twine>=4.0",
+  "ruff>=0.5.0"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

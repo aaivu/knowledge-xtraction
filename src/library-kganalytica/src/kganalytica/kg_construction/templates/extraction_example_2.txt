@@ -1,0 +1,80 @@
+================ EXAMPLES ==================
+
+Note: Observe how the SAME entity names and standardized relation patterns are used across both graphs to enable comparison. Extract ALL information from each text.
+
+Example 1:
+Input Texts:
+TEXT 1: "Germany maintains diplomatic relations with Portugal, North Korea, and Eswatini. Maxim Mehmet is a citizen of Germany, where he works as an actor and speaks German. North Korea is a member of the United Nations Industrial Development Organization and the Non-Aligned Movement, and also has diplomatic relations with Singapore."
+TEXT 2: "Germany is recognized as a country in Europe with Berlin as its capital. It maintains diplomatic relations with Portugal and North Korea. Maxim Mehmet, a German actor, is known for his work in television. North Korea has diplomatic relations with Singapore and Russia."
+
+Output KG:
+
+{
+"graph_1": {
+    "triples": [
+    ["Germany", "diplomatic_relations_with", "Portugal"],
+    ["Germany", "diplomatic_relations_with", "North_Korea"],
+    ["Germany", "diplomatic_relations_with", "Eswatini"],
+    ["Maxim_Mehmet", "citizen_of", "Germany"],
+    ["Maxim_Mehmet", "occupation", "actor"],
+    ["Maxim_Mehmet", "speaks", "German"],
+    ["North_Korea", "member_of", "United_Nations_Industrial_Development_Organization"],
+    ["North_Korea", "member_of", "Non-Aligned_Movement"],
+    ["North_Korea", "diplomatic_relations_with", "Singapore"]
+    ]
+},
+"graph_2": {
+    "triples": [
+    ["Germany", "instance_of", "country"],
+    ["Germany", "located_in", "Europe"],
+    ["Germany", "capital", "Berlin"],
+    ["Germany", "diplomatic_relations_with", "Portugal"],
+    ["Germany", "diplomatic_relations_with", "North_Korea"],
+    ["Maxim_Mehmet", "citizen_of", "Germany"],
+    ["Maxim_Mehmet", "occupation", "actor"],
+    ["Maxim_Mehmet", "known_for", "television_work"],
+    ["North_Korea", "diplomatic_relations_with", "Singapore"],
+    ["North_Korea", "diplomatic_relations_with", "Russia"]
+    ]
+}
+}
+
+
+Example 2:
+Input Texts:
+TEXT 1: "Richmond is located in Contra Costa County and shares borders with both El Cerrito and Albany. San Francisco, which shares borders with Richmond and Alameda, is part of the San Francisco Bay Area. Andrew Halcro, born in San Francisco, is a member of the Republican Party and was educated at Willamette University."
+TEXT 2: "Richmond is a city in Contra Costa County, California. It borders El Cerrito to the north. Andrew Halcro is an American politician affiliated with the Republican Party who studied at Willamette University in Oregon."
+
+Output KG:
+
+{
+"graph_1": {
+    "triples": [
+    ["Richmond", "located_in", "Contra_Costa_County"],
+    ["Richmond", "border_with", "El_Cerrito"],
+    ["Richmond", "border_with", "Albany"],
+    ["San_Francisco", "border_with", "Richmond"],
+    ["San_Francisco", "border_with", "Alameda"],
+    ["San_Francisco", "part_of", "San_Francisco_Bay_Area"],
+    ["Andrew_Halcro", "born_in", "San_Francisco"],
+    ["Andrew_Halcro", "member_of", "Republican_Party"],
+    ["Andrew_Halcro", "educated_at", "Willamette_University"]
+    ]
+},
+"graph_2": {
+    "triples": [
+    ["Richmond", "instance_of", "city"],
+    ["Richmond", "located_in", "Contra_Costa_County"],
+    ["Contra_Costa_County", "located_in", "California"],
+    ["Richmond", "border_with", "El_Cerrito"],
+    ["El_Cerrito", "direction_from_Richmond", "north"],
+    ["Andrew_Halcro", "instance_of", "politician"],
+    ["Andrew_Halcro", "citizen_of", "United_States"],
+    ["Andrew_Halcro", "member_of", "Republican_Party"],
+    ["Andrew_Halcro", "educated_at", "Willamette_University"],
+    ["Willamette_University", "located_in", "Oregon"]
+    ]
+}
+}
+
+"""
