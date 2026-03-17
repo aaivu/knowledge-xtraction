@@ -31,7 +31,6 @@ python kg_evaluation.py
 ### Or from project root:
 
 ```bash
-cd /Users/admin/Desktop/FYP_Benchmarking
 python src/evaluation/kg_evaluation.py
 ```
 
@@ -59,7 +58,6 @@ The script will:
 | **Character N-gram** | 3-gram character-level similarity | Weak baseline |
 
 ## Evaluation Metrics
-
 - **Correlation**: Pearson (linear) and Spearman (rank-based)
 - **Error**: MSE and MAE
 - **Classification**: ROC curves and AUC (threshold=0.7, balanced classes)

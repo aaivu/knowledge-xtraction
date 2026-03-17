@@ -210,6 +210,96 @@ class Config:
             'short_text':   False,
             'label':        'Long-text / NLP-perturbed (non-KG)',
         },
+        'mrpc_snea_bert': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_bert_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_bert',
+            'short_text':   True,
+            'label':        'Short-text / SNEA-BERT',
+        },
+        'paws_wiki_snea_bert': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_bert_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_bert',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-BERT)',
+        },
+        'semantic_kg_snea_bert': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_bert_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_snea_bert',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-BERT)',
+        },
+        'semantic_kg_codex_400_snea_bert': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_KGs_snea_bert_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_bert',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400, SNEA-BERT)',
+        },
+        'semantic_kg_findkg_snea_bert': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_KGs_snea_bert_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_bert',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG, SNEA-BERT)',
+        },
+        'semantic_kg_globi_snea_bert': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_KGs_snea_bert_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_bert',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI, SNEA-BERT)',
+        },
+        'semantic_kg_oregano_snea_bert': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_KGs_snea_bert_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_bert',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano, SNEA-BERT)',
+        },
+        'sts12_snea_bert': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_KGs_snea_bert_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_bert',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-BERT)',
+        },
+        'wikipedia_snea_bert': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_bert_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_bert',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-BERT)',
+        },
     }
 
     # Embedding models to evaluate
@@ -1204,10 +1294,23 @@ def load_single_dataset(dataset_file: str, aa_kea_file: str,
             (k for k in ['pair_id', 'row_id', 'id'] if k in aakea.columns),
             None
         )
+        # Deduplicate results file — keep first occurrence per id
+        # (SNEA-BERT pipeline sometimes re-processes pairs, producing duplicate rows)
+        if merge_key and aakea[merge_key].duplicated().any():
+            n_before = len(aakea)
+            aakea = aakea.drop_duplicates(subset=merge_key, keep='first')
+            print(f"  ⚠  Dropped {n_before - len(aakea)} duplicate id(s) in {aa_kea_file}")
+
         if merge_key and merge_key in df.columns:
+            # Direct key match (e.g. both use pair_id)
             df = df.merge(aakea[[merge_key, score_col]], on=merge_key, how='left')
+        elif merge_key == 'id' and 'pair_id' in df.columns:
+            # Cross-key merge: results file uses 'id', base file uses 'pair_id'
+            df = df.merge(aakea[['id', score_col]],
+                          left_on='pair_id', right_on='id', how='left')
         else:
-            # Positional merge (same row order)
+            # Positional merge (same row order, last resort)
+            print(f"  ⚠  Falling back to positional merge for {aa_kea_file}")
             df[score_col] = aakea[score_col].values[:len(df)]
         # Normalise to standard column name for downstream pipeline
         if score_col != 'aa_kea_similarity':
