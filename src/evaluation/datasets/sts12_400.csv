@@ -1,0 +1,401 @@
+pair_id,response1,response2,label,perturbation_type,dataset_name
+0,let me remind you that our allies include fervent supporters of this tax .,"i insist on reminding you that among our allies , there are devotees of this tax .",1,similar,sts12
+1,"provide with rails , as by laying .",provide with rails .,1,similar,sts12
+2,personnel casualty,military personnel lost by death or capture .,0,dissimilar,sts12
+3,this gross error is leading russia to political ruin .,and this serious error is taking to russia to its ruin policy .,1,similar,sts12
+4,it has a margin of error of plus or minus 4 percentage points .,that poll had 712 likely voters and sampling error of plus or minus 3.7 percentage points .,0,dissimilar,sts12
+5,the processing or operation of something,"a set sequence of steps , part of larger computer program .",0,dissimilar,sts12
+6,a measurable or quantitative decrease,a sudden sharp decrease in some quantity .,1,similar,sts12
+7,"earlier this month , rim had said it expected to report second-quarter earnings of between 7 cents and 11 cents a share .",excluding legal fees and other charges it expected a loss of between 1 and 4 cents a share .,0,dissimilar,sts12
+8,"maddox , 87 , cracked two ribs when he fell about 10 days ago at an assisted living home where he was recovering from intestinal surgery , virginia carnes said .","maddox , who had battled cancer since 1983 , cracked two ribs earlier this month when he fell at an assisted living home where he was recovering from surgery .",1,similar,sts12
+9,a man shooting a car .,a man is cutting a potato .,0,dissimilar,sts12
+10,"we don 't know if any will be sars , "" said dr. james young , ontario 's commissioner of public safety .",""" we 're being hyper-vigilant , "" said dr. james young , ontario 's commissioner of public safety .",0,dissimilar,sts12
+11,"unfortunately , others separate on the basis of accumulated hatred .",other separate unfortunately because of an accumulated resentment .,1,similar,sts12
+12,a man is playing keyboard .,a person is playing a piano .,0,dissimilar,sts12
+13,a man is folding paper .,a woman is slicing a pepper .,0,dissimilar,sts12
+14,a plane is landing .,a animated airplane is landing .,0,dissimilar,sts12
+15,a cat rapidly swats a kid in the head .,a cat and a boy play together .,0,dissimilar,sts12
+16,the who experts didn 't say how many cases in hebei were in rural areas .,"hebei has reported 191 cases and eight deaths , though the who experts did not say how many were in rural areas .",1,similar,sts12
+17,iraq 's economy was ravaged during years of u.n. sanctions over ex-president saddam hussein 's 1990 occupation of kuwait and by the u.s.-led war to oust him which ended in april .,iraq 's economy was shattered under former president saddam hussein and by the u.s.-led war to oust him which ended in april .,1,similar,sts12
+18,let me remind you that our allies include fervent supporters of this tax .,"i would like to remind you that among our allies , there are ardent supporters of this tax .",1,similar,sts12
+19,have unlawful sex with a prostitute,have unlawful sex with a whore .,1,similar,sts12
+20,the man sat in his chair and stared .,the little girl is putting her hair into a pony tail .,0,dissimilar,sts12
+21,"the technology-laced nasdaq composite index .ixic rose 39.39 points , or 2.2 percent , to 1,826.33 , after losing more than 2 percent on tuesday .","the blue-chip dow jones industrial average .dji jumped 194.14 points , or 2.09 percent , to 9,469.20 after sinking more than 1 percent a day earlier .",0,dissimilar,sts12
+22,register formally as a participant,register formally as a participant or member .,1,similar,sts12
+23,a woman is slicing an onion .,a man is cutting and onion .,1,similar,sts12
+24,"continue to live , exist , or prosper",continue to live through hardship or adversity .,0,dissimilar,sts12
+25,trading in loral was halted yesterday ; the shares closed on monday at $ 3.01 .,"the new york stock exchange suspended trading yesterday in loral , which closed at $ 3.01 friday .",1,similar,sts12
+26,a man is jumping rope outside .,a woman is slicing a cucumber .,0,dissimilar,sts12
+27,a man shoots a man .,a man with a pistol shoots another man .,1,similar,sts12
+28,"in addition , it offered the united states and israel a way to work around mr. arafat .","when the prime minister 's position was established in the spring , it offered the united states and israel a way to work around arafat .",1,similar,sts12
+29,""" and about eight to 10 seconds down , i hit .",""" i was in the water for about eight seconds .",0,dissimilar,sts12
+30,cause friction ; wear away or erode,wear away or erode .,1,similar,sts12
+31,a person is frying meat in a pan .,a person is holding a skunk .,0,dissimilar,sts12
+32,a puppy plays with a plastic container .,the dog is playing with a plastic container .,1,similar,sts12
+33,"their contract will expire at 12 : 01 a.m. wednesday instead of 12 : 01 a.m. sunday , said rian wathen , organizing director for united food and commercial workers local 700 .",""" it has outraged the membership , "" said rian wathen , organizing director of united food and commercial workers local 700 .",0,dissimilar,sts12
+34,"the computers were reportedly located in the u.s. , canada and south korea .","the pcs are scattered across the united states , canada and south korea .",1,similar,sts12
+35,the arrests revealed new details about the four-month investigation at selenski 's mount olivet road home .,kerkowski and fassett 's bodies were unearthed at selenski 's mount olivet road home on june 5 .,0,dissimilar,sts12
+36,a badger is digging in the dirt .,a man is moving large rocks .,0,dissimilar,sts12
+37,"mr president , the cashman report can be summarised in four words : citizens ' power over bureaucracy .","mister the president , the report cashman can summarize itself in some words : the strength of the citizens on the bureaucracy .",1,similar,sts12
+38,a girl is styling her hair .,a girl is brushing her hair .,0,dissimilar,sts12
+39,a man is slicing a potato .,a woman is cutting a jalepeno .,0,dissimilar,sts12
+40,south africa has the world 's highest caseload with 4.7 million people infected with hiv or aids .,"with 4.7 million people infected with hiv or aids , south africa has the world 's highest aids caseload .",1,similar,sts12
+41,a man is riding a motorcycle .,a man is riding a horse .,0,dissimilar,sts12
+42,a man is playing a guitar .,a man is playing a trumpet .,0,dissimilar,sts12
+43,a man swims underwater .,a woman is swimming underwater .,0,dissimilar,sts12
+44,"performance , routine",a short theatrical performance that is part of a longer program .,0,dissimilar,sts12
+45,tocqueville believed that there are no effective long-term constraints on this tendency .,"tocqueville thought that on the long run , nothing can be really opposed to this tendency .",1,similar,sts12
+46,"by late afternoon , the dow jones industrial average was up 12.81 , or 0.1 percent , at 9,331.77 , having gained 201 points monday to its highest level since july 2002 .","in morning trading , the dow jones industrial average was down 8.76 , or 0.1 percent , at 9,310.20 , having gained 201 points monday .",0,dissimilar,sts12
+47,""" they 've been in the stores for over six weeks , "" says carney .","the quarterlies usually stay in stores for between six to eight weeks , "" carney added .",0,dissimilar,sts12
+48,a woman is picking a can .,a woman is slicing a tomato .,0,dissimilar,sts12
+49,a man is jumping into water .,a man is cutting paper .,0,dissimilar,sts12
+50,"its shares fell 71 cents , or 3.5 percent , in after-hours trading to $ 19.55 .","the stock had risen 63 cents , or 3 percent , to close at $ 20.26 in regular-session nasdaq trading .",0,dissimilar,sts12
+51,some results are remarkable .,certain results are remarkable .,1,similar,sts12
+52,there must be a balance as a whole .,the unity must be in balance .,1,similar,sts12
+53,"putin , too , also seems to suspect his regime 's impotence .","and , also , of his regime .",0,dissimilar,sts12
+54,the notification was first reported friday by msnbc .,msnbc.com first reported the cia request on friday .,1,similar,sts12
+55,some results are remarkable .,some results .,0,dissimilar,sts12
+56,let me remind you that our allies include fervent supporters of this tax .,"i hold you recall that our allies , there are enthusiastic about this tax .",1,similar,sts12
+57,the elephants are bathing .,two women are singing .,0,dissimilar,sts12
+58,a person is petting a monkey .,a man is holding a slow loris .,0,dissimilar,sts12
+59,a woman is placing food in a pot of hot water .,a woman is frying meat .,0,dissimilar,sts12
+60,a woman is cutting an onion .,a man is cutting onions .,0,dissimilar,sts12
+61,i am one of those members who attends sittings quite faithfully .,i am one of the members who are rather honourably here .,1,similar,sts12
+62,provide with tools or items for a specific purpose,provide with ( something ) usually for a specific purpose .,1,similar,sts12
+63,a woman is picking a can .,a man is playing a guitar .,0,dissimilar,sts12
+64,"excluding one-time items , the company enjoyed a profit of 6 cents a share .","excluding one-time items , it expects profit of 11 cents to 15 cents a share .",0,dissimilar,sts12
+65,today there are two plausible ways to proceed against a deposed tyrant .,today there are two ways of proceeding to the origins .,0,dissimilar,sts12
+66,"the fishermen are inactive , tired and disappointed .","the fishers are inactive , tired and disappointed .",1,similar,sts12
+67,""" they were brutally beaten , and it 's really a wonder that porchia is the only deceased in this case . """,""" it 's a wonder that porchia was the only deceased in this case , "" sax added .",1,similar,sts12
+68,a man rides off on a motorcycle .,a man is riding on a motorcycle .,1,similar,sts12
+69,a woman is feeding a man .,a woman is mixing meat .,0,dissimilar,sts12
+70,"the fishermen are inactive , tired and disappointed .","the fishermen are unemployed , tired and disappointed .",1,similar,sts12
+71,"darren dopp , a spitzer spokesman , declined to comment late thursday .","john heine , a spokesman for the commission in washington , declined to comment on mr. spitzer 's criticism .",0,dissimilar,sts12
+72,a man is slicing a bun .,a man is slicing an onion .,0,dissimilar,sts12
+73,a cyclical span of time defined by a calendar system,a period of time containing 365 ( or 366 ) days .,0,dissimilar,sts12
+74,"be larger in number , quantity , power , status , or importance , without personally having sovereign power .","be larger in number , quantity , power , status or importance .",1,similar,sts12
+75,act of verbally informing,the act of informing by verbal report .,1,similar,sts12
+76,a man is playing the cello .,a man seated is playing the cello .,1,similar,sts12
+77,each side had quite different theories and explanations of what was going on .,each player had the theories and explanations markedly different situation .,1,similar,sts12
+78,"discern , identify , or know because of a previous experience",be fully aware or cognizant of .,0,dissimilar,sts12
+79,but america 's interest in iraqi oil was not driven either by economics or energy policy .,but the interests of america for iraqi oil is dictated by the economy or the energy policy .,1,similar,sts12
+80,"graves reported from albuquerque , villafranca from austin and ratcliffe from laredo .",pete slover reported from laredo and gromer jeffers from albuquerque .,0,dissimilar,sts12
+81,a group of penguins is walking .,a large amount of penguins are heading to the ocean .,0,dissimilar,sts12
+82,the feeling of annoyance at being hindered or thwarted .,a feeling of annoyance at being hindered or criticized .,1,similar,sts12
+83,"coupling , an american version of a hit british comedy , will get the valuable thursday 9 : 30 p.m. time slot .","coupling , an american version of a hit british comedy , will couple with friends on thursdays .",1,similar,sts12
+84,"proving that the millville son 's sacrifice would not go unsung , mayor james quinn ordered all city flags flown at half-mast for the next 30 days .","in millville yesterday , mayor james quinn ordered all city flags flown at half-staff for the next 30 days .",1,similar,sts12
+85,a boy is crawling into a dog house .,a cat is playing on the floor .,0,dissimilar,sts12
+86,but she didn 't say whether she 'll certify the two-year $ 117.4 billion budget for 2004-05 .,she said she didn 't know yet whether she would certify the budget .,1,similar,sts12
+87,"the venture owns five oil refineries and more than 2,100 filling stations in russia and ukraine .","tnk-bp has six oil producing units , five refineries and 2,100 filling stations .",1,similar,sts12
+88,"analysts ' consensus estimate from thomson first call was for a loss of $ 2.08 a share , excluding one-time items .",the estimate of analysts surveyed by thomson first call was for a loss of $ 2.75 a share .,0,dissimilar,sts12
+89,a man is playing guitar .,a man is draining pasta .,0,dissimilar,sts12
+90,funeral direction,the trade of a funeral director .,1,similar,sts12
+91,a state of confinement in a small space,the act of forcing yourself ( or being forced ) into or through a restricted space .,1,similar,sts12
+92,"u.s. troops encountered no resistance during the five-hour sweep near tikrit , saddam hussein 's hometown and the center of a region of baath party supporters .",tikrit is saddam hussein 's hometown and the region around it is known as a hotbed of baath party supporters and former high-ranking iraqi military officials .,0,dissimilar,sts12
+93,"indeed , the french philosopher marcel gauchet entitled a recent book democracy against itself .",one can also note that the french philosopher marcel gauchet entitled one of these recent books the democracy against itself .,1,similar,sts12
+94,a cat is watching a tv .,a man is slicing a leave .,0,dissimilar,sts12
+95,intend something to move toward a certain goal,intend ( something ) to move towards a certain goal .,1,similar,sts12
+96,then perhaps we could have avoided a catastrophe .,perhaps we should have been able to prevent a disaster .,1,similar,sts12
+97,heatley was sixth in the league in goals last season with 41 and ninth in points with 89 .,heatley led atlanta in scoring last season with a team-record 41 goals and 48 assists .,1,similar,sts12
+98,paper is being cut with scissors .,a piece of paper is being cut .,1,similar,sts12
+99,someone is slicing tortila 's .,someone is riding a horse .,0,dissimilar,sts12
+100,the u.s. conference board said its latest measure of business confidence hit 60 after falling to 53 in its first quarter survey .,"the conference board said its measure of business confidence , which had fallen to 53 in the first quarter of 2003 , improved to 60 in the most recent second quarter .",1,similar,sts12
+101,a man is rowing a boat .,a man is slicing a tomato .,0,dissimilar,sts12
+102,a man is tying on a stenographers machine .,the man used a stenograph .,0,dissimilar,sts12
+103,a man is putting garlic on some bread slices .,a man is sprinkling seasoning on several split and buttered loaves of bread .,0,dissimilar,sts12
+104,advancing issues outnumbered decliners about 8 to 5 on the new york stock exchange .,declining issues outnumbered advancers slightly more than 3 to 1 on the new york stock exchange .,0,dissimilar,sts12
+105,a cat is playing on the floor .,a man is slicing garlic .,0,dissimilar,sts12
+106,"and , perhaps most importantly , ahmadinejad is a destabilizing influence ; bernanke is not .","and , perhaps the most important , the destabilising influence , not then .",0,dissimilar,sts12
+107,effectively wield or manipulate a concrete entity,handle effectively .,0,dissimilar,sts12
+108,"prior to joining kodak , palumbo worked for procter & gamble corp. , where he managed products such as folgers and pantene shampoo .","prior to joining eastman kodak , mr. palumbo held senior marketing positions for procter & gamble .",1,similar,sts12
+109,dotson was arrested monday in his native maryland and charged with murder .,"dotson , 21 , was subsequently charged with dennehy 's murder .",1,similar,sts12
+110,the man is slicing a fish open .,a man is slicing a potato .,0,dissimilar,sts12
+111,the ministry of defence is facing a 20m compensation claim from hundreds of kenyan women who claim they were raped by british soldiers .,hundreds of kenyan women claiming they were attacked and raped by british soldiers were granted government legal aid wednesday to pursue their case against the ministry of defense .,1,similar,sts12
+112,there must be a balance as a whole .,the whole must be in balance .,1,similar,sts12
+113,"thank you , commissioner .","thank you , commissioner .",1,similar,sts12
+114,""" we have found the smoking gun , "" investigating board member scott hubbard said .",""" we have found the smoking gun , "" said hubbard , director of nasa 's ames research center in california .",1,similar,sts12
+115,a cat is jumping into a box .,a young man is talking to a leaf .,0,dissimilar,sts12
+116,two foxes are eating from a plate on a brick patio .,foxes are eating from a plate .,0,dissimilar,sts12
+117,make out of components ( in an improvising manner ),make out of components ( often in an improvising manner ) .,1,similar,sts12
+118,""" frank quattrone is innocent , "" keker said in a statement .",quattrone lawyer john w. keker said his client is innocent .,1,similar,sts12
+119,forcefully request,request urgently and forcefully .,1,similar,sts12
+120,a woman is deboning a fish .,a man catches a fish .,0,dissimilar,sts12
+121,the little boy is singing and playing the guitar .,a baby is playing a guitar .,0,dissimilar,sts12
+122,"a process of development , increase or advancement",a process of becoming larger or longer or more numerous or more important .,0,dissimilar,sts12
+123,"decree , issue an order",issue an order .,1,similar,sts12
+124,"also missing is al larsen , 31 , of fort worth , texas , who was in another vehicle swept off the turnpike .","the other victim recovered tuesday morning was al larsen , 31 , of fort worth , texas .",0,dissimilar,sts12
+125,a woman is carrying a boy .,a woman is carrying her baby .,0,dissimilar,sts12
+126,"us special forces troops are training colombian soldiers at military bases in the region to protect the pipeline , which transports crude from colombia 's second-biggest oil field .",u.s. special forces troops are training colombian soldiers at military bases in the region to protect the pipeline .,1,similar,sts12
+127,"( cause to ) move through a space , circuit or system , usu. returning to the starting point",move in circles .,1,similar,sts12
+128,supply or furnish with something needed or wanted,give something useful or necessary to .,0,dissimilar,sts12
+129,the act of coming to rest after a voyage .,the act of coming to land after a voyage .,1,similar,sts12
+130,the man played his guitar .,a man is playing a guitar .,1,similar,sts12
+131,the man talked to a girl over the internet camera .,a teenager talks to a girl over a webcam .,0,dissimilar,sts12
+132,render one language in another language,restate ( words ) from one language into another language .,1,similar,sts12
+133,a man is playing an electronic keyboard .,a man is playing a flute .,0,dissimilar,sts12
+134,this tendency extends deeper than headscarves .,this tendency goes well beyond simple .,0,dissimilar,sts12
+135,a man is playing a guitar .,someone is handling a bun .,0,dissimilar,sts12
+136,( medicine ) the capacity of an organism to defend against disease .,( medicine ) the condition in which an organism can resist disease .,1,similar,sts12
+137,putin 's russia has already lost 12 leading journalists to murder in the past six years .,"putin 's russia has already lost 12 prominent journalists , murdered in the last six years .",1,similar,sts12
+138,a small dog is chasing a yoga ball .,a dog is chasing a ball .,1,similar,sts12
+139,van orden report ( a5-0241 / 2000 ),report van orden ( a5-0241 / 2000 ),1,similar,sts12
+140,a girl is dancing in a cage .,a onion is being chopped .,0,dissimilar,sts12
+141,a man is paddling a canoe .,a man is playing a harp .,0,dissimilar,sts12
+142,"the standards are scarcely comparable , let alone transferable .",the norms are scarcely comparable and again less transférables .,1,similar,sts12
+143,a man is cutting paper with a sword .,a woman is cutting a tomato .,0,dissimilar,sts12
+144,"the s & p / tsx composite rose 87.74 points on the week , while the tsx venture exchange composite gained 44.49 points .","on the week , the dow jones industrial average rose 11.56 points , while the nasdaq stock market gained 39.42 points .",0,dissimilar,sts12
+145,amendment no 7 proposes certain changes in the references to paragraphs .,amendment 7 proposes certain modifications in the references to paragraphs .,1,similar,sts12
+146,two men are talking .,two men are playing guitar .,0,dissimilar,sts12
+147,change one for another,"give to , and receive from , one another .",0,dissimilar,sts12
+148,( cause to ) survive,cause to move by pulling .,0,dissimilar,sts12
+149,then perhaps we could have avoided a catastrophe .,we would perhaps have been able to then avoid a disaster .,1,similar,sts12
+150,the woman is seasoning the oil .,a woman is pouring ingredients in a bowl .,0,dissimilar,sts12
+151,"mr president , i rise in defence of the workers in the industry .","mr president , i would like to take the defence of workers in this sector .",1,similar,sts12
+152,but the returns that make us stock markets so attractive reflect a delicate political balance .,but the returns which return the us markets of the transferable securities if attracting reflect a fragile political balance .,1,similar,sts12
+153,a woman opens a window .,a man is crawling .,0,dissimilar,sts12
+154,a woman is doing weight exercises .,a woman is doing her hair .,0,dissimilar,sts12
+155,someone is greasing a pan .,smeone is laying down .,0,dissimilar,sts12
+156,the man used a chopper to chop the onion .,the man used a machine to chop up a potatoe .,0,dissimilar,sts12
+157,"the technology-laced nasdaq composite index dipped 0.08 of a point to 1,646 .","the technology-laced nasdaq composite index < .ixic > added 1.92 points , or 0.12 percent , at 1,647.94 .",0,dissimilar,sts12
+158,"consumers will lose out , employees will lose out , europe will lose competitive strength and growth .","the consumers are the losers , with the employees , and the competitiveness and the growth european régresseront .",1,similar,sts12
+159,[ provide with a new or different resting place,provide with a new seat .,1,similar,sts12
+160,"one question was whether france , which infuriated washington by leading the charge against u.n. authorization for the war , would vote "" yes "" or abstain .","france , which infuriated washington by leading the charge against u.n. approval for the war , also sought changes .",1,similar,sts12
+161,"the standards are scarcely comparable , let alone transferable .",the standards are hardly comparable and even less transferable .,1,similar,sts12
+162,a woman puts flour on a piece of meat .,a woman is putting flour onto some meat .,1,similar,sts12
+163,a woman is slicing up some meat .,a woman is breading some meat .,0,dissimilar,sts12
+164,this has left the conservative opposition without an effective response .,that leaves the conservative opposition without any effective answer .,1,similar,sts12
+165,five men jump into a swimming pool .,a group of swimmers fall into a pool .,0,dissimilar,sts12
+166,"give a thrashing to , beat",give a thrashing to ; beat hard .,1,similar,sts12
+167,the woman is dicing onions .,a woman is dancing in railway station .,0,dissimilar,sts12
+168,a woman is putting her baby in a waste bin .,the woman is poking holes in the potato .,0,dissimilar,sts12
+169,"an intense surprise , often unpleasant",an unpleasant or disappointing surprise .,1,similar,sts12
+170,two men are fighting .,two men are fighting using a form of martial arts .,0,dissimilar,sts12
+171,make an abstract thing tight or more restrictive,make tight or tighter .,0,dissimilar,sts12
+172,a man is riding a bike .,a panda bear is eating .,0,dissimilar,sts12
+173,connect with ; reach a target or goal,"perceive with the senses quickly , suddenly , or momentarily .",0,dissimilar,sts12
+174,"put an end to , make invalid a process that 's already begun",make invalid for use .,0,dissimilar,sts12
+175,none of this absolves rich countries of their responsibility to help .,"that does not , however , the rich countries of their obligation to help .",1,similar,sts12
+176,a boy is pushing a van .,a person is slicing a tomato .,0,dissimilar,sts12
+177,physical matter left behind after a removal process,matter that remains after something has been removed .,1,similar,sts12
+178,a woman is taking a picture .,a man is playing a guitar .,0,dissimilar,sts12
+179,a man is slicing a tomato .,a man is riding a horse .,0,dissimilar,sts12
+180,the man is putting chicken into the container .,a man is putting foods in a box .,0,dissimilar,sts12
+181,a man is running on the road .,a panda dog is running on the road .,0,dissimilar,sts12
+182,two men are fighting .,the man is exercising .,0,dissimilar,sts12
+183,a rat like creature is smelling around .,an animal is walking on the ground .,0,dissimilar,sts12
+184,a woman is cutting up a chicken .,a woman is slicing meat .,0,dissimilar,sts12
+185,"terri schiavo , 39 , is expected to die sometime in the next two weeks in the tampa-area hospice where she has spent the past several years .","terri schiavo , 39 , underwent the procedure at the tampa bay area hospice where she has been living for several years , said her father , bob schindler .",0,dissimilar,sts12
+186,then perhaps we could have avoided a catastrophe .,we maybe then could have avoided a catastrophe .,1,similar,sts12
+187,iraq 's future depends directly on the fate of iraqi oil production .,the future of iraq is related to the oil production of the country .,1,similar,sts12
+188,"but from the american point of view , the international role of the dollar was a trap .","but from the american view , the international role of the dollar was a trap .",1,similar,sts12
+189,the military officer barked at the recruits .,an officer is talking to recruits .,0,dissimilar,sts12
+190,"since being drafted into service in 1971 , it has racked up a record 45 accidents , with 393 deaths .","it has a chequered safety record , including 47 accidents that resulted in 668 deaths .",0,dissimilar,sts12
+191,"an indication or manifestation of something , often physical",an indication of damage .,0,dissimilar,sts12
+192,""" i ´ m very proud of the citizens of this state , "" gov. john baldacci said after votes from tuesday ´ s referendum were counted .",""" i 'm very proud of the citizens of this state , "" said gov. john baldacci , a casino foe .",1,similar,sts12
+193,a woman is riding on a horse .,a man is turning over tables in anger .,0,dissimilar,sts12
+194,a boy is checking a calender .,a boy is looking at a calendar .,1,similar,sts12
+195,a man is climbing a rope .,a man climbs a rope .,1,similar,sts12
+196,take someone 's soul into heaven,take up someone 's soul into heaven .,1,similar,sts12
+197,microsoft fell 5 percent before the open to $ 27.45 from thursday 's close of $ 28.91 .,shares in microsoft slipped 4.7 percent in after-hours trade to $ 27.54 from a nasdaq close of $ 28.91 .,1,similar,sts12
+198,a kid plays with a toy phone .,a little boy plays with a toy phone .,1,similar,sts12
+199,a feeling or state of extreme anger .,a state of extreme anger .,1,similar,sts12
+200,"egyptologists cast doubt tuesday on an expedition 's claim that it may have found the mummy of queen nefertiti , one of the best-known ancient egyptians .","egyptologists think they may have identified the long-sought mummy of queen nefertiti , one of the ancient world 's legendary beauties .",0,dissimilar,sts12
+201,make or become brighter or lighter,make lighter or brighter .,1,similar,sts12
+202,"the agency will "" consider as timely any tax returns or payments due "" aug. 15 if they are submitted by aug. 22 .",the agency said it would consider as timely any tax returns or payments due from friday through aug. 22 if they are completed by aug. 22 .,1,similar,sts12
+203,""" i do not wish to be present during this witness , "" he told stanislaus county superior court judge al girolami .",""" yes , i do not wish to be present during this witness , "" peterson , 31 , calmly told the judge as he was returned to his cell .",1,similar,sts12
+204,lionel richie is dancing on the ceiling .,lionel ritchie dances while standing on the ceiling .,1,similar,sts12
+205,"protect from heat , cold , or other detrimental conditions",place or set apart .,0,dissimilar,sts12
+206,the act of copying the actions of someone else .,a representation of a person that is exaggerated for comic effect .,0,dissimilar,sts12
+207,a baby tiger is playing with a ball .,a baby is playing with a doll .,0,dissimilar,sts12
+208,"the standards are scarcely comparable , let alone transferable .",the standards are hardly comparable and still less transferable .,1,similar,sts12
+209,a woman is peeling a potato .,a man is slicing potato .,0,dissimilar,sts12
+210,it increases the power of the big countries at the expense of the small countries .,that causes to increase the power of the large countries to the detriment of small .,1,similar,sts12
+211,a man is playing the piano .,the man is playing the violin .,0,dissimilar,sts12
+212,a man is playing a guitar .,a man is playing a flute .,0,dissimilar,sts12
+213,that is the spirit in which the european constitution must be written .,that is the spirit in which must be drawn up the constitution .,1,similar,sts12
+214,a man is cutting a fish .,a man guts a fish .,1,similar,sts12
+215,a woman is slicing meat with a knife .,a man is spreading out dough .,0,dissimilar,sts12
+216,"the dow jones industrials climbed more than 140 points to above the 9,000 mark , the first time since december .","the dow jones industrials briefly surpassed the 9,000 mark for the first time since december . """,1,similar,sts12
+217,"a long , thin implement , usually made of wood",an implement consisting of a length of wood .,1,similar,sts12
+218,the company claims it 's the largest single apple var xserve sale to date .,the company claimed it is the largest sale of xserves by an apple retailer .,1,similar,sts12
+219,the day before today,the day immediately before today .,1,similar,sts12
+220,"devote or adapt exclusively to an skill , study , or work",devote oneself to a special area of work .,1,similar,sts12
+221,the lady stirred up raw eggs in the bowl .,a woman is pouring eyes into a bowl .,0,dissimilar,sts12
+222,"the finger next to the thumb , forefinger",the finger next to the thumb .,1,similar,sts12
+223,"graham , a presidential candidate , was criticized by several republicans as ' ' politicizing ' ' the report .","graham , who co-chaired the inquiry , is a presidential candidate .",0,dissimilar,sts12
+224,"authorities in ohio , indiana and michigan have searched for the bodies .","so far , authorities also have searched areas in pennsylvania , ohio , indiana , and michigan .",0,dissimilar,sts12
+225,the parents want her kept alive ; her husband says she never wanted to be kept alive artificially .,michael schiavo has argued that his wife never wanted to be kept alive artificially .,0,dissimilar,sts12
+226,a man plays a guitar .,a man plays the piano .,0,dissimilar,sts12
+227,a project or undertaking,earnest and conscientious activity intended to do or accomplish something .,1,similar,sts12
+228,a woman is writing .,a woman is swimming .,0,dissimilar,sts12
+229,impress or affect deeply ( emotionally ) .,impress or affect deeply .,1,similar,sts12
+230,someone is mixing ingrediants .,someone is sewing things .,0,dissimilar,sts12
+231,work material with a tool,work with a tool .,1,similar,sts12
+232,van orden report ( a5-0241 / 2000 ),relation horse-trailer orden ( a5-0241 / 2000 ),1,similar,sts12
+233,someone is holding a hedgehog .,a onion is being sliced .,0,dissimilar,sts12
+234,"the blue-chip dow jones industrial average eased 44 points , or 0.47 percent , to 9,543 , after scoring five consecutive up sessions .","the dow jones industrial average .dji rose 18.25 points , or 0.19 percent , to 9,586.71 .",0,dissimilar,sts12
+235,"he did , but the initiative did not get very far .",what it has done without initiative go very far .,1,similar,sts12
+236,"the priest , the rev. john f. johnston , 64 , of 35th avenue in jackson heights , was charged with aggravated harassment and criminal possession of a weapon .","the rev. john johnston , 64 , was charged with aggravated harassment in the phone call case and with criminal possession of a weapon , according to a police statement .",1,similar,sts12
+237,"but price declines have remained below 30 percent , year over year , for the last two quarters , said idc analyst john mcarthur .",mcarthur told internetnews.com price declines have moderated and remained below 30 percent from the previous year for the last two quarters .,1,similar,sts12
+238,let me remind you that our allies include fervent supporters of this tax .,"i would remind you that our allies , devotees of this tax .",1,similar,sts12
+239,remove water from a substance .,remove water from .,1,similar,sts12
+240,express audibly ; utter sounds ( not necessarily words ) ; indicate .,express audibly ; utter sounds ( not necessarily words ) .,1,similar,sts12
+241,a ceremony marking admission into a religious community .,a sacrament admitting a baptized person to full participation in the church .,0,dissimilar,sts12
+242,"limit , keep under control , deter , forbid",to compel or deter by or as if by threats .,0,dissimilar,sts12
+243,( the discovery or exhibition of ) factual evidence that establishes the truth of something .,a formal series of statements showing that if one thing is true something else necessarily follows from it .,1,similar,sts12
+244,five kittens are eating out of five dishes .,kittens are eating food on trays .,0,dissimilar,sts12
+245,""" what they have done is a thinly veiled attempt to do an end run around the constitution , "" she said .","the church 's lawyer , shirley phelps-roper , was clear : "" what they have done is a thinly veiled attempt to do an end run around the constitution , "" she said .",0,dissimilar,sts12
+246,"government bonds sold off sharply after greenspan told congress on tuesday that the u.s. economy "" could very well be embarking on a period of extended growth "" .","greenspan told congress on tuesday the u.s. economy "" could very well be embarking on a period of sustained growth "" .",1,similar,sts12
+247,that provision could open the door wide to arbitrariness .,this paves the way for the of the rules of procedure here .,0,dissimilar,sts12
+248,a judgement or opinion about something,a judgment of the qualities of something or somebody .,1,similar,sts12
+249,this has left the conservative opposition without an effective response .,that leaves the opposition and without any effective response .,1,similar,sts12
+250,a man is opening a door .,a man is cutting an onion .,0,dissimilar,sts12
+251,none of this absolves rich countries of their responsibility to help .,this does not however absolve the rich countries of their obligation to help .,1,similar,sts12
+252,a plane rides on a road .,an airplane moves along a runway .,0,dissimilar,sts12
+253,neither was there a qualified majority within this house to revert to article 272 .,there was no qualified majority in this parliament to go back to article 272 .,1,similar,sts12
+254,the price of a good or service,an assertion that someone is guilty of a fault or offence .,0,dissimilar,sts12
+255,"founded in 1996 , the lendingtree exchange consists of more than 200 banks , lenders , and brokers .","lendingtree matches borrowers via the internet with more than 200 mortgage brokers , banks and other lenders .",1,similar,sts12
+256,peter lyman and hal varian of berkeley 's school of information management and systems say that information production has increased by 30 percent each year between 1999 and 2002 .,"that task appealed to two masters of the megabyte , peter lyman and hal varian , professors at the university of california-berkeley 's school of information management and systems .",0,dissimilar,sts12
+257,"the bodies of former invercargill man warren campbell , 32 , and climbing companion jonathan smith , 47 , were recovered from below mt d 'archiac late yesterday morning .","warren david campbell , 32 , and climbing companion jonathan smith , 47 , did not return as expected on tuesday from climbing on mt d 'archiac in the mckenzie district .",0,dissimilar,sts12
+258,gov. linda lingle and members of her staff were at the navy base and watched the launch .,gov. linda lingle and other dignitaries are scheduled to be at the base to watch the launch .,1,similar,sts12
+259,cooley said he expects muhammad will similarly be called as a witness at a pretrial hearing for malvo .,lee boyd malvo will be called as a witness wednesday in a pretrial hearing for fellow sniper suspect john allen muhammad .,0,dissimilar,sts12
+260,"marc garber , whitley 's attorney , had a different view .","whitley 's attorney , marc garber , called the ruling "" a huge victory . """,0,dissimilar,sts12
+261,the american conservatives are clearly in the minority within the episcopal church .,the letter indicates the vatican 's interest in bolstering conservatives within the episcopal church .,0,dissimilar,sts12
+262,a woman is slicing a pumpkin .,a woman is riding an elephant .,0,dissimilar,sts12
+263,a man jumping rope,a man is talking .,0,dissimilar,sts12
+264,a man is kicking a soccer ball .,a man is mixing a bowl .,0,dissimilar,sts12
+265,a man is dancing .,a man is riding a horse .,0,dissimilar,sts12
+266,"but from the american point of view , the international role of the dollar was a trap .","but the us point of view , the international role of the dollar was a trap .",1,similar,sts12
+267,a woman is chopping an onion .,a woman is slicing partially into half of an onion .,1,similar,sts12
+268,"recover , return to former state",return to a former condition .,1,similar,sts12
+269,three children are eating their food .,the deer jumped over the fence .,0,dissimilar,sts12
+270,"but if europe 's performance continues to decline , would this perception survive ?",but this picture can survive a continuing decline ?,0,dissimilar,sts12
+271,"provide with rails , as by laying .",lay with rails .,1,similar,sts12
+272,pro-market economists don 't object to corporations that blatantly use snob appeal to promote their products .,the economists pro-market do not oppose the companies which openly use the attraction of the luxury to promote their products .,1,similar,sts12
+273,"the company will launch 800 hot spots , or "" wi-fi zones , "" later this summer , and plans to have more than 2,100 by the end of the year .","the service will launch later this summer with 800 locations , and sprint plans 2,100 locations by the end of the year .",1,similar,sts12
+274,a man is preparing a snake for cooking .,the man is dropping sliced cucumbers into water .,0,dissimilar,sts12
+275,a woman is slicing some tomatoes .,a woman is chopping a potato .,0,dissimilar,sts12
+276,escape or avoid a situation or responsibility,use cunning or deceit to escape or avoid .,1,similar,sts12
+277,( parliament adopted the legislative resolution ),( parliament adopted the legislative resolution ),1,similar,sts12
+278,committee with supervisory powers,a committee having supervisory powers .,1,similar,sts12
+279,"several relatives of australian victims of the attack were in court to witness the proceedings , but few balinese attended the trial .","several relatives of australian victims of the attack sat in the front row of the court , but few balinese attended the trial .",1,similar,sts12
+280,a man is cycling .,a man is talking .,0,dissimilar,sts12
+281,"frank quattrone , the former credit suisse first boston technology investment-banking guru , reportedly pleaded not guilty tuesday to charges of obstruction of justice and witness tampering .",new york - ( dow jones ) - former star investment banker frank quattrone pleaded not guilty tuesday to criminal charges of obstruction of justice and witness tampering .,1,similar,sts12
+282,"indeed , the french philosopher marcel gauchet entitled a recent book democracy against itself .",we can also note that the french philosopher marcel gauchet entitled the recent books against democracy itself .,1,similar,sts12
+283,"stick out , jut out , protrude",extend out or project in space .,0,dissimilar,sts12
+284,"they are ignorant , poor , and sick .","they are poor , sick and uncultivated .",1,similar,sts12
+285,partake or provide a banquet,partake in a feast or banquet .,1,similar,sts12
+286,chechen officials working for the moscow-backed government are a frequent target for rebels and tension is running high ahead of next sunday 's presidential election in war-torn chechnya .,"officials in chechnya 's moscow-backed government are a frequent target for rebels , and tension is running high ahead of sunday 's presidential election in the war-ravaged region .",1,similar,sts12
+287,the recording industry association of america says it plans to sue the song traders next month .,"that is , if the recording industry association of america has anything to say about it .",0,dissimilar,sts12
+288,a man is seasoning some carrots .,a woman is slicing garlic .,0,dissimilar,sts12
+289,"as i already explained during second reading , there is a crisis underlying this directive amendment .","as i have already explained , at second reading , a crisis is at the root of this modification of directive .",1,similar,sts12
+290,maij-weggen report ( a5-0323 / 2000 ),mrs maij-weggen 's report ( 5 / 2000 ),0,dissimilar,sts12
+291,"the statewide unemployment rate fell to 6.4 percent , down from a revised 6.7 percent in august .","the unemployment rate in san joaquin county dipped last month to 8.5 percent , down nearly a full percentage point from august .",0,dissimilar,sts12
+292,a woman is cracking eggs .,a man is talking to a woman .,0,dissimilar,sts12
+293,fill with high spirits,fill with high spirits ; fill with optimism .,1,similar,sts12
+294,move in an irregular course,move to and fro or from place to place usually in an irregular course .,1,similar,sts12
+295,"on saturday , a 149mph serve against agassi equalled rusedski 's world record .","on saturday , roddick equalled the world record with a 149 m.p.h. serve in beating andre agassi .",1,similar,sts12
+296,a woman is sewing on a machine .,a woman is breading some meat .,0,dissimilar,sts12
+297,"unfortunately , others separate on the basis of accumulated hatred .",other separate unfortunately because of resentment accumulated .,1,similar,sts12
+298,"mr. bush had sought to store his papers in his father 's presidential library , where they would have stayed secret for a half-century .","in texas , public watchdog groups opposed mr. bush 's efforts to house his papers at his father 's presidential library , where they would have remained secret for a half-century .",1,similar,sts12
+299,we often pontificate here about being the representatives of the citizens of europe .,we are proud often here to represent the citizens of europe .,1,similar,sts12
+300,today 's great pax europa and today 's pan-european prosperity depend on this .,"the large europa of today , just as the prosperity , depends on it .",1,similar,sts12
+301,"likewise , the 30-year bond < us30yt = rr > slid 1-11 / 32 for a yield of 4.38 percent , up from 4.30 percent .","the 30-year bond us30yt = rr jumped 20 / 32 , taking its yield to 4.14 percent from 4.18 percent .",0,dissimilar,sts12
+302,the ( period of ) control of a country by military forces of a foreign power .,the control of a country by military forces of a foreign power .,1,similar,sts12
+303,a man is dancing .,a man is eating bread .,0,dissimilar,sts12
+304,"the broader standard & poor 's 500 index .spx fell 3 points , or 0.30 percent , to 995 .","the technology-laced nasdaq composite index < .ixic > added 1.92 points , or 0.12 percent , at 1,647.94 .",0,dissimilar,sts12
+305,the man is using a camera to hammer a nail .,someone is banging a camera lense against a nail .,0,dissimilar,sts12
+306,a man and woman is riding in a car .,a woman is frying shrimp .,0,dissimilar,sts12
+307,a man is playing a flute in a band .,a man is playing a guitar .,0,dissimilar,sts12
+308,"shares of lendingtree rose $ 6.21 , or 42 percent , to $ 20.90 after hitting $ 21.36 earlier .","lendingtree shares rose 43 percent , or $ 6.31 , to $ 21 , more than doubling in the last two months .",0,dissimilar,sts12
+309,"initiation , founding , introduction of something",the act of starting something for the first time ; introducing something new .,1,similar,sts12
+310,the unions also staged a five-day strike in march that forced all but one of yale 's dining halls to close .,the unions also staged a five-day strike in march ; strikes have preceded eight of the last 10 contracts .,0,dissimilar,sts12
+311,a woman peels garlic with her hands .,the woman is slicing herbs .,0,dissimilar,sts12
+312,a person is slicing an onion .,a cat is pooping into a toilet .,0,dissimilar,sts12
+313,"a sporting match , boxing",a boxing or wrestling match .,1,similar,sts12
+314,a woman cracks two eggs into a glass bowl .,a woman is cracking an egg into a bowl .,1,similar,sts12
+315,"the bestowing of a franchise , enfranchisment",the act of certifying or bestowing a franchise on .,1,similar,sts12
+316,an abundance of something,the property of copious abundance .,1,similar,sts12
+317,microsoft has been awarded a patent for a feature in instant messaging that alerts a user when the person they are communicating with is inputting a message .,microsoft has been awarded a patent on a popular instant-messaging feature that shows users when the person on the other end of the conversation is typing a message .,1,similar,sts12
+318,"justices said that the constitution allows the government to administer drugs only "" in limited circumstances . ""","in a 6-3 ruling , the justices said such anti-psychotic drugs can be used only in "" limited circumstances . """,1,similar,sts12
+319,"unfortunately , others separate on the basis of accumulated hatred .",on others who are unfortunately in the reason of a vengeance gained .,1,similar,sts12
+320,a cat is eating some corn .,a cat is eating corn on the cob .,1,similar,sts12
+321,"the fishermen are inactive , tired and disappointed .","the fishermen are inactive , tired and disappointed .",1,similar,sts12
+322,"the bottom line is that when interest rates rise , asset values will fall .","essence , it is that when interest rates go up , the values of the credit fall .",1,similar,sts12
+323,make a line or marks on a surface ; copy by following the lines of,make a mark or lines on a surface .,1,similar,sts12
+324,the european union has got to do something and do it quickly .,"it is right that the european union is involved , and for this to be done quickly .",1,similar,sts12
+325,"st. paul chairman and chief executive jay s. fishman , 51 , will be ceo of the combined company .","jay fishman , 51 , chairman and chief executive of st paul , will be chief executive of the combined company .",1,similar,sts12
+326,a caress with the lips,the act of caressing with the lips ( or an instance thereof ) .,1,similar,sts12
+327,being a muslim and being an islamist are not the same thing .,to be muslim and islamiste are two different things .,1,similar,sts12
+328,a cat is trying to touch a dog .,the cat teased the dog by touching his head .,1,similar,sts12
+329,two puppies are playing with each other .,some men are playing soccer .,0,dissimilar,sts12
+330,compress out of shape or into small pieces,"become injured , broken , or distorted by pressure .",0,dissimilar,sts12
+331,a man is walking slowly across a rope bridge .,a boy is walking across a bridge .,1,similar,sts12
+332,"a new castle county woman has become the first delaware patient to contract the west nile virus this year , the state 's department of health reported .","a 62-year-old west babylon man has contracted the west nile virus , the first human case in suffolk county this year , according to the county health department .",0,dissimilar,sts12
+333,the woman picked up the kangaroo .,a woman picks up a baby kangaroo .,1,similar,sts12
+334,a physical portion of all or part of a natural object that is collected and preserved as an example of its class or total .,all or part of a natural object that is collected and preserved as an example of its class .,1,similar,sts12
+335,a person is slicing onions .,a person is peeling an onion .,0,dissimilar,sts12
+336,the dead woman was also wearing a ring and a cartier watch .,""" it 's a blond-haired woman wearing a cartier watch on her wrist , "" the source said .",0,dissimilar,sts12
+337,"the 30-year bond us30yt = rr jumped 20 / 32 , taking its yield to 4.14 percent from 4.18 percent .",the 30-year bond us30yt = rr dipped 14 / 32 for a yield of 4.26 percent from 4.23 percent .,0,dissimilar,sts12
+338,the securities and exchange commission has also initiated an informal probe of coke .,that federal investigation is separate from an informal inquiry by the securities and exchange commission .,0,dissimilar,sts12
+339,"that compares with a profit of $ 1 million , or breakeven , on $ 1.39 billion in revenue during the same period last year .","total revenue for the second quarter was $ 1.48 billion , up 7 % from $ 1.39 billion in the same period last year .",0,dissimilar,sts12
+340,three no votes would kill it for now .,it would take three votes to kill the acc 's expansion .,1,similar,sts12
+341,"the broader standard & poor 's 500 index .spx advanced 2 points , or 0.24 percent , to 977 .","the nasdaq composite index .ixic was off 6.52 points , or 0.39 percent , at 1,645.66 .",0,dissimilar,sts12
+342,angle with a hook and line and draw through water,angle with a hook and line drawn through the water .,1,similar,sts12
+343,a man is opening a door .,a man is playing a guitar .,0,dissimilar,sts12
+344,the polar bear is sliding on the snow .,a polar bear is sliding across the snow .,1,similar,sts12
+345,"flow , as of liquids","reduce or cause to be reduced from a solid to a liquid state , usually by heating .",0,dissimilar,sts12
+346,it then appointed a task force to formulate the necessary changes in tax and spending policies .,it has appointed a working group responsible for drawing the necessary changes to bring to public expenditure and fiscal policies .,1,similar,sts12
+347,the woman picked up the kangaroo .,a woman is carrying a kangaroo .,1,similar,sts12
+348,measure the depth of a body of water,measure the depth of ( a body of water ) with a sounding line .,1,similar,sts12
+349,the animal is eating .,a woman is dancing .,0,dissimilar,sts12
+350,there must be a balance as a whole .,the whole must be balanced .,1,similar,sts12
+351,a continuous horizontal layer of brick,( construction ) a layer of masonry .,0,dissimilar,sts12
+352,define ; determine essential qualities of,determine the essential quality of .,1,similar,sts12
+353,the political stock market,politicization of the securities markets,0,dissimilar,sts12
+354,the hedgehog chewed on the towel .,a hedgehog is biting at a blanket .,1,similar,sts12
+355,ride ( a bicycle or motorcycle ),ride a motorcycle .,1,similar,sts12
+356,"dunlap won both the swimsuit competition and the talent portion of the competition , singing "" if i could . ""","she won the talent portion singing "" if i could "" and also won in evening wear .",0,dissimilar,sts12
+357,"shares of mandalay closed down eight cents to $ 29.42 , before the earnings were announced .",shares of mandalay closed down 8 cents at $ 29.42 thursday .,1,similar,sts12
+358,reduce to small pieces by pounding or abrading,reduce to small pieces or particles by pounding or abrading .,1,similar,sts12
+359,"between 1993 and 2002 , 142 allegations of sexual assault were reported .","from 1993 to 2002 , there were 142 reported sexual assaults at the academy .",1,similar,sts12
+360,emit or cause to emit noise,make a certain noise or sound .,1,similar,sts12
+361,"under kansas law , it is illegal for children under the age of 16 to have sexual relations .","in the opinion , kline noted that it is illegal for children that young to have sexual relations .",0,dissimilar,sts12
+362,a man is buttering a piece of bread .,a slow loris hanging on a cord .,0,dissimilar,sts12
+363,the men are playing cricket .,the men are playing basketball .,0,dissimilar,sts12
+364,"there are now 37 active probable cases in the gta , compared with 70 cases on june 6 .","and , globally , the number of active probable cases has declined to 573 .",0,dissimilar,sts12
+365,a europe for all,a europe for all,1,similar,sts12
+366,"barbini 's comments came tuesday , the second day of the ministerial conference and expo on agricultural science and technology .",u.s. agriculture secretary ann veneman kicks off the three-day ministerial conference and expo on agricultural science and technology on monday .,0,dissimilar,sts12
+367,a stiffener in a garment,( nautical ) brace consisting of a heavy rope or wire cable used as a support for a mast or spar .,0,dissimilar,sts12
+368,a woman is cutting tofu .,a woman is cutting an onion .,0,dissimilar,sts12
+369,"depict or portray in art , words , or model",create an image or likeness of .,0,dissimilar,sts12
+370,that provision could open the door wide to arbitrariness .,this point of the regulations opens the door to the arbitrary one .,1,similar,sts12
+371,he proposed a system under which it would take fewer and fewer votes to overcome a filibuster .,frist proposed a process in which it would take gradually fewer votes to overcome filibusters preventing final votes on judicial confirmations .,1,similar,sts12
+372,"fbi agents arrested a former partner of big four accounting firm ernst & young erny.ul on criminal charges of obstructing federal investigations , u.s. officials said on thursday .",a former partner of accountancy firm ernst & young was yesterday arrested by fbi agents in the us on charges of obstructing federal investigations .,1,similar,sts12
+373,people flip into a swimming pool .,men are falling into a pool .,0,dissimilar,sts12
+374,i am one of those members who attends sittings quite faithfully .,i am one of the members of parliament who are rather present .,1,similar,sts12
+375,be the deciding factor in a state of affairs or an outcome,shape or influence ; give direction to .,0,dissimilar,sts12
+376,a man is lifting weights in a garage .,a man is lifting weights .,1,similar,sts12
+377,"yesterday , shares closed up 29 cents , or 0.54 percent , at $ 54.32 .","amazon 's shares yesterday closed at $ 54.32 on the nasdaq stock market , up 29 cents .",0,dissimilar,sts12
+378,""" it was brazen intimidation to keep people on the reservation , "" said a republican who attended but did not want to be named .",""" it was a brazen attempt at intimidation , "" said a republican legislator who attended the meeting .",1,similar,sts12
+379,move about in a confused or purposeless manner .,move about in a confused manner .,1,similar,sts12
+380,it increases the power of the big countries at the expense of the small countries .,has the effect of increasing the power of the large countries at the expense of the smaller countries .,1,similar,sts12
+381,"contrary to what peoplesoft management would have you believe , oracle intends to fully support peoplesoft customers and products for many years to come . ""","ellison said that contrary to the contentions of peoplesoft management , oracle intends to "" fully support peoplesoft customers and products "" for many years to come .",1,similar,sts12
+382,a man is mowing a lawn .,a woman is cutting a lemon .,0,dissimilar,sts12
+383,a man is crushing garlic with the back of a knife .,a woman is slicing meat with a knife .,0,dissimilar,sts12
+384,people are playing baseball .,the cricket player hit the ball .,0,dissimilar,sts12
+385,that provision could open the door wide to arbitrariness .,this point in the regulation opens the door to the arbitrary .,1,similar,sts12
+386,settlement of people distant from their homeland,a body of people who settle far from home but maintain ties with their homeland ; inhabitants remain nationals of their home state but are not literally under the home state 's system of government .,0,dissimilar,sts12
+387,a man puts seasoning in a bowl of water .,the man added seasoning to water in a bowl .,1,similar,sts12
+388,a man playing the guitar .,a woman is painting her lips .,0,dissimilar,sts12
+389,take in marriage ; perform a marriage ceremony,take in marriage .,1,similar,sts12
+390,what we are witnessing today is a shift from a muslim identity to an islamist identity .,today we are to change a muslim identity for islamic identity .,1,similar,sts12
+391,a woman is riding a horse along a perimeter .,a dog is riding a skateboard .,0,dissimilar,sts12
+392,a competitor most likely to win,a competitor thought likely to win .,1,similar,sts12
+393,a quantity of something,a quantity of money .,0,dissimilar,sts12
+394,fail in strength or health and cease to funtion,"break down , literally or metaphorically .",0,dissimilar,sts12
+395,domesticated animals kept for use or profit,a special variety of domesticated animals within a species .,0,dissimilar,sts12
+396,a man is dieing in an operating room .,a man is kissing a woman in stage .,0,dissimilar,sts12
+397,two men pushed carts through the woods .,two men are pushing carts .,1,similar,sts12
+398,"the president has fewer powers than it seems , overshadowed particularly by supreme guide ayatollah ali khamenei .","the president has less of capacities than it does not appear to with it , and it particuli � rement is particuli � rement eclipsed by the guide supr � me the ayatollah ali khamenei .",1,similar,sts12
+399,a man is playing a harp .,a man is playing a keyboard .,0,dissimilar,sts12
