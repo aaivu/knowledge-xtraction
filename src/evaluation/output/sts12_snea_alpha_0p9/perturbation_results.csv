@@ -1,0 +1,13 @@
+perturbation_type,method,f1,roc_auc,n_samples
+similar,AA-KEA,1.0,,200
+similar,ROUGE-1,1.0,,200
+similar,ROUGE-L,1.0,,200
+similar,BLEU,1.0,,200
+similar,BERTScore,1.0,,200
+similar,Sentence-T5,1.0,,200
+dissimilar,AA-KEA,0.0,,200
+dissimilar,ROUGE-1,0.0,,200
+dissimilar,ROUGE-L,0.0,,200
+dissimilar,BLEU,0.0,,200
+dissimilar,BERTScore,0.0,,200
+dissimilar,Sentence-T5,0.0,,200
