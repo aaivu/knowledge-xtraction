@@ -38,7 +38,7 @@ from sklearn.metrics import (
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 from rouge_score import rouge_scorer
-from bert_score import score as bert_score
+from bert_score import BERTScorer
 import torch
 import warnings
 from pathlib import Path
@@ -47,6 +47,37 @@ from tqdm import tqdm
 warnings.filterwarnings('ignore')
 sns.set_style('whitegrid')
 plt.rcParams['figure.figsize'] = (14, 10)
+
+# ── Model singletons — loaded once, reused across all datasets ────────────────
+_ROUGE_SCORER = None
+_ST_MODELS: dict = {}   # model_name -> SentenceTransformer instance
+
+def get_rouge_scorer():
+    global _ROUGE_SCORER
+    if _ROUGE_SCORER is None:
+        _ROUGE_SCORER = rouge_scorer.RougeScorer(
+            ['rouge1', 'rouge2', 'rougeL'], use_stemmer=True
+        )
+    return _ROUGE_SCORER
+
+def get_st_model(model_name: str, model_path: str) -> SentenceTransformer:
+    if model_name not in _ST_MODELS:
+        print(f"  Loading {model_name} (once)...")
+        _ST_MODELS[model_name] = SentenceTransformer(model_path)
+    return _ST_MODELS[model_name]
+
+_BERT_SCORER = None
+
+def get_bert_scorer() -> BERTScorer:
+    global _BERT_SCORER
+    if _BERT_SCORER is None:
+        print("  Loading BERTScorer (roberta-large, once)...")
+        _BERT_SCORER = BERTScorer(
+            model_type='roberta-large',
+            lang='en',
+            device='cpu',
+        )
+    return _BERT_SCORER
 
 
 # ============================================================================
@@ -300,6 +331,1088 @@ class Config:
             'short_text':   False,
             'label':        'Long-text / NLP-perturbed (SNEA-BERT)',
         },
+        # ── SNEA-BERT α=0.3 (hybrid: 30% KG + 70% sentence-transformer) ─────
+        'mrpc_snea_bert_0_3': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_KGs_results_snea_0.3.csv',
+            'score_col':    'snea_bert_alpha_0.3',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_bert_0_3',
+            'short_text':   True,
+            'label':        'Short-text / SNEA-BERT α=0.3',
+        },
+        'paws_wiki_snea_bert_0_3': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_KGs_results_snea_0.3.csv',
+            'score_col':    'snea_bert_alpha_0.3',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_bert_0_3',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-BERT α=0.3)',
+        },
+        'semantic_kg_combined_snea_bert_0_3': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_KGs_results_snea_0.3.csv',
+            'score_col':    'snea_bert_alpha_0.3',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_bert_0_3',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-BERT α=0.3)',
+        },
+        'wikipedia_snea_bert_0_3': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_KGs_results_snea_0.3.csv',
+            'score_col':    'snea_bert_alpha_0.3',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_bert_0_3',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-BERT α=0.3)',
+        },
+        'semantic_kg_codex_400_snea_bert_0_3': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_KGs_results_snea_0.3.csv',
+            'score_col':    'snea_bert_alpha_0.3',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_bert_0_3',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400, SNEA-BERT α=0.3)',
+        },
+        'semantic_kg_findkg_snea_bert_0_3': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_KGs_results_snea_0.3.csv',
+            'score_col':    'snea_bert_alpha_0.3',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_bert_0_3',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG, SNEA-BERT α=0.3)',
+        },
+        'semantic_kg_globi_snea_bert_0_3': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_KGs_results_snea_0.3.csv',
+            'score_col':    'snea_bert_alpha_0.3',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_bert_0_3',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI, SNEA-BERT α=0.3)',
+        },
+        'semantic_kg_oregano_snea_bert_0_3': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_KGs_results_snea_0.3.csv',
+            'score_col':    'snea_bert_alpha_0.3',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_bert_0_3',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano, SNEA-BERT α=0.3)',
+        },
+        'sts12_snea_bert_0_3': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_KGs_results_snea_0.3.csv',
+            'score_col':    'snea_bert_alpha_0.3',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_bert_0_3',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-BERT α=0.3)',
+        },
+        # ── SNEA-BERT alpha sweep (α = 0.0 → 1.0, from Results_All_Methods 2) ──────
+        'mrpc_snea_alpha_0p0': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_0p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_0p0',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=0.0)',
+        },
+        'mrpc_snea_alpha_0p1': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_0p1_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_0p1',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=0.1)',
+        },
+        'mrpc_snea_alpha_0p2': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_0p2_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_0p2',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=0.2)',
+        },
+        'mrpc_snea_alpha_0p3': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_0p3_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_0p3',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=0.3)',
+        },
+        'mrpc_snea_alpha_0p4': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_0p4_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_0p4',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=0.4)',
+        },
+        'mrpc_snea_alpha_0p5': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_0p5_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_0p5',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=0.5)',
+        },
+        'mrpc_snea_alpha_0p6': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_0p6_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_0p6',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=0.6)',
+        },
+        'mrpc_snea_alpha_0p7': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_0p7_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_0p7',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=0.7)',
+        },
+        'mrpc_snea_alpha_0p8': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_0p8_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_0p8',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=0.8)',
+        },
+        'mrpc_snea_alpha_0p9': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_0p9_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_0p9',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=0.9)',
+        },
+        'mrpc_snea_alpha_1p0': {
+            'dataset_file': 'datasets/mrpc_400.csv',
+            'aa_kea_file':  'datasets/mrpc_400_snea_alpha_1p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/mrpc_snea_alpha_1p0',
+            'short_text':   True,
+            'label':        'Short-text / MRPC (SNEA-α=1.0)',
+        },
+        'paws_wiki_snea_alpha_0p0': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_0p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_0p0',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=0.0)',
+        },
+        'paws_wiki_snea_alpha_0p1': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_0p1_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_0p1',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=0.1)',
+        },
+        'paws_wiki_snea_alpha_0p2': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_0p2_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_0p2',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=0.2)',
+        },
+        'paws_wiki_snea_alpha_0p3': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_0p3_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_0p3',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=0.3)',
+        },
+        'paws_wiki_snea_alpha_0p4': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_0p4_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_0p4',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=0.4)',
+        },
+        'paws_wiki_snea_alpha_0p5': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_0p5_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_0p5',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=0.5)',
+        },
+        'paws_wiki_snea_alpha_0p6': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_0p6_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_0p6',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=0.6)',
+        },
+        'paws_wiki_snea_alpha_0p7': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_0p7_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_0p7',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=0.7)',
+        },
+        'paws_wiki_snea_alpha_0p8': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_0p8_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_0p8',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=0.8)',
+        },
+        'paws_wiki_snea_alpha_0p9': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_0p9_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_0p9',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=0.9)',
+        },
+        'paws_wiki_snea_alpha_1p0': {
+            'dataset_file': 'datasets/paws_wiki_400.csv',
+            'aa_kea_file':  'datasets/paws_wiki_400_snea_alpha_1p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/paws_wiki_snea_alpha_1p0',
+            'short_text':   False,
+            'label':        'Long-text / Linguistic (SNEA-α=1.0)',
+        },
+        'sts12_snea_alpha_0p0': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_0p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_0p0',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=0.0)',
+        },
+        'sts12_snea_alpha_0p1': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_0p1_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_0p1',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=0.1)',
+        },
+        'sts12_snea_alpha_0p2': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_0p2_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_0p2',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=0.2)',
+        },
+        'sts12_snea_alpha_0p3': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_0p3_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_0p3',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=0.3)',
+        },
+        'sts12_snea_alpha_0p4': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_0p4_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_0p4',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=0.4)',
+        },
+        'sts12_snea_alpha_0p5': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_0p5_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_0p5',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=0.5)',
+        },
+        'sts12_snea_alpha_0p6': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_0p6_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_0p6',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=0.6)',
+        },
+        'sts12_snea_alpha_0p7': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_0p7_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_0p7',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=0.7)',
+        },
+        'sts12_snea_alpha_0p8': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_0p8_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_0p8',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=0.8)',
+        },
+        'sts12_snea_alpha_0p9': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_0p9_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_0p9',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=0.9)',
+        },
+        'sts12_snea_alpha_1p0': {
+            'dataset_file': 'datasets/sts12_400.csv',
+            'aa_kea_file':  'datasets/sts12_400_snea_alpha_1p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/sts12_snea_alpha_1p0',
+            'short_text':   True,
+            'label':        'Short-text / STS12 (SNEA-α=1.0)',
+        },
+        'semantic_kg_combined_snea_alpha_0p0': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_0p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_0p0',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=0.0)',
+        },
+        'semantic_kg_combined_snea_alpha_0p1': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_0p1_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_0p1',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=0.1)',
+        },
+        'semantic_kg_combined_snea_alpha_0p2': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_0p2_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_0p2',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=0.2)',
+        },
+        'semantic_kg_combined_snea_alpha_0p3': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_0p3_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_0p3',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=0.3)',
+        },
+        'semantic_kg_combined_snea_alpha_0p4': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_0p4_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_0p4',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=0.4)',
+        },
+        'semantic_kg_combined_snea_alpha_0p5': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_0p5_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_0p5',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=0.5)',
+        },
+        'semantic_kg_combined_snea_alpha_0p6': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_0p6_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_0p6',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=0.6)',
+        },
+        'semantic_kg_combined_snea_alpha_0p7': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_0p7_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_0p7',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=0.7)',
+        },
+        'semantic_kg_combined_snea_alpha_0p8': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_0p8_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_0p8',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=0.8)',
+        },
+        'semantic_kg_combined_snea_alpha_0p9': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_0p9_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_0p9',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=0.9)',
+        },
+        'semantic_kg_combined_snea_alpha_1p0': {
+            'dataset_file': 'datasets/semantic_kg_combined_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_combined_400_snea_alpha_1p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_combined_snea_alpha_1p0',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (SNEA-α=1.0)',
+        },
+        'semantic_kg_codex_400_snea_alpha_0p0': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_0p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_0p0',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=0.0)',
+        },
+        'semantic_kg_codex_400_snea_alpha_0p1': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_0p1_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_0p1',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=0.1)',
+        },
+        'semantic_kg_codex_400_snea_alpha_0p2': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_0p2_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_0p2',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=0.2)',
+        },
+        'semantic_kg_codex_400_snea_alpha_0p3': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_0p3_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_0p3',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=0.3)',
+        },
+        'semantic_kg_codex_400_snea_alpha_0p4': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_0p4_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_0p4',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=0.4)',
+        },
+        'semantic_kg_codex_400_snea_alpha_0p5': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_0p5_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_0p5',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=0.5)',
+        },
+        'semantic_kg_codex_400_snea_alpha_0p6': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_0p6_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_0p6',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=0.6)',
+        },
+        'semantic_kg_codex_400_snea_alpha_0p7': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_0p7_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_0p7',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=0.7)',
+        },
+        'semantic_kg_codex_400_snea_alpha_0p8': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_0p8_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_0p8',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=0.8)',
+        },
+        'semantic_kg_codex_400_snea_alpha_0p9': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_0p9_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_0p9',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=0.9)',
+        },
+        'semantic_kg_codex_400_snea_alpha_1p0': {
+            'dataset_file': 'datasets/semantic_kg_codex_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_codex_400_snea_alpha_1p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_codex_400_snea_alpha_1p0',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Codex 400) (SNEA-α=1.0)',
+        },
+        'semantic_kg_findkg_snea_alpha_0p0': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_0p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_0p0',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=0.0)',
+        },
+        'semantic_kg_findkg_snea_alpha_0p1': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_0p1_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_0p1',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=0.1)',
+        },
+        'semantic_kg_findkg_snea_alpha_0p2': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_0p2_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_0p2',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=0.2)',
+        },
+        'semantic_kg_findkg_snea_alpha_0p3': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_0p3_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_0p3',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=0.3)',
+        },
+        'semantic_kg_findkg_snea_alpha_0p4': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_0p4_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_0p4',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=0.4)',
+        },
+        'semantic_kg_findkg_snea_alpha_0p5': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_0p5_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_0p5',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=0.5)',
+        },
+        'semantic_kg_findkg_snea_alpha_0p6': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_0p6_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_0p6',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=0.6)',
+        },
+        'semantic_kg_findkg_snea_alpha_0p7': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_0p7_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_0p7',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=0.7)',
+        },
+        'semantic_kg_findkg_snea_alpha_0p8': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_0p8_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_0p8',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=0.8)',
+        },
+        'semantic_kg_findkg_snea_alpha_0p9': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_0p9_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_0p9',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=0.9)',
+        },
+        'semantic_kg_findkg_snea_alpha_1p0': {
+            'dataset_file': 'datasets/semantic_kg_findkg_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_findkg_400_snea_alpha_1p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_findkg_snea_alpha_1p0',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (FindKG) (SNEA-α=1.0)',
+        },
+        'semantic_kg_globi_snea_alpha_0p0': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_0p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_0p0',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=0.0)',
+        },
+        'semantic_kg_globi_snea_alpha_0p1': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_0p1_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_0p1',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=0.1)',
+        },
+        'semantic_kg_globi_snea_alpha_0p2': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_0p2_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_0p2',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=0.2)',
+        },
+        'semantic_kg_globi_snea_alpha_0p3': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_0p3_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_0p3',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=0.3)',
+        },
+        'semantic_kg_globi_snea_alpha_0p4': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_0p4_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_0p4',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=0.4)',
+        },
+        'semantic_kg_globi_snea_alpha_0p5': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_0p5_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_0p5',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=0.5)',
+        },
+        'semantic_kg_globi_snea_alpha_0p6': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_0p6_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_0p6',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=0.6)',
+        },
+        'semantic_kg_globi_snea_alpha_0p7': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_0p7_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_0p7',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=0.7)',
+        },
+        'semantic_kg_globi_snea_alpha_0p8': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_0p8_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_0p8',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=0.8)',
+        },
+        'semantic_kg_globi_snea_alpha_0p9': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_0p9_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_0p9',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=0.9)',
+        },
+        'semantic_kg_globi_snea_alpha_1p0': {
+            'dataset_file': 'datasets/semantic_kg_globi_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_globi_400_snea_alpha_1p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_globi_snea_alpha_1p0',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (GloBI) (SNEA-α=1.0)',
+        },
+        'semantic_kg_oregano_snea_alpha_0p0': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_0p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_0p0',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=0.0)',
+        },
+        'semantic_kg_oregano_snea_alpha_0p1': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_0p1_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_0p1',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=0.1)',
+        },
+        'semantic_kg_oregano_snea_alpha_0p2': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_0p2_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_0p2',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=0.2)',
+        },
+        'semantic_kg_oregano_snea_alpha_0p3': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_0p3_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_0p3',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=0.3)',
+        },
+        'semantic_kg_oregano_snea_alpha_0p4': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_0p4_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_0p4',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=0.4)',
+        },
+        'semantic_kg_oregano_snea_alpha_0p5': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_0p5_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_0p5',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=0.5)',
+        },
+        'semantic_kg_oregano_snea_alpha_0p6': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_0p6_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_0p6',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=0.6)',
+        },
+        'semantic_kg_oregano_snea_alpha_0p7': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_0p7_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_0p7',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=0.7)',
+        },
+        'semantic_kg_oregano_snea_alpha_0p8': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_0p8_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_0p8',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=0.8)',
+        },
+        'semantic_kg_oregano_snea_alpha_0p9': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_0p9_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_0p9',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=0.9)',
+        },
+        'semantic_kg_oregano_snea_alpha_1p0': {
+            'dataset_file': 'datasets/semantic_kg_oregano_400.csv',
+            'aa_kea_file':  'datasets/semantic_kg_oregano_400_snea_alpha_1p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/semantic_kg_oregano_snea_alpha_1p0',
+            'short_text':   False,
+            'label':        'Long-text / KG-perturbed (Oregano) (SNEA-α=1.0)',
+        },
+        'wikipedia_snea_alpha_0p0': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_0p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_0p0',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=0.0)',
+        },
+        'wikipedia_snea_alpha_0p1': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_0p1_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_0p1',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=0.1)',
+        },
+        'wikipedia_snea_alpha_0p2': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_0p2_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_0p2',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=0.2)',
+        },
+        'wikipedia_snea_alpha_0p3': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_0p3_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_0p3',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=0.3)',
+        },
+        'wikipedia_snea_alpha_0p4': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_0p4_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_0p4',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=0.4)',
+        },
+        'wikipedia_snea_alpha_0p5': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_0p5_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_0p5',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=0.5)',
+        },
+        'wikipedia_snea_alpha_0p6': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_0p6_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_0p6',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=0.6)',
+        },
+        'wikipedia_snea_alpha_0p7': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_0p7_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_0p7',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=0.7)',
+        },
+        'wikipedia_snea_alpha_0p8': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_0p8_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_0p8',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=0.8)',
+        },
+        'wikipedia_snea_alpha_0p9': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_0p9_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_0p9',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=0.9)',
+        },
+        'wikipedia_snea_alpha_1p0': {
+            'dataset_file': 'datasets/wikipedia_entity_swap_400.csv',
+            'aa_kea_file':  'datasets/wikipedia_entity_swap_400_snea_alpha_1p0_results.csv',
+            'score_col':    'snea_bert_similarity',
+            'text1_col':    'response1',
+            'text2_col':    'response2',
+            'output_dir':   'output/wikipedia_snea_alpha_1p0',
+            'short_text':   False,
+            'label':        'Long-text / NLP-perturbed (SNEA-α=1.0)',
+        },
     }
 
     # Embedding models to evaluate
@@ -364,7 +1477,7 @@ def compute_rouge_scores(df):
     print("COMPUTING ROUGE SCORES")
     print("="*80)
 
-    scorer = rouge_scorer.RougeScorer(Config.ROUGE_METRICS, use_stemmer=True)
+    scorer = get_rouge_scorer()
 
     rouge_results = {metric: [] for metric in Config.ROUGE_METRICS}
 
@@ -429,22 +1542,15 @@ def compute_bertscore(df, batch_size=16):
     max_length = 450  # tokens
 
     try:
-        # Compute in batches
+        scorer = get_bert_scorer()
+        references = [str(t)[:2000] for t in df['response1'].tolist()]
+        candidates = [str(t)[:2000] for t in df['response2'].tolist()]
+
         all_scores = []
-        for i in tqdm(range(0, len(df), batch_size), desc="BERTScore"):
-            batch = df.iloc[i:i+batch_size]
-
-            # Truncate texts if needed
-            references = [str(t)[:2000] for t in batch['response1'].tolist()]  # char limit
-            candidates = [str(t)[:2000] for t in batch['response2'].tolist()]
-
-            P, R, F1 = bert_score(
-                candidates, references,
-                lang='en',
-                model_type='roberta-large',
-                verbose=False,
-                batch_size=batch_size
-            )
+        for i in tqdm(range(0, len(references), batch_size), desc="BERTScore"):
+            refs = references[i:i+batch_size]
+            cands = candidates[i:i+batch_size]
+            P, R, F1 = scorer.score(cands, refs)
             all_scores.extend(F1.tolist())
 
         df['bertscore_f1'] = all_scores
@@ -464,19 +1570,23 @@ def compute_embedding_similarities(df):
     print("COMPUTING EMBEDDING SIMILARITIES")
     print("="*80)
 
-    for model_name, model_path in Config.EMBEDDING_MODELS.items():
-        print(f"\nLoading {model_name}...")
-        model = SentenceTransformer(model_path)
+    texts1 = df['response1'].tolist()
+    texts2 = df['response2'].tolist()
 
-        similarities = []
-        for _, row in tqdm(df.iterrows(), total=len(df), desc=model_name):
-            emb1 = model.encode([row['response1']])[0]
-            emb2 = model.encode([row['response2']])[0]
-            sim = cosine_similarity([emb1], [emb2])[0][0]
-            similarities.append(float(sim))
+    for model_name, model_path in Config.EMBEDDING_MODELS.items():
+        model = get_st_model(model_name, model_path)
+
+        print(f"  Encoding {len(texts1)*2} texts with {model_name} (batch)...")
+        all_texts = texts1 + texts2
+        embs = model.encode(all_texts, batch_size=32, show_progress_bar=True,
+                            convert_to_numpy=True)
+        n = len(texts1)
+        e1, e2 = embs[:n], embs[n:]
+        norms = (np.linalg.norm(e1, axis=1) * np.linalg.norm(e2, axis=1)).clip(min=1e-9)
+        similarities = (np.einsum('ij,ij->i', e1, e2) / norms).tolist()
 
         df[f'{model_name}_similarity'] = similarities
-        print(f"✓ {model_name} similarities computed")
+        print(f"  ✓ {model_name} similarities computed")
 
     return df
 
@@ -1100,16 +2210,23 @@ def plot_perturbation_analysis(pert_df, output_dir):
     plt.close()
 
 
-def plot_roc_curves(df, output_dir):
-    """Plot ROC curves for all methods"""
+def plot_roc_curves(df, output_dir, our_method_name='AA-KEA', dataset_title=None):
+    """Plot ROC curves for all methods.
+
+    our_method_name : display name for the KG-based method (AA-KEA / SNEA-BERT / SNEA-BERT α=0.3)
+    dataset_title   : dataset label shown in the plot title
+    """
     print("\nGenerating ROC curves...")
 
+    title_suffix = f' — {dataset_title}' if dataset_title else ''
+
     methods = {
-        'AA-KEA': ('aa_kea_similarity', '#d62728'),
-        'BERTScore': ('bertscore_f1', '#ff7f0e'),
-        'Sentence-T5': ('sentence-t5-base_similarity', '#2ca02c'),
-        'ROUGE-L': ('rougeL_score', '#9467bd'),
-        'BLEU': ('bleu_score', '#8c564b'),
+        our_method_name: ('aa_kea_similarity', '#1a6e2e'),
+        'BERTScore':     ('bertscore_f1',              '#ff7f0e'),
+        'sentence-T5':   ('sentence-t5-base_similarity', '#2ca02c'),
+        'ROUGE-L':       ('rougeL_score',              '#9467bd'),
+        'BLEU':          ('bleu_score',                '#8c564b'),
+        'MiniLM':        ('all-MiniLM-L6-v2_similarity', '#e377c2'),
     }
 
     plt.figure(figsize=(10, 8))
@@ -1119,15 +2236,18 @@ def plot_roc_curves(df, output_dir):
     for method_name, (score_col, color) in methods.items():
         if score_col in df.columns:
             y_scores = df[score_col].values
+            if len(np.unique(y_scores)) < 2:
+                continue
             fpr, tpr, _ = roc_curve(y_true, y_scores)
             auc = roc_auc_score(y_true, y_scores)
+            lw = 2.5 if method_name == our_method_name else 1.5
             plt.plot(fpr, tpr, label=f'{method_name} (AUC = {auc:.3f})',
-                    color=color, linewidth=2)
+                     color=color, linewidth=lw)
 
-    plt.plot([0, 1], [0, 1], 'k--', linewidth=1, label='Random (AUC = 0.5)')
+    plt.plot([0, 1], [0, 1], 'k--', linewidth=1, label='Random (AUC = 0.500)')
     plt.xlabel('False Positive Rate', fontsize=12)
     plt.ylabel('True Positive Rate', fontsize=12)
-    plt.title('ROC Curves: Semantic-KG Evaluation', fontsize=14, fontweight='bold')
+    plt.title(f'ROC Curves{title_suffix}', fontsize=14, fontweight='bold')
     plt.legend(loc='lower right', fontsize=10)
     plt.grid(alpha=0.3)
 
@@ -1366,9 +2486,28 @@ def run_single_dataset(dataset_key: str, cfg: dict) -> dict | None:
     # Text length analysis
     length_df = text_length_analysis(df, predictions)
 
+    # Derive the correct display name for our method based on dataset key / score column
+    _score_col = cfg.get('score_col', 'aa_kea_similarity')
+    if '_snea_alpha_' in dataset_key:
+        # e.g. 'mrpc_snea_alpha_0p5' → 'SNEA-BERT α=0.5'
+        _a_lbl = dataset_key.split('_snea_alpha_')[-1]   # '0p5'
+        _a_float = _a_lbl.replace('p', '.')               # '0.5'
+        _our_method_name = f'SNEA-BERT α={_a_float}'
+    elif _score_col == 'snea_bert_alpha_0.3':
+        _our_method_name = 'SNEA-BERT α=0.3'
+    elif _score_col == 'snea_bert_similarity':
+        _our_method_name = 'SNEA-BERT'
+    else:
+        _our_method_name = 'AA-KEA'
+
+    # Clean dataset title: strip 'Long-text / ' or 'Short-text / ' prefix
+    _dataset_title = cfg['label'].split(' / ', 1)[-1] if ' / ' in cfg['label'] else cfg['label']
+
     # Visualisations
     plot_overall_comparison(results_df, cfg['output_dir'])
-    plot_roc_curves(df, cfg['output_dir'])
+    plot_roc_curves(df, cfg['output_dir'],
+                    our_method_name=_our_method_name,
+                    dataset_title=_dataset_title)
     if not pert_df.empty:
         plot_perturbation_analysis(pert_df, cfg['output_dir'])
     plot_text_length_analysis(length_df, cfg['output_dir'])
@@ -1580,13 +2719,15 @@ def plot_perturbation_cross_dataset(all_pert_results: dict, output_dir: str = 'o
 # MULTI-DATASET MAIN
 # ============================================================================
 
-def run_all_datasets():
+def run_all_datasets(keys_filter=None):
     """
     Run full evaluation across all configured datasets and produce
     cross-dataset comparison visualisations.
 
     Datasets missing their AA-KEA results file are skipped gracefully —
     run partial evaluations as results become available.
+
+    keys_filter: optional set of dataset keys to restrict which datasets run.
     """
     print("\n" + "=" * 80)
     print("MULTI-DATASET EVALUATION")
@@ -1598,6 +2739,8 @@ def run_all_datasets():
     Path(CROSS_DIR).mkdir(parents=True, exist_ok=True)
 
     for dataset_key, cfg in Config.DATASETS.items():
+        if keys_filter and dataset_key not in keys_filter:
+            continue
         summary = run_single_dataset(dataset_key, cfg)
         if summary:
             summaries.append(summary)
@@ -1661,10 +2804,19 @@ if __name__ == "__main__":
         help="'single' = original Semantic-KG Codex evaluation, "
              "'multi' = all datasets, 'both' = run both",
     )
+    parser.add_argument(
+        "--keys",
+        nargs="+",
+        default=None,
+        help="Run only the specified dataset keys (subset of Config.DATASETS).",
+    )
     args = parser.parse_args()
 
     if args.mode in ("single", "both"):
         results = main()
 
     if args.mode in ("multi", "both"):
-        run_all_datasets()
+        if args.keys:
+            run_all_datasets(keys_filter=set(args.keys))
+        else:
+            run_all_datasets()

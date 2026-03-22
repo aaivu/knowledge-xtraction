@@ -51,7 +51,7 @@ BASELINE_METHODS = [
     'BERTScore', 'all-MiniLM-L6-v2', 'sentence-t5-base',
 ]
 
-OUR_METHOD_LABELS = {'AA-KEA (Our Method)', 'SNEA-BERT (Our Method)'}
+OUR_METHOD_LABELS = {'AA-KEA (Our Method)', 'SNEA-BERT (Our Method)', 'SNEA-BERT α=0.3 (Our Method)', 'SNEA-BERT α=0.0 (Our Method)', 'SNEA-BERT α=0.1 (Our Method)', 'SNEA-BERT α=0.2 (Our Method)', 'SNEA-BERT α=0.3 (Our Method)', 'SNEA-BERT α=0.4 (Our Method)', 'SNEA-BERT α=0.5 (Our Method)', 'SNEA-BERT α=0.6 (Our Method)', 'SNEA-BERT α=0.7 (Our Method)', 'SNEA-BERT α=0.8 (Our Method)', 'SNEA-BERT α=0.9 (Our Method)', 'SNEA-BERT α=1.0 (Our Method)'}
 
 # Maps every "Dataset" label in the confusion CSV → (base_dataset, variant_name)
 DATASET_VARIANT_MAP = {
@@ -79,6 +79,116 @@ DATASET_VARIANT_MAP = {
     'Semantic-KG GloBI (SNEA-BERT)':         ('Semantic-KG GloBI', 'SNEA-BERT'),
     'Semantic-KG Oregano (SNEA-BERT)':       ('Semantic-KG Oregano', 'SNEA-BERT'),
     'STS12 (SNEA-BERT)':                     ('STS12', 'SNEA-BERT'),
+    # ── SNEA-BERT α=0.3 (30% KG + 70% sentence-transformer) ─────────────────
+    'MRPC (SNEA-BERT α=0.3)':               ('MRPC', 'SNEA-BERT α=0.3'),
+    'PAWS-Wiki (SNEA-BERT α=0.3)':          ('PAWS-Wiki', 'SNEA-BERT α=0.3'),
+    'Semantic-KG (SNEA-BERT α=0.3)':        ('Semantic-KG Combined', 'SNEA-BERT α=0.3'),
+    'Wiki Swap (SNEA-BERT α=0.3)':          ('Wiki Swap', 'SNEA-BERT α=0.3'),
+    'Semantic-KG Codex 400 (SNEA-α=0.3)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.3'),
+    'Semantic-KG FindKG (SNEA-α=0.3)':     ('Semantic-KG FindKG', 'SNEA-BERT α=0.3'),
+    'Semantic-KG GloBI (SNEA-α=0.3)':      ('Semantic-KG GloBI', 'SNEA-BERT α=0.3'),
+    'Semantic-KG Oregano (SNEA-α=0.3)':    ('Semantic-KG Oregano', 'SNEA-BERT α=0.3'),
+    'STS12 (SNEA-α=0.3)':                  ('STS12', 'SNEA-BERT α=0.3'),
+    # ── SNEA-BERT alpha sweep (α = 0.0 → 1.0) ─────────────────────────────────
+    'MRPC (SNEA-α=0.0)':  ('MRPC', 'SNEA-BERT α=0.0'),
+    'MRPC (SNEA-α=0.1)':  ('MRPC', 'SNEA-BERT α=0.1'),
+    'MRPC (SNEA-α=0.2)':  ('MRPC', 'SNEA-BERT α=0.2'),
+    'MRPC (SNEA-α=0.3)':  ('MRPC', 'SNEA-BERT α=0.3'),
+    'MRPC (SNEA-α=0.4)':  ('MRPC', 'SNEA-BERT α=0.4'),
+    'MRPC (SNEA-α=0.5)':  ('MRPC', 'SNEA-BERT α=0.5'),
+    'MRPC (SNEA-α=0.6)':  ('MRPC', 'SNEA-BERT α=0.6'),
+    'MRPC (SNEA-α=0.7)':  ('MRPC', 'SNEA-BERT α=0.7'),
+    'MRPC (SNEA-α=0.8)':  ('MRPC', 'SNEA-BERT α=0.8'),
+    'MRPC (SNEA-α=0.9)':  ('MRPC', 'SNEA-BERT α=0.9'),
+    'MRPC (SNEA-α=1.0)':  ('MRPC', 'SNEA-BERT α=1.0'),
+    'PAWS-Wiki (SNEA-α=0.0)':  ('PAWS-Wiki', 'SNEA-BERT α=0.0'),
+    'PAWS-Wiki (SNEA-α=0.1)':  ('PAWS-Wiki', 'SNEA-BERT α=0.1'),
+    'PAWS-Wiki (SNEA-α=0.2)':  ('PAWS-Wiki', 'SNEA-BERT α=0.2'),
+    'PAWS-Wiki (SNEA-α=0.3)':  ('PAWS-Wiki', 'SNEA-BERT α=0.3'),
+    'PAWS-Wiki (SNEA-α=0.4)':  ('PAWS-Wiki', 'SNEA-BERT α=0.4'),
+    'PAWS-Wiki (SNEA-α=0.5)':  ('PAWS-Wiki', 'SNEA-BERT α=0.5'),
+    'PAWS-Wiki (SNEA-α=0.6)':  ('PAWS-Wiki', 'SNEA-BERT α=0.6'),
+    'PAWS-Wiki (SNEA-α=0.7)':  ('PAWS-Wiki', 'SNEA-BERT α=0.7'),
+    'PAWS-Wiki (SNEA-α=0.8)':  ('PAWS-Wiki', 'SNEA-BERT α=0.8'),
+    'PAWS-Wiki (SNEA-α=0.9)':  ('PAWS-Wiki', 'SNEA-BERT α=0.9'),
+    'PAWS-Wiki (SNEA-α=1.0)':  ('PAWS-Wiki', 'SNEA-BERT α=1.0'),
+    'STS12 (SNEA-α=0.0)':  ('STS12', 'SNEA-BERT α=0.0'),
+    'STS12 (SNEA-α=0.1)':  ('STS12', 'SNEA-BERT α=0.1'),
+    'STS12 (SNEA-α=0.2)':  ('STS12', 'SNEA-BERT α=0.2'),
+    'STS12 (SNEA-α=0.3)':  ('STS12', 'SNEA-BERT α=0.3'),
+    'STS12 (SNEA-α=0.4)':  ('STS12', 'SNEA-BERT α=0.4'),
+    'STS12 (SNEA-α=0.5)':  ('STS12', 'SNEA-BERT α=0.5'),
+    'STS12 (SNEA-α=0.6)':  ('STS12', 'SNEA-BERT α=0.6'),
+    'STS12 (SNEA-α=0.7)':  ('STS12', 'SNEA-BERT α=0.7'),
+    'STS12 (SNEA-α=0.8)':  ('STS12', 'SNEA-BERT α=0.8'),
+    'STS12 (SNEA-α=0.9)':  ('STS12', 'SNEA-BERT α=0.9'),
+    'STS12 (SNEA-α=1.0)':  ('STS12', 'SNEA-BERT α=1.0'),
+    'Semantic-KG Combined (SNEA-α=0.0)':  ('Semantic-KG Combined', 'SNEA-BERT α=0.0'),
+    'Semantic-KG Combined (SNEA-α=0.1)':  ('Semantic-KG Combined', 'SNEA-BERT α=0.1'),
+    'Semantic-KG Combined (SNEA-α=0.2)':  ('Semantic-KG Combined', 'SNEA-BERT α=0.2'),
+    'Semantic-KG Combined (SNEA-α=0.3)':  ('Semantic-KG Combined', 'SNEA-BERT α=0.3'),
+    'Semantic-KG Combined (SNEA-α=0.4)':  ('Semantic-KG Combined', 'SNEA-BERT α=0.4'),
+    'Semantic-KG Combined (SNEA-α=0.5)':  ('Semantic-KG Combined', 'SNEA-BERT α=0.5'),
+    'Semantic-KG Combined (SNEA-α=0.6)':  ('Semantic-KG Combined', 'SNEA-BERT α=0.6'),
+    'Semantic-KG Combined (SNEA-α=0.7)':  ('Semantic-KG Combined', 'SNEA-BERT α=0.7'),
+    'Semantic-KG Combined (SNEA-α=0.8)':  ('Semantic-KG Combined', 'SNEA-BERT α=0.8'),
+    'Semantic-KG Combined (SNEA-α=0.9)':  ('Semantic-KG Combined', 'SNEA-BERT α=0.9'),
+    'Semantic-KG Combined (SNEA-α=1.0)':  ('Semantic-KG Combined', 'SNEA-BERT α=1.0'),
+    'Semantic-KG Codex 400 (SNEA-α=0.0)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.0'),
+    'Semantic-KG Codex 400 (SNEA-α=0.1)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.1'),
+    'Semantic-KG Codex 400 (SNEA-α=0.2)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.2'),
+    'Semantic-KG Codex 400 (SNEA-α=0.3)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.3'),
+    'Semantic-KG Codex 400 (SNEA-α=0.4)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.4'),
+    'Semantic-KG Codex 400 (SNEA-α=0.5)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.5'),
+    'Semantic-KG Codex 400 (SNEA-α=0.6)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.6'),
+    'Semantic-KG Codex 400 (SNEA-α=0.7)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.7'),
+    'Semantic-KG Codex 400 (SNEA-α=0.8)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.8'),
+    'Semantic-KG Codex 400 (SNEA-α=0.9)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=0.9'),
+    'Semantic-KG Codex 400 (SNEA-α=1.0)':  ('Semantic-KG Codex 400', 'SNEA-BERT α=1.0'),
+    'Semantic-KG FindKG (SNEA-α=0.0)':  ('Semantic-KG FindKG', 'SNEA-BERT α=0.0'),
+    'Semantic-KG FindKG (SNEA-α=0.1)':  ('Semantic-KG FindKG', 'SNEA-BERT α=0.1'),
+    'Semantic-KG FindKG (SNEA-α=0.2)':  ('Semantic-KG FindKG', 'SNEA-BERT α=0.2'),
+    'Semantic-KG FindKG (SNEA-α=0.3)':  ('Semantic-KG FindKG', 'SNEA-BERT α=0.3'),
+    'Semantic-KG FindKG (SNEA-α=0.4)':  ('Semantic-KG FindKG', 'SNEA-BERT α=0.4'),
+    'Semantic-KG FindKG (SNEA-α=0.5)':  ('Semantic-KG FindKG', 'SNEA-BERT α=0.5'),
+    'Semantic-KG FindKG (SNEA-α=0.6)':  ('Semantic-KG FindKG', 'SNEA-BERT α=0.6'),
+    'Semantic-KG FindKG (SNEA-α=0.7)':  ('Semantic-KG FindKG', 'SNEA-BERT α=0.7'),
+    'Semantic-KG FindKG (SNEA-α=0.8)':  ('Semantic-KG FindKG', 'SNEA-BERT α=0.8'),
+    'Semantic-KG FindKG (SNEA-α=0.9)':  ('Semantic-KG FindKG', 'SNEA-BERT α=0.9'),
+    'Semantic-KG FindKG (SNEA-α=1.0)':  ('Semantic-KG FindKG', 'SNEA-BERT α=1.0'),
+    'Semantic-KG GloBI (SNEA-α=0.0)':  ('Semantic-KG GloBI', 'SNEA-BERT α=0.0'),
+    'Semantic-KG GloBI (SNEA-α=0.1)':  ('Semantic-KG GloBI', 'SNEA-BERT α=0.1'),
+    'Semantic-KG GloBI (SNEA-α=0.2)':  ('Semantic-KG GloBI', 'SNEA-BERT α=0.2'),
+    'Semantic-KG GloBI (SNEA-α=0.3)':  ('Semantic-KG GloBI', 'SNEA-BERT α=0.3'),
+    'Semantic-KG GloBI (SNEA-α=0.4)':  ('Semantic-KG GloBI', 'SNEA-BERT α=0.4'),
+    'Semantic-KG GloBI (SNEA-α=0.5)':  ('Semantic-KG GloBI', 'SNEA-BERT α=0.5'),
+    'Semantic-KG GloBI (SNEA-α=0.6)':  ('Semantic-KG GloBI', 'SNEA-BERT α=0.6'),
+    'Semantic-KG GloBI (SNEA-α=0.7)':  ('Semantic-KG GloBI', 'SNEA-BERT α=0.7'),
+    'Semantic-KG GloBI (SNEA-α=0.8)':  ('Semantic-KG GloBI', 'SNEA-BERT α=0.8'),
+    'Semantic-KG GloBI (SNEA-α=0.9)':  ('Semantic-KG GloBI', 'SNEA-BERT α=0.9'),
+    'Semantic-KG GloBI (SNEA-α=1.0)':  ('Semantic-KG GloBI', 'SNEA-BERT α=1.0'),
+    'Semantic-KG Oregano (SNEA-α=0.0)':  ('Semantic-KG Oregano', 'SNEA-BERT α=0.0'),
+    'Semantic-KG Oregano (SNEA-α=0.1)':  ('Semantic-KG Oregano', 'SNEA-BERT α=0.1'),
+    'Semantic-KG Oregano (SNEA-α=0.2)':  ('Semantic-KG Oregano', 'SNEA-BERT α=0.2'),
+    'Semantic-KG Oregano (SNEA-α=0.3)':  ('Semantic-KG Oregano', 'SNEA-BERT α=0.3'),
+    'Semantic-KG Oregano (SNEA-α=0.4)':  ('Semantic-KG Oregano', 'SNEA-BERT α=0.4'),
+    'Semantic-KG Oregano (SNEA-α=0.5)':  ('Semantic-KG Oregano', 'SNEA-BERT α=0.5'),
+    'Semantic-KG Oregano (SNEA-α=0.6)':  ('Semantic-KG Oregano', 'SNEA-BERT α=0.6'),
+    'Semantic-KG Oregano (SNEA-α=0.7)':  ('Semantic-KG Oregano', 'SNEA-BERT α=0.7'),
+    'Semantic-KG Oregano (SNEA-α=0.8)':  ('Semantic-KG Oregano', 'SNEA-BERT α=0.8'),
+    'Semantic-KG Oregano (SNEA-α=0.9)':  ('Semantic-KG Oregano', 'SNEA-BERT α=0.9'),
+    'Semantic-KG Oregano (SNEA-α=1.0)':  ('Semantic-KG Oregano', 'SNEA-BERT α=1.0'),
+    'Wiki Swap (SNEA-α=0.0)':  ('Wiki Swap', 'SNEA-BERT α=0.0'),
+    'Wiki Swap (SNEA-α=0.1)':  ('Wiki Swap', 'SNEA-BERT α=0.1'),
+    'Wiki Swap (SNEA-α=0.2)':  ('Wiki Swap', 'SNEA-BERT α=0.2'),
+    'Wiki Swap (SNEA-α=0.3)':  ('Wiki Swap', 'SNEA-BERT α=0.3'),
+    'Wiki Swap (SNEA-α=0.4)':  ('Wiki Swap', 'SNEA-BERT α=0.4'),
+    'Wiki Swap (SNEA-α=0.5)':  ('Wiki Swap', 'SNEA-BERT α=0.5'),
+    'Wiki Swap (SNEA-α=0.6)':  ('Wiki Swap', 'SNEA-BERT α=0.6'),
+    'Wiki Swap (SNEA-α=0.7)':  ('Wiki Swap', 'SNEA-BERT α=0.7'),
+    'Wiki Swap (SNEA-α=0.8)':  ('Wiki Swap', 'SNEA-BERT α=0.8'),
+    'Wiki Swap (SNEA-α=0.9)':  ('Wiki Swap', 'SNEA-BERT α=0.9'),
+    'Wiki Swap (SNEA-α=1.0)':  ('Wiki Swap', 'SNEA-BERT α=1.0'),
 }
 
 BASE_DATASETS = [
@@ -89,19 +199,34 @@ BASE_DATASETS = [
 ]
 
 # Our variants in preferred display order
-VARIANT_ORDER = [
-    'AA-KEA', 'SNEA-BERT', 'WL', 'WL Accurate', 'WL Clean',
-    'KEA Enhanced', 'KEA BERT', 'GNN',
-]
+VARIANT_ORDER = list(dict.fromkeys([
+    'AA-KEA', 'SNEA-BERT',
+    'SNEA-BERT α=0.0', 'SNEA-BERT α=0.1', 'SNEA-BERT α=0.2', 'SNEA-BERT α=0.3',
+    'SNEA-BERT α=0.4', 'SNEA-BERT α=0.5', 'SNEA-BERT α=0.6', 'SNEA-BERT α=0.7',
+    'SNEA-BERT α=0.8', 'SNEA-BERT α=0.9', 'SNEA-BERT α=1.0',
+    'WL', 'WL Accurate', 'WL Clean', 'KEA Enhanced', 'KEA BERT', 'GNN',
+]))
 
-# Only these two are shown in the main heatmap / rank plot / performance table.
-# Other variants are excluded (they were only evaluated on a subset of datasets).
-MAIN_OUR_VARIANTS = ['AA-KEA', 'SNEA-BERT']
+# Shown in the main heatmap / rank plot (AA-KEA excluded; only alpha sweep + plain SNEA-BERT).
+MAIN_OUR_VARIANTS = list(dict.fromkeys([
+    'SNEA-BERT',
+    'SNEA-BERT α=0.0', 'SNEA-BERT α=0.1', 'SNEA-BERT α=0.2', 'SNEA-BERT α=0.3',
+    'SNEA-BERT α=0.4', 'SNEA-BERT α=0.5', 'SNEA-BERT α=0.6', 'SNEA-BERT α=0.7',
+    'SNEA-BERT α=0.8', 'SNEA-BERT α=0.9', 'SNEA-BERT α=1.0',
+]))
+
+# Alpha-only variants used for "Our Best Variant" in the performance summary table.
+ALPHA_VARIANTS = [v for v in MAIN_OUR_VARIANTS if 'α=' in v]
+
+# Datasets shown in heatmap/rank plots (Semantic-KG Codex excluded — no alpha data,
+# produces all-grey columns for our variants).
+HEATMAP_DATASETS = [d for d in BASE_DATASETS if d != 'Semantic-KG Codex']
 
 # Short display names for x-tick labels
 METHOD_SHORT = {
     'AA-KEA':           'AA-KEA\n(Ours)',
     'SNEA-BERT':        'SNEA-BERT\n(Ours)',
+    'SNEA-BERT α=0.3':  'SNEA-BERT\nα=0.3\n(Ours)',
     'WL':               'WL\n(Ours)',
     'WL Accurate':      'WL-Acc\n(Ours)',
     'WL Clean':         'WL-Clean\n(Ours)',
@@ -115,6 +240,17 @@ METHOD_SHORT = {
     'BERTScore':        'BERTScore',
     'all-MiniLM-L6-v2': 'MiniLM',
     'sentence-t5-base': 'T5-base',
+    'SNEA-BERT α=0.0': 'SNEA-α=0.0\n(Ours)',
+    'SNEA-BERT α=0.1': 'SNEA-α=0.1\n(Ours)',
+    'SNEA-BERT α=0.2': 'SNEA-α=0.2\n(Ours)',
+    'SNEA-BERT α=0.3': 'SNEA-α=0.3\n(Ours)',
+    'SNEA-BERT α=0.4': 'SNEA-α=0.4\n(Ours)',
+    'SNEA-BERT α=0.5': 'SNEA-α=0.5\n(Ours)',
+    'SNEA-BERT α=0.6': 'SNEA-α=0.6\n(Ours)',
+    'SNEA-BERT α=0.7': 'SNEA-α=0.7\n(Ours)',
+    'SNEA-BERT α=0.8': 'SNEA-α=0.8\n(Ours)',
+    'SNEA-BERT α=0.9': 'SNEA-α=0.9\n(Ours)',
+    'SNEA-BERT α=1.0': 'SNEA-α=1.0\n(Ours)',
 }
 
 # Set to [] when nothing new to append; populate before running main().
@@ -153,6 +289,162 @@ NEW_KG_DATASETS = [
         'our_method': 'SNEA-BERT (Our Method)',
         'N': 400, 'N_pos': 200,
     },
+    # ── SNEA-BERT α=0.3 results ───────────────────────────────────────────────
+    {
+        'label':      'MRPC (SNEA-BERT α=0.3)',
+        'output_dir': _HERE / 'output/mrpc_snea_bert_0_3',
+        'our_method': 'SNEA-BERT α=0.3 (Our Method)',
+        'N': 400, 'N_pos': 200,
+    },
+    {
+        'label':      'PAWS-Wiki (SNEA-BERT α=0.3)',
+        'output_dir': _HERE / 'output/paws_wiki_snea_bert_0_3',
+        'our_method': 'SNEA-BERT α=0.3 (Our Method)',
+        'N': 400, 'N_pos': 200,
+    },
+    {
+        'label':      'Semantic-KG (SNEA-BERT α=0.3)',
+        'output_dir': _HERE / 'output/semantic_kg_combined_snea_bert_0_3',
+        'our_method': 'SNEA-BERT α=0.3 (Our Method)',
+        'N': 400, 'N_pos': 200,
+    },
+    {
+        'label':      'Wiki Swap (SNEA-BERT α=0.3)',
+        'output_dir': _HERE / 'output/wikipedia_snea_bert_0_3',
+        'our_method': 'SNEA-BERT α=0.3 (Our Method)',
+        'N': 400, 'N_pos': 200,
+    },
+    {
+        'label':      'Semantic-KG Codex 400 (SNEA-α=0.3)',
+        'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_bert_0_3',
+        'our_method': 'SNEA-BERT α=0.3 (Our Method)',
+        'N': 400, 'N_pos': 200,
+    },
+    {
+        'label':      'Semantic-KG FindKG (SNEA-α=0.3)',
+        'output_dir': _HERE / 'output/semantic_kg_findkg_snea_bert_0_3',
+        'our_method': 'SNEA-BERT α=0.3 (Our Method)',
+        'N': 400, 'N_pos': 200,
+    },
+    {
+        'label':      'Semantic-KG GloBI (SNEA-α=0.3)',
+        'output_dir': _HERE / 'output/semantic_kg_globi_snea_bert_0_3',
+        'our_method': 'SNEA-BERT α=0.3 (Our Method)',
+        'N': 400, 'N_pos': 200,
+    },
+    {
+        'label':      'Semantic-KG Oregano (SNEA-α=0.3)',
+        'output_dir': _HERE / 'output/semantic_kg_oregano_snea_bert_0_3',
+        'our_method': 'SNEA-BERT α=0.3 (Our Method)',
+        'N': 400, 'N_pos': 200,
+    },
+    {
+        'label':      'STS12 (SNEA-α=0.3)',
+        'output_dir': _HERE / 'output/sts12_snea_bert_0_3',
+        'our_method': 'SNEA-BERT α=0.3 (Our Method)',
+        'N': 400, 'N_pos': 200,
+    },
+
+    # ── SNEA-BERT alpha sweep ─────────────────────────────────────────────────
+    {'label': 'MRPC (SNEA-α=0.0)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_0p0', 'our_method': 'SNEA-BERT α=0.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'MRPC (SNEA-α=0.1)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_0p1', 'our_method': 'SNEA-BERT α=0.1 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'MRPC (SNEA-α=0.2)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_0p2', 'our_method': 'SNEA-BERT α=0.2 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'MRPC (SNEA-α=0.3)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_0p3', 'our_method': 'SNEA-BERT α=0.3 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'MRPC (SNEA-α=0.4)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_0p4', 'our_method': 'SNEA-BERT α=0.4 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'MRPC (SNEA-α=0.5)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_0p5', 'our_method': 'SNEA-BERT α=0.5 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'MRPC (SNEA-α=0.6)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_0p6', 'our_method': 'SNEA-BERT α=0.6 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'MRPC (SNEA-α=0.7)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_0p7', 'our_method': 'SNEA-BERT α=0.7 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'MRPC (SNEA-α=0.8)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_0p8', 'our_method': 'SNEA-BERT α=0.8 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'MRPC (SNEA-α=0.9)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_0p9', 'our_method': 'SNEA-BERT α=0.9 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'MRPC (SNEA-α=1.0)', 'output_dir': _HERE / 'output/mrpc_snea_alpha_1p0', 'our_method': 'SNEA-BERT α=1.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=0.0)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_0p0', 'our_method': 'SNEA-BERT α=0.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=0.1)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_0p1', 'our_method': 'SNEA-BERT α=0.1 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=0.2)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_0p2', 'our_method': 'SNEA-BERT α=0.2 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=0.3)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_0p3', 'our_method': 'SNEA-BERT α=0.3 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=0.4)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_0p4', 'our_method': 'SNEA-BERT α=0.4 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=0.5)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_0p5', 'our_method': 'SNEA-BERT α=0.5 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=0.6)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_0p6', 'our_method': 'SNEA-BERT α=0.6 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=0.7)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_0p7', 'our_method': 'SNEA-BERT α=0.7 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=0.8)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_0p8', 'our_method': 'SNEA-BERT α=0.8 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=0.9)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_0p9', 'our_method': 'SNEA-BERT α=0.9 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'PAWS-Wiki (SNEA-α=1.0)', 'output_dir': _HERE / 'output/paws_wiki_snea_alpha_1p0', 'our_method': 'SNEA-BERT α=1.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=0.0)', 'output_dir': _HERE / 'output/sts12_snea_alpha_0p0', 'our_method': 'SNEA-BERT α=0.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=0.1)', 'output_dir': _HERE / 'output/sts12_snea_alpha_0p1', 'our_method': 'SNEA-BERT α=0.1 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=0.2)', 'output_dir': _HERE / 'output/sts12_snea_alpha_0p2', 'our_method': 'SNEA-BERT α=0.2 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=0.3)', 'output_dir': _HERE / 'output/sts12_snea_alpha_0p3', 'our_method': 'SNEA-BERT α=0.3 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=0.4)', 'output_dir': _HERE / 'output/sts12_snea_alpha_0p4', 'our_method': 'SNEA-BERT α=0.4 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=0.5)', 'output_dir': _HERE / 'output/sts12_snea_alpha_0p5', 'our_method': 'SNEA-BERT α=0.5 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=0.6)', 'output_dir': _HERE / 'output/sts12_snea_alpha_0p6', 'our_method': 'SNEA-BERT α=0.6 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=0.7)', 'output_dir': _HERE / 'output/sts12_snea_alpha_0p7', 'our_method': 'SNEA-BERT α=0.7 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=0.8)', 'output_dir': _HERE / 'output/sts12_snea_alpha_0p8', 'our_method': 'SNEA-BERT α=0.8 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=0.9)', 'output_dir': _HERE / 'output/sts12_snea_alpha_0p9', 'our_method': 'SNEA-BERT α=0.9 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'STS12 (SNEA-α=1.0)', 'output_dir': _HERE / 'output/sts12_snea_alpha_1p0', 'our_method': 'SNEA-BERT α=1.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=0.0)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_0p0', 'our_method': 'SNEA-BERT α=0.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=0.1)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_0p1', 'our_method': 'SNEA-BERT α=0.1 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=0.2)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_0p2', 'our_method': 'SNEA-BERT α=0.2 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=0.3)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_0p3', 'our_method': 'SNEA-BERT α=0.3 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=0.4)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_0p4', 'our_method': 'SNEA-BERT α=0.4 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=0.5)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_0p5', 'our_method': 'SNEA-BERT α=0.5 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=0.6)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_0p6', 'our_method': 'SNEA-BERT α=0.6 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=0.7)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_0p7', 'our_method': 'SNEA-BERT α=0.7 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=0.8)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_0p8', 'our_method': 'SNEA-BERT α=0.8 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=0.9)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_0p9', 'our_method': 'SNEA-BERT α=0.9 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Combined (SNEA-α=1.0)', 'output_dir': _HERE / 'output/semantic_kg_combined_snea_alpha_1p0', 'our_method': 'SNEA-BERT α=1.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=0.0)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_0p0', 'our_method': 'SNEA-BERT α=0.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=0.1)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_0p1', 'our_method': 'SNEA-BERT α=0.1 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=0.2)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_0p2', 'our_method': 'SNEA-BERT α=0.2 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=0.3)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_0p3', 'our_method': 'SNEA-BERT α=0.3 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=0.4)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_0p4', 'our_method': 'SNEA-BERT α=0.4 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=0.5)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_0p5', 'our_method': 'SNEA-BERT α=0.5 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=0.6)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_0p6', 'our_method': 'SNEA-BERT α=0.6 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=0.7)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_0p7', 'our_method': 'SNEA-BERT α=0.7 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=0.8)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_0p8', 'our_method': 'SNEA-BERT α=0.8 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=0.9)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_0p9', 'our_method': 'SNEA-BERT α=0.9 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Codex 400 (SNEA-α=1.0)', 'output_dir': _HERE / 'output/semantic_kg_codex_400_snea_alpha_1p0', 'our_method': 'SNEA-BERT α=1.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=0.0)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_0p0', 'our_method': 'SNEA-BERT α=0.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=0.1)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_0p1', 'our_method': 'SNEA-BERT α=0.1 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=0.2)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_0p2', 'our_method': 'SNEA-BERT α=0.2 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=0.3)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_0p3', 'our_method': 'SNEA-BERT α=0.3 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=0.4)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_0p4', 'our_method': 'SNEA-BERT α=0.4 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=0.5)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_0p5', 'our_method': 'SNEA-BERT α=0.5 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=0.6)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_0p6', 'our_method': 'SNEA-BERT α=0.6 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=0.7)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_0p7', 'our_method': 'SNEA-BERT α=0.7 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=0.8)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_0p8', 'our_method': 'SNEA-BERT α=0.8 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=0.9)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_0p9', 'our_method': 'SNEA-BERT α=0.9 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG FindKG (SNEA-α=1.0)', 'output_dir': _HERE / 'output/semantic_kg_findkg_snea_alpha_1p0', 'our_method': 'SNEA-BERT α=1.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=0.0)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_0p0', 'our_method': 'SNEA-BERT α=0.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=0.1)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_0p1', 'our_method': 'SNEA-BERT α=0.1 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=0.2)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_0p2', 'our_method': 'SNEA-BERT α=0.2 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=0.3)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_0p3', 'our_method': 'SNEA-BERT α=0.3 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=0.4)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_0p4', 'our_method': 'SNEA-BERT α=0.4 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=0.5)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_0p5', 'our_method': 'SNEA-BERT α=0.5 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=0.6)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_0p6', 'our_method': 'SNEA-BERT α=0.6 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=0.7)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_0p7', 'our_method': 'SNEA-BERT α=0.7 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=0.8)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_0p8', 'our_method': 'SNEA-BERT α=0.8 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=0.9)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_0p9', 'our_method': 'SNEA-BERT α=0.9 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG GloBI (SNEA-α=1.0)', 'output_dir': _HERE / 'output/semantic_kg_globi_snea_alpha_1p0', 'our_method': 'SNEA-BERT α=1.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=0.0)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_0p0', 'our_method': 'SNEA-BERT α=0.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=0.1)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_0p1', 'our_method': 'SNEA-BERT α=0.1 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=0.2)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_0p2', 'our_method': 'SNEA-BERT α=0.2 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=0.3)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_0p3', 'our_method': 'SNEA-BERT α=0.3 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=0.4)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_0p4', 'our_method': 'SNEA-BERT α=0.4 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=0.5)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_0p5', 'our_method': 'SNEA-BERT α=0.5 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=0.6)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_0p6', 'our_method': 'SNEA-BERT α=0.6 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=0.7)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_0p7', 'our_method': 'SNEA-BERT α=0.7 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=0.8)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_0p8', 'our_method': 'SNEA-BERT α=0.8 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=0.9)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_0p9', 'our_method': 'SNEA-BERT α=0.9 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Semantic-KG Oregano (SNEA-α=1.0)', 'output_dir': _HERE / 'output/semantic_kg_oregano_snea_alpha_1p0', 'our_method': 'SNEA-BERT α=1.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=0.0)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_0p0', 'our_method': 'SNEA-BERT α=0.0 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=0.1)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_0p1', 'our_method': 'SNEA-BERT α=0.1 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=0.2)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_0p2', 'our_method': 'SNEA-BERT α=0.2 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=0.3)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_0p3', 'our_method': 'SNEA-BERT α=0.3 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=0.4)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_0p4', 'our_method': 'SNEA-BERT α=0.4 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=0.5)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_0p5', 'our_method': 'SNEA-BERT α=0.5 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=0.6)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_0p6', 'our_method': 'SNEA-BERT α=0.6 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=0.7)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_0p7', 'our_method': 'SNEA-BERT α=0.7 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=0.8)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_0p8', 'our_method': 'SNEA-BERT α=0.8 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=0.9)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_0p9', 'our_method': 'SNEA-BERT α=0.9 (Our Method)', 'N': 400, 'N_pos': 200},
+    {'label': 'Wiki Swap (SNEA-α=1.0)', 'output_dir': _HERE / 'output/wikipedia_snea_alpha_1p0', 'our_method': 'SNEA-BERT α=1.0 (Our Method)', 'N': 400, 'N_pos': 200},
 ]
 
 # ---------------------------------------------------------------------------
@@ -312,10 +604,9 @@ def _draw_dual_heatmap(pivot_f1: pd.DataFrame, pivot_auc: pd.DataFrame,
 
 def plot_heatmap(df: pd.DataFrame):
     main_df   = build_main_df(df)
-    # Only keep AA-KEA and SNEA-BERT from our variants; keep all baselines
     col_order = [m for m in MAIN_OUR_VARIANTS + BASELINE_METHODS
                  if m in main_df['Method'].unique()]
-    datasets  = [d for d in BASE_DATASETS if d in main_df['Dataset'].unique()]
+    datasets  = [d for d in HEATMAP_DATASETS if d in main_df['Dataset'].unique()]
 
     pivot_f1  = (main_df.pivot_table(index='Dataset', columns='Method',
                                       values='F1',  aggfunc='first')
@@ -368,9 +659,8 @@ def plot_variants_heatmap(df: pd.DataFrame):
 
 def plot_ranks(df: pd.DataFrame):
     main_df   = build_main_df(df)
-    datasets  = [d for d in BASE_DATASETS if d in main_df['Dataset'].unique()]
+    datasets  = [d for d in HEATMAP_DATASETS if d in main_df['Dataset'].unique()]
 
-    # Only keep AA-KEA and SNEA-BERT from our variants; keep all baselines
     col_order = [m for m in MAIN_OUR_VARIANTS + BASELINE_METHODS
                  if m in main_df['Method'].unique()]
     n_ours    = sum(1 for m in col_order if m in MAIN_OUR_VARIANTS)
@@ -545,17 +835,16 @@ def plot_performance_table(df: pd.DataFrame):
     rows = []
     for ds in datasets:
         sub      = main_df[main_df['Dataset'] == ds]
-        # Only consider AA-KEA and SNEA-BERT as "our variants"
-        our_sub  = sub[sub['Method'].isin(MAIN_OUR_VARIANTS)]
+        # Only consider SNEA-BERT alpha variants as "our variants"
+        our_sub  = sub[sub['Method'].isin(ALPHA_VARIANTS)]
 
         if our_sub.empty:
             continue
 
         best_our = our_sub.loc[our_sub['F1'].idxmax()]
 
-        # Best competitor = best method among baselines + any non-MAIN our variant
-        # (excludes AA-KEA and SNEA-BERT themselves to avoid self-comparison)
-        others = sub[~sub['Method'].isin(MAIN_OUR_VARIANTS)]
+        # Best competitor = best baseline method only (ROUGE, BLEU, BERTScore, ST)
+        others = sub[sub['Method'].isin(BASELINE_METHODS)]
         if others.empty:
             continue
         best_other = others.loc[others['F1'].idxmax()]
