@@ -1,152 +1,78 @@
-# Library Usage (`construct_kgs`)
+# Knowledge Graph Construction API
 
-This library entrypoint is:
+Three public functions for extracting knowledge graphs using KRPOMultiAlign with N-paragraph label alignment.
 
-```python
-from main import construct_kgs
-```
+## API Functions
 
-## Input CSV Type
+### 1. construct_graph
 
-`construct_kgs` expects an input CSV with this format:
-
-- `id`
-- `paragraph_1`
-- `paragraph_2`
-- `paragraph_3`
-- ...
-
-Example header:
-
-```csv
-id,paragraph_1,paragraph_2,paragraph_3
-```
-
-## Function Arguments
+Extract a single knowledge graph from one paragraph.
 
 ```python
-construct_kgs(
-	input_csv: str,
-	output_csv: str,
-	extract_llm: str = "llama-3.3-70b-versatile",
-	verbose: bool = False,
-) -> str
+from kganalytica.kg_construction import construct_graph
+
+graph = construct_graph(
+    paragraph="Albert Einstein developed the theory of relativity.",
+    model="llama-3.1-8b-instant",
+    api_key=None,
+    max_rounds=3
+)
+# Returns: [['Albert_Einstein', 'developed', 'relativity'], ...]
 ```
 
-Argument notes:
+### 2. construct_graphs
 
-- `input_csv`: path to input CSV (must follow the paragraph format above)
-- `output_csv`: path to output CSV
-- `extract_llm`: extraction model (default `llama-3.3-70b-versatile`)
-- `verbose`: enable debug logs
+Extract N aligned knowledge graphs from N paragraphs simultaneously.
 
-## Required `.env` Keys
+```python
+from kganalytica.kg_construction import construct_graphs
 
-Set keys based on the model/provider you use:
+result = construct_graphs(
+    paragraphs=["Paris is in France.", "France is in Europe."],
+    model="llama-3.1-8b-instant",
+    api_key=None,
+    max_rounds=3
+)
+# Returns: {"graph_1": [...], "graph_2": [...]}
+```
 
-- `GROQ_API_KEY` (required for `llama-3.3-70b-versatile` and other Groq models)
-- `GROQ_API_KEY2` to `GROQ_API_KEY20` (optional, for key rotation)
-- `OPENAI_API_KEY` (required for OpenAI models)
-- `GEMINI_API_KEY` (required for Gemini models)
+### 3. construct_kgs
 
-Example:
+Process rows with multiple paragraphs (CSV-like format).
+
+```python
+from kganalytica.kg_construction import construct_kgs
+
+rows = [{
+    "id": "doc_1",
+    "paragraph_1": "Text about topic.",
+    "paragraph_2": "More text about topic."
+}]
+
+result = construct_kgs(
+    rows=rows,
+    model="llama-3.1-8b-instant",
+    api_key=None,
+    max_rounds=3
+)
+# Returns: [{"id": "doc_1", "kg_1": [...], "kg_2": [...]}]
+```
+
+## Configuration
+
+### Environment Variables
+
+Set ONE provider API key (choose Groq, OpenAI, or Gemini):
 
 ```env
-GROQ_API_KEY=
-OPENAI_API_KEY=
-GEMINI_API_KEY=
-```
+# Groq (Recommended - includes Llama, Mistral, Qwen)
+GROQ_API_KEY=gsk_...
 
----
+# OR OpenAI (for GPT models)
+OPENAI_API_KEY=sk-...
 
-# Function Usage (`construct_graph`)
-
-For constructing a knowledge graph from a single paragraph, use:
-
-```python
-from main import construct_graph
-```
-
-## Function Signature
-
-```python
-construct_graph(
-    paragraph: str,
-    llm: str = "llama-3.3-70b-versatile"
-) -> Graph
-```
-
-## Function Arguments
-
-- `paragraph` (str): The input text/paragraph to extract knowledge graph from
-- `llm` (str): The LLM model to use for extraction (default: `llama-3.3-70b-versatile`)
-
-## Return Type
-
-**Returns**: `Graph` object containing:
-
-- `triples`: List of triplets (subject, relation, object)
-  - Each triplet is a `Triplet` object with:
-    - `subject`: The subject entity
-    - `relation`: The relationship type
-    - `object`: The object entity
-
-## Usage Examples
-
-### Basic Usage (with default LLM)
-
-```python
-from main import construct_graph
-
-paragraph = "Albert Einstein was born in Germany. He developed the theory of relativity."
-graph = construct_graph(paragraph)
-
-# Access the triplets
-for triplet in graph.triples:
-    print(f"{triplet.subject} -> {triplet.relation} -> {triplet.object}")
-```
-
-### With Custom LLM
-
-```python
-from main import construct_graph
-
-paragraph = "Paris is the capital of France."
-graph = construct_graph(
-    paragraph=paragraph,
-    llm="mistralai/Mistral-7B-Instruct-v0.2"
-)
-
-# Process the graph
-triplets = graph.triples
-```
-
-### Output Format
-
-The `Graph` object's `triples` attribute contains a list of extracted relationships. Example output:
-
-```
-Albert Einstein -> born_in -> Germany
-Albert Einstein -> developed -> theory of relativity
-Paris -> capital_of -> France
-```
-
-## Required `.env` Keys for `construct_graph`
-
-Same as `construct_kgs` - set keys based on the LLM model you use:
-
-- `GROQ_API_KEY` (for Groq models like `llama-3.3-70b-versatile`)
-- `OPENAI_API_KEY` (for OpenAI models)
-- `GEMINI_API_KEY` (for Gemini models)
-
----
-
-# Function Usage (`construct_graphs`)
-
-For constructing knowledge graphs from multiple paragraphs at once, use:
-
-```python
-from main import construct_graphs
+# OR Gemini (for Google models)
+GEMINI_API_KEY=...
 ```
 
 ## Function Signature

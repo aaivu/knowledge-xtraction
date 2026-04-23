@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kganalytica"
-version = "0.1.5"
+version = "0.2.0"
 description = "Knowledge graph construction, comparison, and similarity toolkit for LLM contextual understanding"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -36,7 +36,6 @@ dependencies = [
   "numpy>=1.24",
   "networkx>=3.0",
   "pandas>=2.0",
-  "python-dotenv>=1.0",
   "sentence-transformers>=2.2.2",
   "torch>=2.0",
   "openai",
@@ -45,6 +44,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+dotenv = [
+  "python-dotenv>=1.0"
+]
 graph = [
   "grakel>=0.1.10"
 ]

@@ -4,34 +4,28 @@ from .hf import HuggingFaceFactory
 from .groq import GroqFactory
 
 class LLMFactorySelector:
-    # Cache to store loaded model instances
-    _model_cache = {}
-    
+    _model_cache: dict = {}
+
     @staticmethod
-    def get_factory(model_name: str):
-        # Check if model is already loaded
-        if model_name in LLMFactorySelector._model_cache:
-            return LLMFactorySelector._model_cache[model_name]
-        
+    def get_factory(model_name: str, api_key: str | None = None):
+        cache_key = (model_name, api_key)
+        if cache_key in LLMFactorySelector._model_cache:
+            return LLMFactorySelector._model_cache[cache_key]
+
         model_name_lower = model_name.lower()
 
         if "gemini" in model_name_lower:
-            instance = GeminiFactory(model_name)
+            instance = GeminiFactory(model_name, api_key=api_key)
         elif "gpt" in model_name_lower or "openai" in model_name_lower:
-            instance = OpenAIFactory(model_name)
-        elif "groq" in model_name_lower or "llama" in model_name_lower or "mixtral" in model_name_lower:
-            instance = GroqFactory(model_name)
+            instance = OpenAIFactory(model_name, api_key=api_key)
+        elif any(x in model_name_lower for x in ("llama", "mixtral", "groq", "mistral", "qwen", "deepseek")):
+            instance = GroqFactory(model_name, api_key=api_key)
         else:
-            instance = HuggingFaceFactory(model_name)
-        
-        # Cache the instance
-        LLMFactorySelector._model_cache[model_name] = instance
+            instance = HuggingFaceFactory(model_name, api_key=api_key)
+
+        LLMFactorySelector._model_cache[cache_key] = instance
         return instance
-    
+
     @staticmethod
     def clear_cache():
-        """Clear all cached model instances."""
-        for model_name, instance in LLMFactorySelector._model_cache.items():
-            if hasattr(instance, 'clear_model'):
-                instance.clear_model()
         LLMFactorySelector._model_cache.clear()

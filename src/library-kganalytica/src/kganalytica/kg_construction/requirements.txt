@@ -1,14 +1,16 @@
-# Core dependencies
-pydantic>=2.0.0
-python-dotenv>=1.0.0
+# Knowledge graph construction with KRPOMultiAlign
 
-# LLM APIs
-google-genai>=0.3.0
-openai>=1.0.0
-groq>=0.4.0
+# LLM APIs - choose one:
+groq>=0.4.0              # Recommended: Llama, Mistral, Qwen, etc.
+openai>=1.0.0            # Optional: GPT models
+google-genai>=0.3.0      # Optional: Gemini models
 
-# HuggingFace Transformers
-transformers>=4.35.0
-torch>=2.0.0
-bitsandbytes>=0.41.0
-accelerate>=0.24.0
+# Environment
+python-dotenv>=1.0.0     # For .env file support
+
+# Optional: For local HuggingFace models
+# transformers>=4.35.0
+# torch>=2.0.0
+# bitsandbytes>=0.41.0
+# accelerate>=0.24.0
+
