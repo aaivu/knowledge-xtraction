@@ -1,173 +1,87 @@
-# Knowledge Graph Construction Pipeline
+# Graph Construction
 
-A scalable pipeline for extracting and verifying knowledge graphs from text paragraphs using LLMs. The pipeline supports dynamic paragraph counts, iterative refinement, and configurable LLM parameters.
+Extracts knowledge graphs (KGs) from any number of text paragraphs using a single-prompt few-shot LLM call. For each row in the input CSV the pipeline sends all N paragraphs together in one prompt and returns N aligned knowledge graphs, one per paragraph.
 
-## Overview
+## How it works
 
-The pipeline performs the following steps:
+1. **Few-shot prompting** — two worked examples (with known-good KGs) are embedded directly in the prompt so the model understands the expected output format without fine-tuning.
+2. **Single LLM call per row** — all N paragraphs are sent together; the model returns `knowledge_graph1` … `knowledge_graphN` in one JSON response.
+3. **Validation** — any triplet that is not a 3-string list, or that still contains placeholder tokens (`entity1`, `relation`, etc.), is dropped.
+4. **Normalisation** — every subject, relation, and object is lowercased, underscores are replaced with spaces, and extra whitespace is collapsed.
+5. **Checkpointing** — rows already present in the output CSV are skipped, so a run can be safely resumed after an interruption.
 
-1. **Extraction**: Extracts triplets from paragraphs using a configured LLM
-2. **Verification**: Optionally verifies extracted triplets against source text
-3. **Refinement**: Re-generates graphs if verification fails (up to `max_time` iterations)
-4. **Normalization**: Normalizes entity and label names (lowercase with underscores)
-5. **Output**: Saves verified knowledge graphs to CSV files
-
-## Quick Start
-
-### Basic Usage
+## Quick start
 
 ```bash
-python main.py input.csv
+python main.py --input_csv input/data.csv
 ```
 
-### Fast Execution
-
-For quick results with minimal verification:
+With explicit output path and model:
 
 ```bash
-python main.py input.csv input/\
-  --extract_llm llama-3.3-70b-versatile \
-  --skip_verification \
-  --max_time 1
+python main.py --input_csv input/data.csv --output_csv output/kg_results.csv --model llama-3.3-70b-versatile
 ```
 
-### Custom Triplet Count (Optional)
-
-If you want the LLM to extract approximately a specific number of triplets:
-
-```bash
-python main.py input.csv --num_triplets 15
-```
-
-**Note**: If `--num_triplets` is not provided, the LLM decides the triplet count freely.
-
-## Command-Line Arguments
-
-### Required Arguments
-
-| Argument | Type | Description |
-|----------|------|-------------|
-| `input_csv` | string | Path to input CSV file. If not provided, processes all CSVs in `input/` folder |
-
-### Optional Arguments
-
-#### LLM Selection
+## Arguments
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--extract_llm` | `mistralai/Mistral-7B-Instruct-v0.2` | LLM model for knowledge graph extraction |
-| `--verification_llm1` | `mistralai/Mistral-7B-Instruct-v0.2` | Primary LLM for triplet verification |
-| `--verification_llm2` | `mistralai/Mistral-7B-Instruct-v0.2` | Secondary LLM for verification (backup) |
+| `--input_csv` | *(required)* | Path to input CSV |
+| `--output_csv` | `output/kg_results.csv` | Path to output CSV |
+| `--model` | `llama-3.3-70b-versatile` | LLM model name (see Supported models below) |
 
-#### Temperature Control
-
-| Flag | Default | Range | Description |
-|------|---------|-------|-------------|
-| `--extract_temperature` | `0.0` | 0.0-1.0 | Temperature for extraction LLM (0=deterministic, 1=creative) |
-| `--verify_temperature` | `0.0` | 0.0-1.0 | Temperature for verification LLM (0=deterministic, 1=creative) |
-
-**Note**: Temperature values default to 0 if not provided, ensuring deterministic outputs.
-
-#### Pipeline Control
-
-| Flag | Default | Type | Description |
-|------|---------|------|-------------|
-| `--max_time` | `3` | int | Maximum iterations for extraction/verification loop |
-| `--num_triplets` | `None` | int | Target number of triplets per graph (if not provided, LLM decides freely) |
-| `--skip_verification` | `False` | flag | Skip verification step (extraction only) |
-| `--output_dir` | `output` | string | Directory for output CSV files |
-| `--verbose` | `False` | flag | Enable verbose logging for debugging |
-
-## Input File Format
-
-CSV file with the following structure:
+## Input format
 
 ```csv
 id,paragraph_1,paragraph_2,paragraph_3,...
-1,Text for first paragraph,Text for second paragraph,Text for third paragraph,...
-2,Another first paragraph,Another second paragraph,Another third paragraph,...
+1,"Text 1...","Text 2...","Text 3..."
+2,"Text 1...","Text 2..."
 ```
 
-**Requirements**:
-- First column must be `id` (unique identifier)
-- Paragraph columns must be named `paragraph_1`, `paragraph_2`, etc.
-- Supports dynamic number of paragraphs per row
+- `id` — unique row identifier
+- `paragraph_1`, `paragraph_2`, `paragraph_3`, … — any number of paragraph columns; each row can have a different count
+- The pipeline detects N dynamically and instructs the model to return exactly N graphs
 
-## Entity and Label Normalization
-
-The pipeline automatically normalizes all entity and label names before saving to ensure consistency:
-
-### Normalization Rules
-
-1. **Lowercase**: All text is converted to lowercase
-2. **Underscore Separation**: Spaces are replaced with underscores (`_`)
-3. **Special Characters**: Special characters are replaced with underscores
-4. **Multiple Underscores**: Consecutive underscores are collapsed to single underscore
-5. **Trimming**: Leading and trailing underscores are removed
-
-### Examples
-
-| Original | Normalized |
-|----------|------------|
-| `Barack Obama` | `barack_obama` |
-| `New York City` | `new_york_city` |
-| `was born in` | `was_born_in` |
-| `COVID-19 pandemic` | `covid_19_pandemic` |
-| `Machine Learning` | `machine_learning` |
-
-### Normalization Process
-
-- Normalization is applied **automatically** to all triplets before saving
-- Original text is extracted by LLM, normalization happens at output time
-- This ensures consistent entity/relation names across different knowledge graphs
-
-### Testing Normalization
-
-You can test the normalization functionality:
-
-```bash
-python test_normalization.py
-```
-
-This will demonstrate how various entity and label names are normalized.
-
-## Output Format
-
-Output CSV with knowledge graphs:
+## Output format
 
 ```csv
 id,paragraph_1,kg_1,paragraph_2,kg_2,paragraph_3,kg_3,...
-1,Text for first paragraph,"[[""subject"",""relation"",""object""]]",Text for second paragraph,"[[""subject2"",""relation2"",""object2""]]",...
+1,"Text 1...","[[\"subject\",\"relation\",\"object\"],...]","Text 2...","[...]","Text 3...","[...]"
 ```
 
-Each `kg_N` column contains JSON array of triplets: `[["subject", "relation", "object"], ...]`
+Columns are interleaved: `paragraph_1, kg_1, paragraph_2, kg_2, …` for as many paragraphs as the row has. Each `kg_N` column contains a JSON array of `[subject, relation, object]` triplets.
 
-## Examples
+## Environment variables
 
-### Example 1: Fast Extraction (No Verification)
+Create a `.env` file in this directory. Only one key is needed depending on the provider you use:
 
-```bash
-python main.py data.csv \
-  --extract_llm llama-3.3-70b-versatile \
-  --skip_verification \
-  --max_time 1
+| Variable | Required for |
+|----------|-------------|
+| `GROQ_API_KEY` | Groq models — `llama-*`, `mixtral-*` (default) |
+| `GEMINI_API_KEY` | Google Gemini models — `gemini-*` |
+| `OPENAI_API_KEY` | OpenAI models — `gpt-*` |
+
+HuggingFace models are loaded locally and need no API key.
+
+Example `.env` for Groq:
+
+```
+GROQ_API_KEY=gsk_...
 ```
 
-**Use case**: Quick prototype, bulk processing, fast feedback
-- Skips verification for speed
-- Single extraction pass
-- Deterministic output (default temperature 0)
+## Supported models
 
-### Example 2: Quality-First Extraction
+The provider is inferred from the model name:
 
-```bash
-python main.py data.csv \
-  --extract_llm gpt-4 \
-  --verification_llm1 gpt-4o-mini \
-  --max_time 5
+| Model name contains | Provider |
+|---------------------|----------|
+| `llama`, `mixtral`, `groq` | Groq |
+| `gemini` | Google Gemini |
+| `gpt`, `openai` | OpenAI |
+| anything else | HuggingFace (local) |
+
+## Dependencies
+
 ```
-
-**Use case**: High-quality knowledge graphs
-- Uses advanced models
-- Multiple refinement iterations
-- LLM decides triplet count freely
+pip install -r requirements.txt
+```

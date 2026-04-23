@@ -1,6 +1,6 @@
 __pycache__/
 .env
-# log
-# input
-# output
+log
+input
+output
 *.log

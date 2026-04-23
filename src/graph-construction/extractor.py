@@ -1,213 +1,145 @@
-"""Knowledge Graph extraction from text paragraphs using LLMs."""
-
-import os
-import json
-import logging
 import re
-from typing import List, Dict, Any, Optional
-from pathlib import Path
+import json
+import time
+import logging
 
-from schemas import Graph, DynamicKnowledgeGraphs, Triplet
-from llms.llm_factory import LLMFactorySelector
+log = logging.getLogger(__name__)
+
+_PLACEHOLDER_TOKENS = {"entity1", "entity2", "entity3", "entity4", "relation"}
+
+_ROOTS_T1 = (
+    'A&E Networks will simulcast the original "Roots" in 2016. The original "Roots" premiered in 1977 '
+    "and ran for four seasons. The miniseries followed Kunta Kinte, a free black man in Virginia, as he "
+    "was sold into slavery."
+)
+_ROOTS_T2 = (
+    '(CNN)One of the biggest TV events of all time is being reimagined for new audiences. "Roots," the '
+    "epic miniseries about an African-American slave and his descendants, had a staggering audience of "
+    "over 100 million viewers back in 1977"
+)
+_ISIS_T1 = (
+    "ISIS released more than 200 Yazidis, a minority group, a group says. The Islamist terror group has "
+    "been killed in recent summer. ISIS released scores of other Yazidis, mainly children and the elderly. "
+    "The Peshmerga commander says the freed Yazidis are released."
+)
+_ISIS_T2 = (
+    "(CNN) ISIS on Wednesday released more than 200 Yazidis, a minority group whose members were killed, "
+    "captured and displaced when the Islamist terror organization overtook their towns in northern Iraq "
+    "last summer, officials said. Most of those released were women and children; the rest were ill or "
+    "elderly, said Rassol Omar, a commander in the Peshmerga force that defends northern Iraq's "
+    "semi-autonomous Kurdish region. Omar didn't say what led to the release, other than asserting that "
+    "Arab tribal leaders helped to coordinate it. The freed Yazidis were received by Peshmerga, who sent "
+    "them to the Kurdish regional capital, Irbil, said Nuri Osman, an official with Iraq's Kurdistan "
+    "Regional Government. It wasn't immediately clear what motivated Wednesday's release, Osman said."
+)
+
+_PROMPT = (
+    "You are an expert at creating knowledge graphs based on text.\n"
+    "You will receive multiple pieces of text, and you must perform the following steps on each:\n"
+    "1. Entity detection: Select key entities. Keep them short and skip minor details.\n"
+    "2. Coreference resolution: Use the same entity name for the same concept across all texts.\n"
+    "3. Relation extraction: Identify semantic relationships as simple, concise phrases.\n"
+    "4. Knowledge Graph refinement: Align similar triples across graphs for easy comparison.\n\n"
+    "Format your response as a JSON object. Do not include any text outside the JSON.\n"
+    'Each knowledge graph is a list of triples: [["subject", "relation", "object"], ...].\n\n'
+    "EXAMPLE 1:\n"
+    f"TEXT1:\n{_ROOTS_T1}\n\nTEXT2:\n{_ROOTS_T2}\n\n"
+    "YOUR OUTPUT:\n"
+    "{\n"
+    '  "knowledge_graph1": [\n'
+    '      ["A&E Networks", "will simulcast in 2016", "Roots"],\n'
+    '      ["Roots", "premiered in", "1977"],\n'
+    '      ["Roots", "ran for", "four seasons"],\n'
+    '      ["Roots", "instance of", "miniseries"],\n'
+    '      ["Roots", "followed", "Kunta Kinte"],\n'
+    '      ["Kunta Kinte", "was sold into", "slavery"],\n'
+    '      ["Kunta Kinte", "was a", "free black man"]\n'
+    "  ],\n"
+    '  "knowledge_graph2": [\n'
+    '      ["Roots", "one of the", "biggest TV events of all time"],\n'
+    '      ["Roots", "had a staggering audience of", "over 100 million viewers"],\n'
+    '      ["Roots", "being", "reimagined for new audiences"],\n'
+    '      ["Roots", "was about", "an African-American slave and his descendants"],\n'
+    '      ["Roots", "premiered", "1977"]\n'
+    "  ]\n"
+    "}\n\n"
+    "EXAMPLE 2:\n"
+    f"TEXT1:\n{_ISIS_T1}\n\nTEXT2:\n{_ISIS_T2}\n\n"
+    "YOUR OUTPUT:\n"
+    "{\n"
+    '  "knowledge_graph1": [\n'
+    '      ["ISIS", "released", "more than 200 Yazidis"],\n'
+    '      ["Yazidis", "are", "minority group"],\n'
+    '      ["ISIS", "released", "children and elderly Yazidis"],\n'
+    '      ["Peshmerga commander", "said", "freed Yazidis are released"]\n'
+    "  ],\n"
+    '  "knowledge_graph2": [\n'
+    '      ["ISIS", "released", "more than 200 Yazidis"],\n'
+    '      ["Yazidis", "are", "minority group"],\n'
+    '      ["Yazidis", "killed and displaced by", "ISIS"],\n'
+    '      ["ISIS", "released", "children and elderly Yazidis"],\n'
+    '      ["Peshmerga commander", "said", "freed Yazidis are released"],\n'
+    '      ["Peshmerga", "received", "freed Yazidis"],\n'
+    '      ["Peshmerga", "sent freed Yazidis to", "Irbil"],\n'
+    '      ["Arab tribal leaders", "helped coordinate", "release of Yazidis"]\n'
+    "  ]\n"
+    "}\n\n"
+)
 
 
-class KGExtractor:
-    """Extracts Knowledge Graphs from text paragraphs using LLMs."""
-    
-    def __init__(self, model_name: str, template_path: str = "templates/extraction.txt",
-                 num_triplets: Optional[int] = None, temperature: float = 0.0):
-        """
-        Initialize the extractor.
-        
-        Args:
-            model_name: Name of the LLM to use for extraction
-            template_path: Path to the extraction prompt template
-            num_triplets: Target number of triplets per graph (if None, LLM decides freely)
-            temperature: Temperature for LLM sampling (0.0-1.0)
-        """
-        self.model_name = model_name
-        self.num_triplets = num_triplets
-        self.temperature = temperature
-        self.llm = LLMFactorySelector.get_factory(model_name)
-        self.template = self._load_template(template_path)
 
-    
-    def _load_template(self, template_path: Optional[str] = None) -> str:
-        """Load the extraction prompt template."""
-        if template_path is None:
-            raise ValueError("Template path must be provided")
-        
-        template_path = Path(template_path)
-        if not template_path.exists():
-            raise FileNotFoundError(f"Extraction template not found: {template_path}")
-        
-        with open(template_path, 'r', encoding='utf-8') as f:
-            return f.read()
-    
-    def _build_prompt(
-        self, 
-        paragraphs: List[str], 
-        failed_triplets: Optional[Dict[str, List[List[str]]]] = None,
-        approved_triplets: Optional[Dict[str, List[List[str]]]] = None
-    ) -> str:
-        """Build extraction prompt with feedback from previous attempts."""
-        n = len(paragraphs)
-        
-        text_parts = []
-        for i, para in enumerate(paragraphs, 1):
-            text_parts.append(f"TEXT {i}:\n{para}")
-        
-        texts_section = "\n\n".join(text_parts)
-        
-        prompt = self.template.replace("{n}", str(n))
-        if self.num_triplets is not None:
-            prompt = prompt.replace("{num_triplets}", str(self.num_triplets))
-        prompt += f"\n{texts_section}\n\n"
-        
-        if self.num_triplets is not None:
-            prompt += f"Extract approximately {self.num_triplets} triplets per text.\n\n"
-        
-        # Add section for approved triplets that must be included
-        if approved_triplets:
-            prompt += "================ APPROVED TRIPLETS (MUST INCLUDE) ==================\n\n"
-            prompt += "The following triplets have been VERIFIED and MUST be included. Include these exactly:\n\n"
-            for graph_key, triplets in approved_triplets.items():
-                graph_num = graph_key.replace("graph_", "")
-                prompt += f"Approved triplets for TEXT {graph_num} (include these):\n"
-                for triplet in triplets:
-                    prompt += f"  + {triplet}\n"
-            prompt += "\n"
-        
-        # Add cautionary section for failed triplets if provided
-        if failed_triplets:
-            prompt += "================ FORBIDDEN TRIPLETS (DO NOT USE) ==================\n\n"
-            prompt += "The following triplets FAILED verification. Do NOT include these:\n\n"
-            for graph_key, triplets in failed_triplets.items():
-                graph_num = graph_key.replace("graph_", "")
-                prompt += f"Forbidden triplets for TEXT {graph_num} (do not use):\n"
-                for triplet in triplets:
-                    prompt += f"  - {triplet}\n"
-            prompt += "\n"
-        
-        prompt += "Output the graphs:"
-        
-        return prompt
-    
-    def _parse_triplets_array(self, content: str) -> Dict[str, List]:
-        """Parse triplets array string into structured format."""
-        content = content.strip()
-        
-        # Handle empty content
-        if not content or content == '[]':
-            return {"triples": []}
-        
-        # Find the array in the content
-        # Look for [[...]] pattern
-        array_match = re.search(r'(\[.*\])', content, re.DOTALL)
-        if not array_match:
-            return {"triples": []}
-        
-        array_str = array_match.group(1)
-        
+def _validate(triplets: list) -> list:
+    # drop placeholder entries and anything that is not a 3-string list
+    valid = []
+    for t in triplets:
+        if isinstance(t, (list, tuple)) and len(t) == 3 and all(isinstance(e, str) for e in t):
+            if t[0].lower().strip() not in _PLACEHOLDER_TOKENS and t[2].lower().strip() not in _PLACEHOLDER_TOKENS:
+                valid.append(list(t))
+    return valid
+
+
+def _normalize(label: str) -> str:
+    s = label.replace("_", " ").lower()
+    return re.sub(r" {2,}", " ", s).strip()
+
+
+def extract(paragraphs: list, llm) -> dict:
+    # Single-prompt few-shot extraction. Returns {1: [[s,r,o],...], 2: ...}
+    if not paragraphs:
+        return {}
+
+    n = len(paragraphs)
+    graph_keys = ", ".join(f"knowledge_graph{i + 1}" for i in range(n))
+    instruction = (
+        f"Now extract knowledge graphs for the following {n} text(s). "
+        f"Return a JSON object with exactly {n} key(s): {graph_keys}. "
+        "Each value is a list of [subject, relation, object] triples.\n\n"
+    )
+    text_block = "\n\n".join(f"TEXT{i + 1}:\n{p}" for i, p in enumerate(paragraphs))
+    prompt = _PROMPT + instruction + text_block
+
+    data = {}
+    for attempt in range(3):
+        raw = llm.get_answer(prompt)
+        cleaned = re.sub(r"```(?:json)?", "", raw).strip().strip("`")
         try:
-            # Replace single quotes with double quotes for JSON parsing
-            array_str = array_str.replace("'", '"')
-            triplets = json.loads(array_str)
-            
-            # Validate it's a list of lists/triplets
-            if isinstance(triplets, list):
-                valid_triplets = []
-                for t in triplets:
-                    if isinstance(t, list) and len(t) >= 3:
-                        valid_triplets.append(t[:3])  # Take first 3 elements
-                return {"triples": valid_triplets}
+            data = json.loads(cleaned)
         except json.JSONDecodeError:
-            pass
-        
-        return {"triples": []}
-    
-    def _parse_response(self, response: str, num_graphs: int) -> DynamicKnowledgeGraphs:
-        """Parse LLM response into DynamicKnowledgeGraphs."""
-        data = {}
-        
-        # Try simple format first: graph_N: [[...], ...]
-        # Use a more robust approach - find graph_N: then capture until next graph_ or end
-        lines = response.split('\n')
-        current_graph = None
-        current_content = []
-        
-        for line in lines:
-            # Check if this line starts a new graph
-            graph_match = re.match(r'graph_(\d+)\s*:', line)
-            if graph_match:
-                # Save previous graph if exists
-                if current_graph is not None:
-                    data[current_graph] = self._parse_triplets_array(''.join(current_content))
-                # Start new graph
-                current_graph = f"graph_{graph_match.group(1)}"
-                # Content starts after "graph_N:"
-                remaining = line.split(':', 1)[1] if ':' in line else ''
-                current_content = [remaining]
-            elif current_graph is not None:
-                current_content.append(line)
-        
-        # Save last graph
-        if current_graph is not None:
-            data[current_graph] = self._parse_triplets_array(''.join(current_content))
-        
-        # If simple format didn't work, try JSON format
-        if not data:
-            # Fallback to JSON format
-            json_str = response
-            
-            # Handle markdown code blocks
-            match = re.search(r"```(?:json)?\s*(.*?)\s*```", response, re.DOTALL)
-            if match:
-                json_str = match.group(1)
-            else:
-                # Try to find raw JSON object
-                match = re.search(r"(\{.*\})", response, re.DOTALL)
-                if match:
-                    json_str = match.group(1)
-            
-            try:
-                data = json.loads(json_str)
-            except json.JSONDecodeError:
-                data = {}
-        
-        for i in range(1, num_graphs + 1):
-            graph_key = f"graph_{i}"
-            if graph_key not in data:
-                data[graph_key] = {"triples": []}
-        
-        return DynamicKnowledgeGraphs(**data)
-    
-    def extract(self, paragraphs: List[str], failed_triplets: Optional[Dict[str, List[List[str]]]] = None,
-        approved_triplets: Optional[Dict[str, List[List[str]]]] = None) -> DynamicKnowledgeGraphs:
-        """Extract knowledge graphs from paragraphs."""
-        if not paragraphs:
-            return DynamicKnowledgeGraphs(graphs={})
-        
-        num_graphs = len(paragraphs)
-        prompt = self._build_prompt(paragraphs, failed_triplets, approved_triplets)
-        
-        try:
-            response = self.llm.get_answer(prompt)
-            kgs = self._parse_response(response, num_graphs)
-            return kgs
-            
-        except Exception as e:
-            logging.error(f"Extraction failed: {e}")
-            return DynamicKnowledgeGraphs(
-                graphs={f"graph_{i}": Graph(triples=[]) for i in range(1, num_graphs + 1)}
-            )
-    
-    def extract_single(self, paragraph: str, graph_index: int = 1) -> Graph:
-        """Extract single knowledge graph from one paragraph."""
-        kgs = self.extract([paragraph])
-        return kgs.get_graph(1)
-    
-    def clear(self):
-        """Release resources."""
-        if hasattr(self.llm, 'clear_model'):
-            self.llm.clear_model()
+            m = re.search(r"\{.*\}", cleaned, re.DOTALL)
+            data = {}
+            if m:
+                try:
+                    data = json.loads(m.group(0))
+                except json.JSONDecodeError:
+                    pass
+
+        graphs = {i + 1: _validate(data.get(f"knowledge_graph{i + 1}", [])) for i in range(len(paragraphs))}
+        if any(v for v in graphs.values()):
+            break
+        log.warning(f"Attempt {attempt + 1}/3 — empty result, retrying...")
+        time.sleep(1)
+
+    graphs = {i + 1: _validate(data.get(f"knowledge_graph{i + 1}", [])) for i in range(len(paragraphs))}
+    for i, triplets in graphs.items():
+        log.info(f"graph_{i}: {len(triplets)} triplets")
+    return {k: [[_normalize(e) for e in t] for t in v] for k, v in graphs.items()}
