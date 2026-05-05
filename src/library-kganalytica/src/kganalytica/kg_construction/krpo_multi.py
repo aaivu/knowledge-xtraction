@@ -90,7 +90,7 @@ _NLI_TMPL = (
 _MULTI_EXTRACTION_BASE = (
     "Your task is to transform {n} related text(s) into a COMPREHENSIVE set of knowledge graphs "
     "as lists of triplets. Extract all {n} graphs simultaneously so that entity and relation "
-    "labels are CONSISTENT across all graphs.\n\n"
+    "labels are CONSISTENT ACROSS ALL THE GRAPHS whenever possible.\n\n"
     "IMPORTANT RULES:\n"
     "- Extract EVERY piece of information mentioned in each text as triplets\n"
     "- The SAME real-world entity MUST use the SAME label in ALL graphs "
