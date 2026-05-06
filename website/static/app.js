@@ -239,18 +239,22 @@ const KG_CACHE_KEY = 'kgx_kg_cache';
 
 function normalizeInput(s) { return s.trim().replace(/\s+/g, ' '); }
 
+function cacheKey(texts) { return texts.map(normalizeInput).join('\x00'); }
+
 function loadFromCache(texts) {
   try {
-    const entry = JSON.parse(localStorage.getItem(KG_CACHE_KEY));
-    if (!entry || !Array.isArray(entry.inputs) || entry.inputs.length !== 3) return null;
-    return texts.every((t, i) => normalizeInput(t) === entry.inputs[i]) ? entry.kgs : null;
+    const store = JSON.parse(localStorage.getItem(KG_CACHE_KEY));
+    if (!store || typeof store !== 'object') return null;
+    const entry = store[cacheKey(texts)];
+    return entry ? entry.kgs : null;
   } catch (_) { return null; }
 }
 
 function saveToCache(texts, kgs) {
-  localStorage.setItem(KG_CACHE_KEY, JSON.stringify({
-    inputs: texts.map(normalizeInput), kgs, savedAt: Date.now(),
-  }));
+  let store = {};
+  try { store = JSON.parse(localStorage.getItem(KG_CACHE_KEY)) || {}; } catch (_) {}
+  store[cacheKey(texts)] = { kgs, savedAt: Date.now() };
+  localStorage.setItem(KG_CACHE_KEY, JSON.stringify(store));
 }
 
 function clearKGCache() { localStorage.removeItem(KG_CACHE_KEY); }
