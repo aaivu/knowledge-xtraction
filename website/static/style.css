@@ -159,7 +159,7 @@ textarea::placeholder { color: #c8c8c8; }
 .cus-accent { color: #111111; }
 
 /* BUTTONS */
-.btn-row { display: flex; justify-content: center; margin-top: 1.8rem; }
+.btn-row { display: flex; justify-content: center; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.8rem; }
 .btn-primary, .btn-accent {
   display: inline-flex; align-items: center; gap: 0.55rem;
   padding: 0.78rem 2rem; border-radius: var(--radius-sm);
@@ -176,6 +176,25 @@ textarea::placeholder { color: #c8c8c8; }
 .btn-primary:disabled,
 .btn-accent:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 .btn-icon-svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* Cache toggle (Step 01) */
+.cache-toggle { display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; font-size: 0.75rem; color: var(--muted); user-select: none; }
+.cache-toggle input[type=checkbox] { width: 13px; height: 13px; cursor: pointer; accent-color: var(--text); }
+.cache-toggle:hover { color: var(--text); }
+
+/* Cache action buttons (Step 02) */
+.cache-action-btns { display: inline-flex; align-items: center; gap: 0.3rem; }
+.cache-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: var(--radius-sm);
+  background: transparent; border: 1px solid var(--card-b);
+  color: var(--muted); cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.cache-icon-btn svg { width: 14px; height: 14px; }
+.cache-icon-btn:hover  { color: var(--text); border-color: #aaa; background: var(--surface); }
+.cache-icon-btn.saved  { color: var(--green); border-color: var(--green); }
+.cache-icon-btn.cleared { color: var(--red); border-color: var(--red); }
 .spinner {
   width: 15px; height: 15px;
   border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff;

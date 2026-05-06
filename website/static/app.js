@@ -8,7 +8,8 @@
 const state = {
   kgs: { 1: [], 2: [], 3: [] },
   networks: {},
-  analysis: null,   // stored after s3kg call for KGAnalytica
+  analysis: null,       // stored after s3kg call for KGAnalytica
+  currentTexts: null,   // stored after generation for cache save
 };
 
 // ── DOM References ───────────────────────────────────────────────────────────
@@ -23,6 +24,10 @@ const kgSection       = document.getElementById('kgSection');
 const resultsSection  = document.getElementById('resultsSection');
 const kgaSection      = document.getElementById('kgaSection');
 const toastContainer  = document.getElementById('toastContainer');
+const useCacheCheck   = document.getElementById('useCache');
+const cacheActionBtns = document.getElementById('cacheActionBtns');
+const saveCacheBtn    = document.getElementById('saveCacheBtn');
+const clearCacheBtn   = document.getElementById('clearCacheBtn');
 
 // ── Settings Panel Toggle ─────────────────────────────────────────────────────
 settingsToggle.addEventListener('click', () => {
@@ -229,23 +234,75 @@ function showSection(el) {
   el.classList.add('fade-in');
 }
 
+// ── KG Cache ─────────────────────────────────────────────────────────────────
+const KG_CACHE_KEY = 'kgx_kg_cache';
+
+function normalizeInput(s) { return s.trim().replace(/\s+/g, ' '); }
+
+function loadFromCache(texts) {
+  try {
+    const entry = JSON.parse(localStorage.getItem(KG_CACHE_KEY));
+    if (!entry || !Array.isArray(entry.inputs) || entry.inputs.length !== 3) return null;
+    return texts.every((t, i) => normalizeInput(t) === entry.inputs[i]) ? entry.kgs : null;
+  } catch (_) { return null; }
+}
+
+function saveToCache(texts, kgs) {
+  localStorage.setItem(KG_CACHE_KEY, JSON.stringify({
+    inputs: texts.map(normalizeInput), kgs, savedAt: Date.now(),
+  }));
+}
+
+function clearKGCache() { localStorage.removeItem(KG_CACHE_KEY); }
+
+// ── Shared KG Render ─────────────────────────────────────────────────────────
+function applyKGData(kgsObj) {
+  [1, 2, 3].forEach(i => { state.kgs[i] = kgsObj[String(i)] || []; });
+  Object.values(state.networks).forEach(n => { try { n.destroy(); } catch (_) {} });
+  state.networks = {};
+  resultsSection.hidden = true;
+  showSection(kgSection);
+  [1, 2, 3].forEach(i => {
+    const triples = state.kgs[i];
+    const count   = triples.length;
+    document.getElementById(`tc${i}`).textContent = `${count} triplet${count !== 1 ? 's' : ''}`;
+    buildTripletTable(`tt${i}`, triples);
+    if (count > 0) {
+      state.networks[i] = renderGraph(`kg${i}`, triples);
+    } else {
+      document.getElementById(`kg${i}`).innerHTML =
+        '<div class="kg-empty-msg">No triplets extracted for this paragraph</div>';
+    }
+  });
+  cacheActionBtns.hidden = false;
+  setTimeout(() => kgSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+}
+
 // ── Generate Knowledge Graphs ─────────────────────────────────────────────────
 generateBtn.addEventListener('click', async () => {
   const texts  = [1, 2, 3].map(i => document.getElementById(`text${i}`).value.trim());
   const apiKey = document.getElementById('apiKey').value.trim();
   const model  = document.getElementById('modelName').value.trim() || 'llama-3.1-8b-instant';
 
-  if (texts.some(t => !t)) {
-    toast('Please fill in all three text areas before generating.');
-    return;
-  }
-  if (!apiKey) {
-    toast('Open ⚙ Settings and enter your Groq API key.');
-    return;
+  if (texts.some(t => !t)) { toast('Please fill in all three text areas before generating.'); return; }
+  if (!apiKey) { toast('Open ⚙ Settings and enter your Groq API key.'); return; }
+
+  // Check cache first if toggle is on
+  if (useCacheCheck.checked) {
+    const cached = loadFromCache(texts);
+    if (cached) {
+      state.currentTexts = texts;
+      kgSection.hidden = true;
+      resultsSection.hidden = true;
+      setLoading(generateBtn, true);
+      await new Promise(r => setTimeout(r, 2000));
+      setLoading(generateBtn, false);
+      applyKGData(cached);
+      return;
+    }
   }
 
   setLoading(generateBtn, true);
-  // Hide downstream sections while regenerating
   kgSection.hidden      = true;
   resultsSection.hidden = true;
 
@@ -257,41 +314,30 @@ generateBtn.addEventListener('click', async () => {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Server error');
-
-    // Store KGs
-    [1, 2, 3].forEach(i => { state.kgs[i] = data.kgs[String(i)] || []; });
-
-    // Destroy old networks
-    Object.values(state.networks).forEach(n => { try { n.destroy(); } catch (_) {} });
-    state.networks = {};
-
-    // Render graphs
-    showSection(kgSection);
-
-    [1, 2, 3].forEach(i => {
-      const triples = state.kgs[i];
-      const count   = triples.length;
-      document.getElementById(`tc${i}`).textContent =
-        `${count} triplet${count !== 1 ? 's' : ''}`;
-      buildTripletTable(`tt${i}`, triples);
-
-      if (count > 0) {
-        state.networks[i] = renderGraph(`kg${i}`, triples);
-      } else {
-        document.getElementById(`kg${i}`).innerHTML =
-          '<div class="kg-empty-msg">No triplets extracted for this paragraph</div>';
-      }
-    });
-
-    setTimeout(() =>
-      kgSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+    state.currentTexts = texts;
+    applyKGData(data.kgs);
     toast('Knowledge graphs generated successfully!', 'success');
-
   } catch (err) {
     toast(err.message);
   } finally {
     setLoading(generateBtn, false);
   }
+});
+
+// ── Cache Save / Clear ────────────────────────────────────────────────────────
+saveCacheBtn.addEventListener('click', () => {
+  if (!state.currentTexts || [1, 2, 3].every(i => !state.kgs[i].length)) {
+    toast('No KGs to save.'); return;
+  }
+  saveToCache(state.currentTexts, { '1': state.kgs[1], '2': state.kgs[2], '3': state.kgs[3] });
+  saveCacheBtn.classList.add('saved');
+  setTimeout(() => saveCacheBtn.classList.remove('saved'), 1500);
+});
+
+clearCacheBtn.addEventListener('click', () => {
+  clearKGCache();
+  clearCacheBtn.classList.add('cleared');
+  setTimeout(() => clearCacheBtn.classList.remove('cleared'), 1500);
 });
 
 // ── Calculate S3KG Similarity ─────────────────────────────────────────────────
