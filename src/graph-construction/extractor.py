@@ -32,6 +32,17 @@ _ISIS_T2 = (
     "them to the Kurdish regional capital, Irbil, said Nuri Osman, an official with Iraq's Kurdistan "
     "Regional Government. It wasn't immediately clear what motivated Wednesday's release, Osman said."
 )
+_ROOTS_T3 = (
+    "Roots is a 1977 American television miniseries based on Alex Haley's novel. It depicts the life of "
+    "Kunta Kinte, an African who was captured and sold into slavery in America. The series was broadcast "
+    "on ABC and became one of the most watched programs in US television history."
+)
+_ISIS_T3 = (
+    "The Yazidis are a Kurdish-speaking minority group native to northern Iraq. They follow a religion "
+    "that combines elements of several ancient traditions. In August 2014, ISIS launched a major offensive "
+    "against Yazidi communities in the Sinjar region, killing hundreds and enslaving thousands. The attack "
+    "prompted international condemnation and led to US airstrikes against ISIS positions in northern Iraq."
+)
 
 _PROMPT = (
     "You are an expert at creating knowledge graphs based on text.\n"
@@ -39,11 +50,11 @@ _PROMPT = (
     "1. Entity detection: Extract ALL entities comprehensively. Include all named entities, important concepts, objects, and properties mentioned. Also extract attributes, quantities, dates, locations, and roles. Do NOT skip supporting or background details.\n"
     "2. Coreference resolution: Replace ALL pronouns (he, she, it, they, his, her, its) with the actual entity name. Use the same entity label for the same concept across all texts.\n"
     "3. Relation extraction: Identify semantic relationships as simple, concise phrases. Split compound sentences into as many triplets as needed — one triplet per fact.\n"
-    "4. Knowledge Graph refinement: Align similar triples across graphs for easy comparison.\n\n"
+    "4. Knowledge Graph refinement: Where the same entity or relation appears across multiple graphs, use the same label consistently. Do not merge distinct facts — preserve each triplet independently.\n\n"
     "Format your response as a JSON object. Do not include any text outside the JSON.\n"
     'Each knowledge graph is a list of triples: [["subject", "relation", "object"], ...].\n\n'
     "EXAMPLE 1:\n"
-    f"TEXT1:\n{_ROOTS_T1}\n\nTEXT2:\n{_ROOTS_T2}\n\n"
+    f"TEXT1 (reference answer):\n{_ROOTS_T1}\n\nTEXT2 (model-generated response):\n{_ROOTS_T2}\n\nTEXT3 (supporting context):\n{_ROOTS_T3}\n\n"
     "YOUR OUTPUT:\n"
     "{\n"
     '  "knowledge_graph1": [\n'
@@ -61,10 +72,19 @@ _PROMPT = (
     '      ["Roots", "being", "reimagined for new audiences"],\n'
     '      ["Roots", "was about", "an African-American slave and his descendants"],\n'
     '      ["Roots", "premiered", "1977"]\n'
+    "  ],\n"
+    '  "knowledge_graph3": [\n'
+    '      ["Roots", "is a", "American television miniseries"],\n'
+    '      ["Roots", "based on", "Alex Haley\'s novel"],\n'
+    '      ["Roots", "depicts life of", "Kunta Kinte"],\n'
+    '      ["Kunta Kinte", "was captured and sold into", "slavery"],\n'
+    '      ["Roots", "was broadcast on", "ABC"],\n'
+    '      ["Roots", "premiered in", "1977"],\n'
+    '      ["Roots", "one of the most watched", "US television programs"]\n'
     "  ]\n"
     "}\n\n"
     "EXAMPLE 2:\n"
-    f"TEXT1:\n{_ISIS_T1}\n\nTEXT2:\n{_ISIS_T2}\n\n"
+    f"TEXT1 (reference answer):\n{_ISIS_T1}\n\nTEXT2 (model-generated response):\n{_ISIS_T2}\n\nTEXT3 (supporting context):\n{_ISIS_T3}\n\n"
     "YOUR OUTPUT:\n"
     "{\n"
     '  "knowledge_graph1": [\n'
@@ -82,6 +102,16 @@ _PROMPT = (
     '      ["Peshmerga", "received", "freed Yazidis"],\n'
     '      ["Peshmerga", "sent freed Yazidis to", "Irbil"],\n'
     '      ["Arab tribal leaders", "helped coordinate", "release of Yazidis"]\n'
+    "  ],\n"
+    '  "knowledge_graph3": [\n'
+    '      ["Yazidis", "are", "Kurdish-speaking minority group"],\n'
+    '      ["Yazidis", "native to", "northern Iraq"],\n'
+    '      ["ISIS", "launched offensive against", "Yazidi communities"],\n'
+    '      ["ISIS", "offensive in", "Sinjar region"],\n'
+    '      ["ISIS", "killed hundreds of", "Yazidis"],\n'
+    '      ["ISIS", "enslaved thousands of", "Yazidis"],\n'
+    '      ["attack", "prompted", "international condemnation"],\n'
+    '      ["attack", "led to", "US airstrikes against ISIS"]\n'
     "  ]\n"
     "}\n\n"
 )
