@@ -1,6 +1,4 @@
-# KEA-Based Knowledge Graph Extraction Prompt
-
-## System Prompt for 3-Graph Extraction
+# Complete Knowledge Graph Extraction Prompt
 
 \begin{lstlisting}[basicstyle=\ttfamily\footnotesize,breaklines=true,frame=single,xleftmargin=4pt,xrightmargin=4pt,columns=fullflexible,keepspaces=true]
 messages=[
@@ -95,12 +93,3 @@ messages=[
     }
 ]
 \end{lstlisting}
-
-## Description
-
-This prompt is used in the KEA-based knowledge graph extraction method to generate knowledge graphs from multiple text inputs. The system includes:
-
-- **System Role**: Defines the expert task, extraction steps, and provides two in-context examples
-- **User Role**: Dynamically constructs the extraction request with the actual input paragraphs
-
-The prompt dynamically adapts to the number of input texts (2, 3, or more), automatically generating the required number of knowledge graphs and updating the instruction message accordingly. The examples demonstrate extraction from three text types: reference answers, model-generated responses, and supporting context.
