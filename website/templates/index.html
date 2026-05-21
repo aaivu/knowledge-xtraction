@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S3KG · Knowledge Graph Evaluator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════ HEADER ════════════════════════════════ -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="22,3 41,13 41,31 22,41 3,31 3,13"
+                   stroke="#7c5cfc" stroke-width="1.8" fill="rgba(124,92,252,0.12)"/>
+          <circle cx="22" cy="22" r="3.5" fill="#ff8c42"/>
+          <line x1="22" y1="18.5" x2="22" y2="9"  stroke="#7c5cfc" stroke-width="1.4"/>
+          <line x1="22" y1="25.5" x2="22" y2="35" stroke="#7c5cfc" stroke-width="1.4"/>
+          <line x1="19"  y1="20.5" x2="10" y2="15.5" stroke="#7c5cfc" stroke-width="1.4"/>
+          <line x1="25"  y1="20.5" x2="34" y2="15.5" stroke="#7c5cfc" stroke-width="1.4"/>
+          <line x1="19"  y1="23.5" x2="10" y2="28.5" stroke="#7c5cfc" stroke-width="1.4"/>
+          <line x1="25"  y1="23.5" x2="34" y2="28.5" stroke="#7c5cfc" stroke-width="1.4"/>
+          <circle cx="22" cy="9"   r="2.5" fill="#7c5cfc" opacity="0.8"/>
+          <circle cx="22" cy="35"  r="2.5" fill="#7c5cfc" opacity="0.8"/>
+          <circle cx="10" cy="15.5" r="2.5" fill="#7c5cfc" opacity="0.8"/>
+          <circle cx="34" cy="15.5" r="2.5" fill="#7c5cfc" opacity="0.8"/>
+          <circle cx="10" cy="28.5" r="2.5" fill="#7c5cfc" opacity="0.8"/>
+          <circle cx="34" cy="28.5" r="2.5" fill="#7c5cfc" opacity="0.8"/>
+        </svg>
+        <div>
+          <h1 class="logo-title">KGAnalytica</h1>
+          <p class="logo-sub">Semantic Structural Similarity for Knowledge Graphs</p>
+        </div>
+      </div>
+
+      <button class="icon-btn" id="settingsToggle" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        Settings
+      </button>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════ SETTINGS PANEL ═══════════════════════════ -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-inner">
+
+      <div class="setting-field">
+        <label for="apiKey">Groq API Key</label>
+        <input type="password" id="apiKey" placeholder="gsk_…" autocomplete="off" spellcheck="false" />
+      </div>
+
+      <div class="setting-field">
+        <label for="modelName">Model</label>
+        <input type="text" id="modelName" value="llama-3.1-8b-instant" spellcheck="false" />
+      </div>
+
+      <div class="setting-field">
+        <label for="alpha">
+          Structural ↔ Semantic blend (α)
+          <span class="alpha-badge" id="alphaVal">0.50</span>
+        </label>
+        <div class="slider-row">
+          <span class="slider-label">WL&nbsp;Kernel</span>
+          <input type="range" id="alpha" min="0" max="1" step="0.05" value="0.5" />
+          <span class="slider-label">SBERT</span>
+        </div>
+        <p class="field-hint">α = 0 → pure structural &nbsp;·&nbsp; α = 1 → pure semantic &nbsp;·&nbsp; α = 0.5 used in the paper</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ MAIN PAGE ══════════════════════════════ -->
+  <main class="page">
+
+    <!-- ─────────────────────── STEP 1 · Inputs ─────────────────────────── -->
+    <section class="section" id="inputSection">
+      <div class="section-hd">
+        <div class="step-badge">01</div>
+        <div>
+          <h2 class="section-title">Input Paragraphs</h2>
+          <p class="section-sub">Paste three texts to construct knowledge graphs from</p>
+        </div>
+      </div>
+
+      <div class="input-grid">
+
+        <div class="input-card">
+          <div class="input-card-hd kg1-accent">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z"/>
+            </svg>
+            <span>LLM Response</span>
+            <code class="tag">KG<sub>LLM</sub></code>
+          </div>
+          <textarea id="text1" placeholder="Paste the LLM-generated answer here…" rows="8"></textarea>
+        </div>
+
+        <div class="input-card">
+          <div class="input-card-hd kg2-accent">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Gold Answer</span>
+            <code class="tag">KG<sub>gold</sub></code>
+          </div>
+          <textarea id="text2" placeholder="Paste the reference / ground-truth answer here…" rows="8"></textarea>
+        </div>
+
+        <div class="input-card">
+          <div class="input-card-hd kg3-accent">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+            </svg>
+            <span>Supporting Context</span>
+            <code class="tag">KG<sub>ctx</sub></code>
+          </div>
+          <textarea id="text3" placeholder="Paste the supporting source context here…" rows="8"></textarea>
+        </div>
+
+      </div>
+
+      <div class="btn-row">
+        <label class="cache-toggle">
+          <input type="checkbox" id="useCache" />
+          <svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12">
+            <path d="M4 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V7.414A1 1 0 0016.707 6.707l-3.414-3.414A1 1 0 0012.586 3H4zm6 9a2 2 0 11-4 0 2 2 0 014 0zm-1-6H6v2h3V6z"/>
+          </svg>
+        </label>
+        <button class="btn-primary" id="generateBtn">
+          <svg class="btn-icon-svg" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z"/>
+          </svg>
+          <span class="btn-label">Generate Knowledge Graphs</span>
+          <span class="spinner" hidden></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── STEP 2 · KG Graphs ───────────────────────── -->
+    <section class="section" id="kgSection" hidden>
+      <div class="section-hd">
+        <div class="step-badge">02</div>
+        <div>
+          <h2 class="section-title">Knowledge Graphs</h2>
+          <p class="section-sub">Drag nodes to explore — edges are labelled with extracted relations</p>
+        </div>
+      </div>
+
+      <div class="kg-grid">
+
+        <div class="kg-card">
+          <div class="kg-card-hd kg1-accent">
+            <span>KG <sub>LLM</sub></span>
+            <span class="triplet-count" id="tc1">0 triplets</span>
+          </div>
+          <div class="kg-canvas" id="kg1"></div>
+          <details class="triplet-details">
+            <summary>View triplets</summary>
+            <div class="triplet-scroll">
+              <table class="triplet-table" id="tt1">
+                <thead><tr><th>Subject</th><th>Relation</th><th>Object</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+
+        <div class="kg-card">
+          <div class="kg-card-hd kg2-accent">
+            <span>KG <sub>gold</sub></span>
+            <span class="triplet-count" id="tc2">0 triplets</span>
+          </div>
+          <div class="kg-canvas" id="kg2"></div>
+          <details class="triplet-details">
+            <summary>View triplets</summary>
+            <div class="triplet-scroll">
+              <table class="triplet-table" id="tt2">
+                <thead><tr><th>Subject</th><th>Relation</th><th>Object</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+
+        <div class="kg-card">
+          <div class="kg-card-hd kg3-accent">
+            <span>KG <sub>ctx</sub></span>
+            <span class="triplet-count" id="tc3">0 triplets</span>
+          </div>
+          <div class="kg-canvas" id="kg3"></div>
+          <details class="triplet-details">
+            <summary>View triplets</summary>
+            <div class="triplet-scroll">
+              <table class="triplet-table" id="tt3">
+                <thead><tr><th>Subject</th><th>Relation</th><th>Object</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-accent" id="s3kgBtn">
+          <svg class="btn-icon-svg" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <span class="btn-label">Calculate S3KG Similarity</span>
+          <span class="spinner" hidden></span>
+        </button>
+        <div class="cache-action-btns" id="cacheActionBtns" hidden>
+          <button class="cache-icon-btn" id="saveCacheBtn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V7.414A1 1 0 0016.707 6.707l-3.414-3.414A1 1 0 0012.586 3H4zm6 9a2 2 0 11-4 0 2 2 0 014 0zm-1-6H6v2h3V6z"/></svg>
+          </button>
+          <button class="cache-icon-btn" id="clearCacheBtn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── STEP 3 · Results ─────────────────────────── -->
+    <section class="section" id="resultsSection" hidden>
+      <div class="section-hd">
+        <div class="step-badge">03</div>
+        <div>
+          <h2 class="section-title">S3KG Similarity Results</h2>
+          <p class="section-sub">Scores range from 0 (no similarity) to 1 (identical)</p>
+        </div>
+      </div>
+
+      <div class="results-grid">
+
+        <!-- GoldSim -->
+        <div class="score-card">
+          <p class="score-label kg1-accent">GoldSim</p>
+          <p class="score-eq">S3KG(KG<sub>LLM</sub>,&thinsp;KG<sub>gold</sub>)</p>
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 100 100">
+              <circle class="gauge-bg"   cx="50" cy="50" r="42"/>
+              <circle class="gauge-fill" cx="50" cy="50" r="42" id="gauge-gold"/>
+            </svg>
+            <div class="gauge-inner">
+              <span class="score-value" id="val-gold">—</span>
+              <span class="score-desc">Factual Accuracy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CUS (centre, highlighted) -->
+        <div class="score-card cus-card">
+          <p class="score-label cus-accent">CUS</p>
+          <p class="score-eq">Harmonic mean of GoldSim &amp; CtxSim</p>
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 100 100">
+              <circle class="gauge-bg"   cx="50" cy="50" r="42"/>
+              <circle class="gauge-fill" cx="50" cy="50" r="42" id="gauge-cus"/>
+            </svg>
+            <div class="gauge-inner">
+              <span class="score-value" id="val-cus">—</span>
+              <span class="score-desc">Contextual Understanding</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CtxSim -->
+        <div class="score-card">
+          <p class="score-label kg3-accent">CtxSim</p>
+          <p class="score-eq">S3KG(KG<sub>LLM</sub>,&thinsp;KG<sub>ctx</sub>)</p>
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 100 100">
+              <circle class="gauge-bg"   cx="50" cy="50" r="42"/>
+              <circle class="gauge-fill" cx="50" cy="50" r="42" id="gauge-ctx"/>
+            </svg>
+            <div class="gauge-inner">
+              <span class="score-value" id="val-ctx">—</span>
+              <span class="score-desc">Contextual Faithfulness</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Dynamic interpretation text -->
+      <div class="insight-box" id="insightBox"></div>
+
+      <div class="btn-row" style="margin-top:1.5rem;">
+        <button class="btn-accent" id="kgaBtn">
+          <svg class="btn-icon-svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zm0 6a1 1 0 011-1h6a1 1 0 010 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span class="btn-label">Analyse Triplets with KGAnalytica</span>
+          <span class="spinner" hidden></span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ─────────────── STEP 4 · Knowledge Graph Analytica ────────────────── -->
+    <section class="section" id="kgaSection" hidden>
+      <div class="section-hd">
+        <div class="step-badge">04</div>
+        <div>
+          <h2 class="section-title">Knowledge Graph Analytica</h2>
+          <p class="section-sub">Triplet-level analysis — aligned, entity wrong, relation wrong, extra &amp; missing facts — powered by <strong>KGAnalytica</strong></p>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="kga-tabs">
+        <button class="kga-tab active" data-panel="kgaGoldPanel">
+          <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13">
+            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          vs Gold Answer
+        </button>
+        <button class="kga-tab" data-panel="kgaCtxPanel">
+          <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13">
+            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+          </svg>
+          vs Supporting Context
+        </button>
+      </div>
+
+      <!-- Gold Panel -->
+      <div class="kga-panel" id="kgaGoldPanel">
+        <div class="kga-overall-box" id="kgaOverallGold" hidden></div>
+        <div class="kga-cat-grid" id="kgaCatGridGold"></div>
+      </div>
+
+      <!-- Context Panel -->
+      <div class="kga-panel" id="kgaCtxPanel" hidden>
+        <div class="kga-overall-box" id="kgaOverallCtx" hidden></div>
+        <div class="kga-cat-grid" id="kgaCatGridCtx"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
