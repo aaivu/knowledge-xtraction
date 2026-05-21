@@ -20,10 +20,12 @@ This repository provides tools and scripts for analyzing knowledge graph triplet
 ## Getting Started
 
 ### Prerequisites
+
 - Python 3.7+
 - Recommended: Create a virtual environment
 
 ### Installation
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/aaivu/knowledge-xtraction.git
@@ -35,6 +37,7 @@ This repository provides tools and scripts for analyzing knowledge graph triplet
    ```
 
 ### Usage
+
 - To analyze annotator agreement:
   ```bash
   python agreement_3_annotators.py
@@ -53,10 +56,5 @@ This repository provides tools and scripts for analyzing knowledge graph triplet
   ```
 
 ## Data
-- Place your annotation and result CSV files in the `kg_compare/Results/` directory.
 
-## Contributing
-Contributions are welcome! Please open issues or submit pull requests for improvements or bug fixes.
-
-## License
-This project is licensed under the MIT License.
+- manually annotated ground truth datasets are in the `Annotated datasets` directory.
