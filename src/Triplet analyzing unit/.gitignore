@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Output files
+*.xlsx
+*.csv
+Results/
+
+# Do NOT ignore Excel/CSV files in Annotated datasets
+!Annotated datasets/*.xlsx
+!Annotated datasets/*.csv
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
