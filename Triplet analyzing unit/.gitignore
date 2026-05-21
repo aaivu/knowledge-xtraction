@@ -42,6 +42,10 @@ Thumbs.db
 *.csv
 Results/
 
+# Do NOT ignore Excel/CSV files in Annotated datasets
+!Annotated datasets/*.xlsx
+!Annotated datasets/*.csv
+
 # Pytest
 .pytest_cache/
 .coverage
