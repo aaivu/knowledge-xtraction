@@ -1,7 +1,4 @@
-"""
-RotatE: Rotation-based Knowledge Graph Embedding
-Reference: Sun et al. "RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space" (ICLR 2019)
-"""
+"""RotatE knowledge graph embedding model."""
 
 import numpy as np
 import torch
@@ -12,7 +9,7 @@ class RotatE(nn.Module):
     def __init__(self, num_entities, num_relations, embedding_dim=512, margin=6.0):
         super(RotatE, self).__init__()
         self.embedding_dim = embedding_dim
-        self.entity_embeddings = nn.Embedding(num_entities, embedding_dim * 2)  # real + imaginary
+        self.entity_embeddings = nn.Embedding(num_entities, embedding_dim * 2)
         self.relation_embeddings = nn.Embedding(num_relations, embedding_dim)
         self.margin = margin
 
@@ -31,7 +28,6 @@ class RotatE(nn.Module):
         r_re = torch.cos(r)
         r_im = torch.sin(r)
 
-        # Complex multiplication: h * r
         hr_re = h_re * r_re - h_im * r_im
         hr_im = h_re * r_im + h_im * r_re
 

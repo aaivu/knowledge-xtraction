@@ -1,23 +1,4 @@
-#!/usr/bin/env python3
-"""
-GNN-based KG Similarity (Option A — GraphCheck-inspired)
-
-Adapts GraphCheck's GNN graph encoding approach for unsupervised KG
-similarity scoring. No pre-trained weights or LLM required.
-
-Pipeline:
-1. Parse KG triples into a PyG Data object
-   - Nodes  = unique entities (subject / object)
-   - Edges  = directed triple edges (subject → object)
-   - Node features (x) = SBERT embeddings of entity labels
-2. Propagate through a 2-layer GAT
-   - Each node accumulates neighbourhood context via attention
-   - Captures both semantic content (SBERT) and local structure (GAT)
-3. Mean-pool node embeddings → single graph-level vector per KG
-4. Cosine similarity between the two graph vectors → score in [0, 1]
-
-Reference: GraphCheck (ACL 2025) — graph_build.py + model/gnn.py
-"""
+"""GNN-based KG similarity with SBERT node features."""
 
 import torch
 import torch.nn as nn
@@ -25,25 +6,15 @@ import torch.nn.functional as F
 from torch_geometric.data import Data
 from torch_geometric.nn import GATConv
 from sentence_transformers import SentenceTransformer
-
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
-
-SBERT_MODEL_NAME = "paraphrase-MPNet-base-v2"  # 768-D, consistent with KEA/AA-KEA
+SBERT_MODEL_NAME = "paraphrase-MPNet-base-v2"
 EMBED_DIM = 768
 GNN_HIDDEN_DIM = 256
 GNN_NUM_LAYERS = 2
 GNN_NUM_HEADS = 4
-GNN_DROPOUT = 0.0          # no dropout at inference
-GNN_RANDOM_SEED = 42       # fixed seed so the encoder is reproducible
+GNN_DROPOUT = 0.0
+GNN_RANDOM_SEED = 42
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# ---------------------------------------------------------------------------
-# Lazy-loaded singletons (avoids reloading on every call)
-# ---------------------------------------------------------------------------
-
 _sbert_model: SentenceTransformer | None = None
 _gnn_encoder: "KGEncoder | None" = None
 
@@ -68,12 +39,6 @@ def _get_encoder() -> "KGEncoder":
         ).to(DEVICE)
         _gnn_encoder.eval()
     return _gnn_encoder
-
-
-# ---------------------------------------------------------------------------
-# GNN encoder (lightweight 2-layer GAT, same family as GraphCheck's gnn.py)
-# ---------------------------------------------------------------------------
-
 class KGEncoder(nn.Module):
     """
     2-layer Graph Attention Network that converts per-node SBERT embeddings
@@ -116,12 +81,6 @@ class KGEncoder(nn.Module):
         x = F.dropout(x, p=self.dropout, training=self.training)
         x = self.conv2(x, edge_index)
         return x
-
-
-# ---------------------------------------------------------------------------
-# KG → PyG Data conversion  (adapted from GraphCheck's textualize_graph)
-# ---------------------------------------------------------------------------
-
 def _triples_to_pyg(triples: list, sbert: SentenceTransformer) -> Data | None:
     """
     Convert a list of (subject, predicate, object) triples into a PyG Data
@@ -158,17 +117,16 @@ def _triples_to_pyg(triples: list, sbert: SentenceTransformer) -> Data | None:
 
     node_labels = list(nodes.keys())
 
-    # Encode node labels with SBERT
     x = sbert.encode(
         node_labels, convert_to_tensor=True, device=DEVICE, show_progress_bar=False
-    ).float()  # [N, 768]
+    ).float()
 
     if edges_src:
         edge_index = torch.tensor([edges_src, edges_dst],
                                   dtype=torch.long, device=DEVICE)
         edge_attr = sbert.encode(
             edge_labels, convert_to_tensor=True, device=DEVICE, show_progress_bar=False
-        ).float()  # [E, 768]
+        ).float()
     else:
         edge_index = torch.zeros((2, 0), dtype=torch.long, device=DEVICE)
         edge_attr  = torch.zeros((0, EMBED_DIM), dtype=torch.float, device=DEVICE)
@@ -179,12 +137,6 @@ def _triples_to_pyg(triples: list, sbert: SentenceTransformer) -> Data | None:
         edge_attr=edge_attr,
         num_nodes=len(nodes),
     )
-
-
-# ---------------------------------------------------------------------------
-# Graph-level encoding
-# ---------------------------------------------------------------------------
-
 def _encode_kg(
     triples: list,
     encoder: KGEncoder,
@@ -201,21 +153,14 @@ def _encode_kg(
     if data is None:
         return None, True
 
-    # Single-node graphs: skip GNN (no edges to aggregate)
     if data.num_nodes == 1:
         return data.x.squeeze(0), True
 
     with torch.no_grad():
-        node_embs = encoder(data.x, data.edge_index)  # [N, GNN_HIDDEN_DIM]
-        graph_emb = node_embs.mean(dim=0)              # [GNN_HIDDEN_DIM]
+        node_embs = encoder(data.x, data.edge_index)
+        graph_emb = node_embs.mean(dim=0)
 
     return graph_emb, False
-
-
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
-
 def calculate_gnn_similarity(
     kg1_triples: list,
     kg2_triples: list,
@@ -265,13 +210,11 @@ def calculate_gnn_similarity_with_info(
     if emb1 is None or emb2 is None:
         return 0.0, {"error": "could not encode one or both KGs"}
 
-    # Cosine similarity ∈ [-1, 1]  →  clip to [0, 1]
     e1 = F.normalize(emb1.unsqueeze(0), p=2, dim=1)
     e2 = F.normalize(emb2.unsqueeze(0), p=2, dim=1)
     cosine_raw = torch.mm(e1, e2.t()).item()
     similarity = float(np.clip(cosine_raw, 0.0, 1.0))
 
-    # Build PyG Data again just to count nodes/edges for debug info
     d1 = _triples_to_pyg(kg1_triples, sbert)
     d2 = _triples_to_pyg(kg2_triples, sbert)
 
@@ -287,30 +230,24 @@ def calculate_gnn_similarity_with_info(
     }
 
     return float(similarity), debug_info
-
-
-# ---------------------------------------------------------------------------
-# Quick smoke-test
-# ---------------------------------------------------------------------------
-
 if __name__ == "__main__":
     print("=" * 60)
     print("GNN Similarity — smoke test")
     print("=" * 60)
 
     kg1 = [
-        ["Marie Curie", "discovered", "Radium"],
-        ["Marie Curie", "won", "Nobel Prize in Physics"],
-        ["Marie Curie", "won", "Nobel Prize in Chemistry"],
+        ["Entity A", "discovered", "Concept A"],
+        ["Entity A", "received", "Award A"],
+        ["Entity A", "received", "Award B"],
     ]
     kg2 = [
-        ["Marie Curie", "found", "Radium"],
-        ["Marie Curie", "received", "Nobel Prize in Physics"],
-        ["Marie Curie", "was awarded", "Nobel Prize in Chemistry"],
+        ["Entity A", "found", "Concept A"],
+        ["Entity A", "won", "Award A"],
+        ["Entity A", "was awarded", "Award B"],
     ]
     kg3 = [
-        ["Albert Einstein", "developed", "Theory of Relativity"],
-        ["Albert Einstein", "won", "Nobel Prize in Physics"],
+        ["Entity B", "developed", "Concept B"],
+        ["Entity B", "received", "Award C"],
     ]
 
     sim, info = calculate_gnn_similarity_with_info(kg1, kg2)

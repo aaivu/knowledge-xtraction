@@ -41,43 +41,88 @@ See [Graph Construction README](./graph-construction/README.md) for:
 
 ---
 
-### Step 2: Evaluate Graph Similarity
+### 2. Graph Similarity Benchmarking
 
-Analyze and compare knowledge graphs using various similarity metrics.
+**Folder:** `KGX-Graph-Similarity/`
 
-See [KGX-Graph-Similarity README](./KGX-Graph-Similarity/README.md) for evaluation methods.
+**Input:** Benchmark CSVs in `KGX-Graph-Similarity/S3KG_Benchmarking/Data/` with `kg_1` and `kg_2` columns.
 
----
+**What it does:** Scores each KG pair with graph similarity methods, including S3KG across alpha settings, WL kernel, KEA variants, TransE, RotatE, and semantic WL.
 
-### Step 3: Analyze Triplets
-
-Perform triplet-level analysis and comparison of extracted knowledge graphs.
-
-See [Triplet Analyzing Unit README](./Triplet%20analyzing%20unit/README.md) for:
-- Triplet classification (aligned, entity_different, relation_different)
-- Comparison methods (standard and KEA-style scoring)
-- Agreement analysis across annotators
-- Excel-based output for detailed examination
+**Output:** Result CSVs in `KGX-Graph-Similarity/S3KG_Benchmarking/Results_All_Methods_KGSim/` with one score column per method.
 
 ```bash
-cd "triplet-analyzing-unit"
+python KGX-Graph-Similarity/s3kg_benchmarking_scores.py
+```
 
-# Standard triplet analysis
+### 3. LLM KG Similarity Scoring
+
+**Folder:** `KGX-Graph-Similarity/`
+
+**Input:** LLM QA KG CSVs in `KGX-Graph-Similarity/LLM_Evaluation/KGs_With_Temps/`. Files are grouped by temperature and contain `kg_gold`, `kg_llm`, and `kg_context`.
+
+**What it does:** Compares the LLM answer KG against the gold answer KG and the supporting context KG using S3KG with alpha `0.5`.
+
+**Output:** Scored CSVs in `KGX-Graph-Similarity/LLM_Evaluation/Results_KGs_With_Temps/` with `s3kg_gold_llm` and `s3kg_ctx_llm`.
+
+```bash
+python KGX-Graph-Similarity/llm_evalution_score_s3kg_temps.py
+```
+
+### 4. LLM Score Analysis
+
+**Folder:** `KGX-Graph-Similarity/`
+
+**Input:** Scored LLM KG CSVs from `KGX-Graph-Similarity/LLM_Evaluation/Results_KGs_With_Temps/`.
+
+**What it does:** Computes mean GoldSim, CtxSim, and CUS scores by dataset, model, and temperature. It also creates paper-ready table CSV/LaTeX files and plots.
+
+**Output:** Analysis files in `KGX-Graph-Similarity/LLM_Evaluation/Results_KGs_With_Temps/Analysis_plot_temps/`.
+
+```bash
+python KGX-Graph-Similarity/llm_mean_score_analysis.py
+```
+
+### 5. Bottom 5% Filtering for Triplet Analysis
+
+**Folder:** `KGX-Graph-Similarity/Filtered_5%_rows_for_TAU/`
+
+**Input:** `*_scored.csv` files with `gold_similarity` and `context_similarity` columns.
+
+**What it does:** Finds the bottom 5% cutoff separately for gold similarity and context similarity. It exports low-gold rows, low-context rows, and a filtered set where both scores are above the 5th percentile.
+
+**Output:** `low_gold/`, `low_context/`, and `filtered/`.
+
+```bash
+cd KGX-Graph-Similarity/Filtered_5%_rows_for_TAU
+python filter_low_scores.py
+```
+
+### 6. Triplet Analysis
+
+**Folder:** `Triplet analyzing unit/`
+
+**Input:** Annotated triplet files or filtered low-score cases.
+
+**What it does:** Performs triplet-level comparison, including aligned triplets, entity differences, relation differences, and annotator agreement.
+
+**Output:** Excel/CSV files for detailed triplet-level review.
+
+```bash
+cd "Triplet analyzing unit"
 python run_triplet_analysis.py
-
-# KEA-style (head/relation/tail) scoring
 python run_triplet_analysis_kea.py
 ```
 
----
+### 7. Evaluation
 
-### Step 4: Run Evaluations
+**Folder:** `evaluation/`
 
-Execute evaluation pipelines on datasets.
+**Input:** Benchmark datasets and precomputed similarity result CSVs.
 
-See [Evaluation README](./evaluation/README.md) for benchmark and evaluation details.
+**What it does:** Runs dataset-level evaluation, ranked faithfulness evaluation, and cross-dataset comparisons.
 
----
+**Output:** Evaluation CSVs and plots under the evaluation output folders.
 
 ## Installation
 

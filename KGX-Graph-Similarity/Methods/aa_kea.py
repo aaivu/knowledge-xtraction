@@ -1,21 +1,4 @@
-#!/usr/bin/env python3
-"""
-Attention-Augmented KEA (AA-KEA)
-
-Replaces semantic clustering in KEA with GAP-style attention alignment.
-This eliminates dependency on clustering thresholds while retaining
-semantic sensitivity through mutual attention over graph neighborhoods.
-
-Pipeline:
-1. Semantic Triple Matching (from KEA) - SBERT-based triple selection
-2. Attention-Based Node Alignment (from GAP) - replaces clustering
-3. WL Kernel Comparison (from KEA) - structural similarity
-
-Shared utilities (SBERT embeddings, graph building, soft label mapping,
-WL kernel helpers) are imported from SNEA.py.
-
-Author: Research Implementation
-"""
+"""Attention-augmented KEA graph similarity."""
 
 import networkx as nx
 import numpy as np
@@ -47,12 +30,10 @@ class AttentionAligner(nn.Module):
         self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
 
-        # Projection layers for query/key/value
         self.query_proj = nn.Linear(embedding_dim, hidden_dim)
         self.key_proj = nn.Linear(embedding_dim, hidden_dim)
         self.value_proj = nn.Linear(embedding_dim, hidden_dim)
 
-        # Output projection to get aligned representation
         self.output_proj = nn.Linear(hidden_dim, hidden_dim)
 
         self._init_weights()
@@ -84,17 +65,17 @@ class AttentionAligner(nn.Module):
         V_t = self.value_proj(target_emb)
 
         scale = np.sqrt(self.hidden_dim)
-        attention_st = torch.matmul(Q_s, K_t.transpose(0, 1)) / scale  # [n_source, n_target]
+        attention_st = torch.matmul(Q_s, K_t.transpose(0, 1)) / scale
         attention_st = F.softmax(attention_st, dim=1)
 
-        attention_ts = torch.matmul(Q_t, K_s.transpose(0, 1)) / scale  # [n_target, n_source]
+        attention_ts = torch.matmul(Q_t, K_s.transpose(0, 1)) / scale
         attention_ts = F.softmax(attention_ts, dim=1)
 
         context_s = torch.matmul(attention_st, V_t)
-        aligned_source = self.output_proj(context_s + V_s)  # Residual connection
+        aligned_source = self.output_proj(context_s + V_s)
 
         context_t = torch.matmul(attention_ts, V_s)
-        aligned_target = self.output_proj(context_t + V_t)  # Residual connection
+        aligned_target = self.output_proj(context_t + V_t)
 
         return aligned_source, aligned_target, attention_st
 
@@ -145,12 +126,6 @@ def calculate_attention_augmented_similarity(kg1_triples, kg2_triples, use_neura
     """
     Calculate similarity using Attention-Augmented KEA.
 
-    Pipeline:
-    1. Filter valid triples
-    2. Semantic triple matching (from KEA)
-    3. Attention-based label alignment (replaces clustering)
-    4. WL kernel comparison
-
     Args:
         kg1_triples: List of [subject, predicate, object] triples (claim KG)
         kg2_triples: List of [subject, predicate, object] triples (ground-truth KG)
@@ -165,14 +140,11 @@ def calculate_attention_augmented_similarity(kg1_triples, kg2_triples, use_neura
 
     if not kg1_triples or not kg2_triples:
         return 0.0, {'error': 'Empty triples'}
-
-    # Step 1: Semantic Triple Matching (from KEA)
     filtered_kg2_triples = match_and_filter_triples(kg1_triples, kg2_triples)
 
     if not filtered_kg2_triples:
         return 0.0, {'error': 'No matching triples found'}
 
-    # Create NetworkX graphs
     kg1_graph = create_networkx_graph(kg1_triples)
     kg2_graph = create_networkx_graph(filtered_kg2_triples)
 
@@ -180,9 +152,6 @@ def calculate_attention_augmented_similarity(kg1_triples, kg2_triples, use_neura
     kg2_node_labels = set(nx.get_node_attributes(kg2_graph, 'label').values())
     kg1_edge_labels = set(nx.get_edge_attributes(kg1_graph, 'relation').values())
     kg2_edge_labels = set(nx.get_edge_attributes(kg2_graph, 'relation').values())
-
-    # Step 2: Attention-Based Label Alignment
-    # Entities and relations are aligned separately to avoid cross-type mismatches
     if use_neural_attention:
         aligner = AttentionAligner(embedding_dim=768, hidden_dim=256)
 
@@ -195,7 +164,6 @@ def calculate_attention_augmented_similarity(kg1_triples, kg2_triples, use_neura
         ) if kg1_edge_labels and kg2_edge_labels else ({}, {})
 
     else:
-        # Softmax-based similarity (no learned parameters) — same base logic as SNEA
         entity_mapping_g1, entity_mapping_g2 = compute_soft_label_mapping(
             kg1_node_labels, kg2_node_labels, prefix="node"
         ) if kg1_node_labels and kg2_node_labels else ({}, {})
@@ -206,8 +174,6 @@ def calculate_attention_augmented_similarity(kg1_triples, kg2_triples, use_neura
 
     label_mapping_g1 = {**entity_mapping_g1, **relation_mapping_g1}
     label_mapping_g2 = {**entity_mapping_g2, **relation_mapping_g2}
-
-    # Step 3: Relabel graphs with attention-derived labels
     relabeled_kg1 = relabel_graph_with_mapping(kg1_graph, label_mapping_g1)
     relabeled_kg2 = relabel_graph_with_mapping(kg2_graph, label_mapping_g2)
 
@@ -216,8 +182,6 @@ def calculate_attention_augmented_similarity(kg1_triples, kg2_triples, use_neura
 
     if kg1_grakel is None or kg2_grakel is None:
         return 0.0, {'error': 'Failed to create GraKel graphs'}
-
-    # Step 4: WL Kernel Comparison
     try:
         wl_kernel = WeisfeilerLehman(n_iter=5, normalize=True)
         kernel_matrix = wl_kernel.fit_transform([kg1_grakel, kg2_grakel])
@@ -253,14 +217,14 @@ if __name__ == "__main__":
     print("=" * 60)
 
     kg1 = [
-        ['Marie Curie', 'discovered', 'Radium'],
-        ['Marie Curie', 'won', 'Nobel Prize in Physics'],
-        ['Marie Curie', 'won', 'Nobel Prize in Chemistry'],
+        ['Entity A', 'discovered', 'Concept A'],
+        ['Entity A', 'received', 'Award A'],
+        ['Entity A', 'received', 'Award B'],
     ]
     kg2 = [
-        ['Marie Curie', 'found', 'Radium'],
-        ['Marie Curie', 'received', 'Nobel Prize in Physics'],
-        ['Marie Curie', 'was awarded', 'Nobel Prize in Chemistry'],
+        ['Entity A', 'found', 'Concept A'],
+        ['Entity A', 'won', 'Award A'],
+        ['Entity A', 'was awarded', 'Award B'],
     ]
 
     print("\nTest 1: Similar graphs with different wording")
@@ -269,8 +233,8 @@ if __name__ == "__main__":
     print(f"Debug: {info1}")
 
     kg3 = [
-        ['Albert Einstein', 'developed', 'Theory of Relativity'],
-        ['Albert Einstein', 'won', 'Nobel Prize in Physics'],
+        ['Entity B', 'developed', 'Concept B'],
+        ['Entity B', 'received', 'Award C'],
     ]
     print("\nTest 2: Different graphs")
     sim2, info2 = calculate_attention_augmented_similarity(kg1, kg3)

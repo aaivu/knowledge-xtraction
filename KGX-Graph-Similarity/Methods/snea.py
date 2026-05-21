@@ -1,19 +1,4 @@
-#!/usr/bin/env python3
-"""
-SNEA - Semantic Node Edge Aligned Similarity
-
-Performs entity/relationship-separated Knowledge Graph similarity using:
-1. Semantic Triple Matching (SBERT-based triple selection, from KEA)
-2. Soft Label Alignment - entities and relations aligned separately
-   via cosine similarity with threshold=0.65
-3. WL Kernel Comparison on relabelled graphs
-
-The key design is treating node labels (entities) and edge labels (relations)
-as separate alignment problems, preventing cross-type label collisions.
-This file also provides shared utilities used by aa_kea.py.
-
-Author: Research Implementation
-"""
+"""SNEA similarity with separate entity and relation alignment."""
 
 import networkx as nx
 import numpy as np
@@ -26,7 +11,6 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 sbert_model = SentenceTransformer('paraphrase-MPNet-base-v2', device=DEVICE)
 
 
-# ── shared utilities ───────────────────────────────────────────────────────────
 
 def get_sbert_embedding(label):
     """Get SBERT embedding for a label."""
@@ -99,7 +83,7 @@ def compute_soft_label_mapping(graph1_labels, graph2_labels, similarity_threshol
 
     emb1_norm = emb1 / (np.linalg.norm(emb1, axis=1, keepdims=True) + 1e-8)
     emb2_norm = emb2 / (np.linalg.norm(emb2, axis=1, keepdims=True) + 1e-8)
-    similarity_matrix = np.dot(emb1_norm, emb2_norm.T)  # [n1, n2]
+    similarity_matrix = np.dot(emb1_norm, emb2_norm.T)
 
     label_mapping_g1 = {}
     label_mapping_g2 = {}
@@ -163,18 +147,10 @@ def convert_to_grakel_graph(nx_graph):
     return Graph(edges, node_labels=node_labels, edge_labels=edge_labels)
 
 
-# ── SNEA method ────────────────────────────────────────────────────────────────
 
 def calculate_snea_similarity(kg1_triples, kg2_triples):
     """
     Calculate graph similarity using Semantic Node Edge Aligned (SNEA) method.
-
-    Pipeline:
-    1. Filter valid triples
-    2. Semantic triple matching (SBERT-based, from KEA)
-    3. Soft label alignment — entities (nodes) and relations (edges) aligned
-       separately using cosine similarity with threshold=0.65
-    4. WL Kernel comparison on relabelled graphs
 
     Args:
         kg1_triples: List of [subject, predicate, object] triples
@@ -189,14 +165,11 @@ def calculate_snea_similarity(kg1_triples, kg2_triples):
 
     if not kg1_triples or not kg2_triples:
         return 0.0, {'error': 'Empty triples'}
-
-    # Step 1: Semantic Triple Matching
     filtered_kg2_triples = match_and_filter_triples(kg1_triples, kg2_triples)
 
     if not filtered_kg2_triples:
         return 0.0, {'error': 'No matching triples found'}
 
-    # Build NetworkX graphs
     kg1_graph = create_networkx_graph(kg1_triples)
     kg2_graph = create_networkx_graph(filtered_kg2_triples)
 
@@ -204,8 +177,6 @@ def calculate_snea_similarity(kg1_triples, kg2_triples):
     kg2_node_labels = set(nx.get_node_attributes(kg2_graph, 'label').values())
     kg1_edge_labels = set(nx.get_edge_attributes(kg1_graph, 'relation').values())
     kg2_edge_labels = set(nx.get_edge_attributes(kg2_graph, 'relation').values())
-
-    # Step 2: Separate alignment for entities and relations
     entity_mapping_g1, entity_mapping_g2 = compute_soft_label_mapping(
         kg1_node_labels, kg2_node_labels, prefix="node"
     ) if kg1_node_labels and kg2_node_labels else ({}, {})
@@ -216,8 +187,6 @@ def calculate_snea_similarity(kg1_triples, kg2_triples):
 
     label_mapping_g1 = {**entity_mapping_g1, **relation_mapping_g1}
     label_mapping_g2 = {**entity_mapping_g2, **relation_mapping_g2}
-
-    # Step 3: Relabel graphs
     relabeled_kg1 = relabel_graph_with_mapping(kg1_graph, label_mapping_g1)
     relabeled_kg2 = relabel_graph_with_mapping(kg2_graph, label_mapping_g2)
 
@@ -226,8 +195,6 @@ def calculate_snea_similarity(kg1_triples, kg2_triples):
 
     if kg1_grakel is None or kg2_grakel is None:
         return 0.0, {'error': 'Failed to create GraKel graphs'}
-
-    # Step 4: WL Kernel Comparison
     try:
         wl_kernel = WeisfeilerLehman(n_iter=5, normalize=True)
         kernel_matrix = wl_kernel.fit_transform([kg1_grakel, kg2_grakel])
@@ -260,14 +227,14 @@ if __name__ == "__main__":
     print("=" * 60)
 
     kg1 = [
-        ['Marie Curie', 'discovered', 'Radium'],
-        ['Marie Curie', 'won', 'Nobel Prize in Physics'],
-        ['Marie Curie', 'won', 'Nobel Prize in Chemistry'],
+        ['Entity A', 'discovered', 'Concept A'],
+        ['Entity A', 'received', 'Award A'],
+        ['Entity A', 'received', 'Award B'],
     ]
     kg2 = [
-        ['Marie Curie', 'found', 'Radium'],
-        ['Marie Curie', 'received', 'Nobel Prize in Physics'],
-        ['Marie Curie', 'was awarded', 'Nobel Prize in Chemistry'],
+        ['Entity A', 'found', 'Concept A'],
+        ['Entity A', 'won', 'Award A'],
+        ['Entity A', 'was awarded', 'Award B'],
     ]
 
     print("\nTest 1: Similar graphs with different wording")
@@ -276,8 +243,8 @@ if __name__ == "__main__":
     print(f"Debug: {info1}")
 
     kg3 = [
-        ['Albert Einstein', 'developed', 'Theory of Relativity'],
-        ['Albert Einstein', 'won', 'Nobel Prize in Physics'],
+        ['Entity B', 'developed', 'Concept B'],
+        ['Entity B', 'received', 'Award C'],
     ]
     print("\nTest 2: Different graphs")
     sim2, info2 = calculate_snea_similarity(kg1, kg3)

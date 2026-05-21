@@ -1,7 +1,4 @@
-"""
-Graph Embedding Similarity Calculator
-Provides unified interface for TransE and RotatE similarity calculation
-"""
+"""Graph embedding similarity utilities for TransE and RotatE."""
 
 import numpy as np
 import torch
@@ -61,7 +58,6 @@ class GraphEmbeddingSimilarity:
 
                 pos_score = model(heads, relations, tails)
 
-                # Negative sampling
                 neg_h = np.random.randint(0, len(self.entity2id))
                 neg_t = np.random.randint(0, len(self.entity2id))
 

@@ -1,12 +1,13 @@
-# Virtual Environment
+# Virtual environments
 venv/
-venv
+.venv/
 .venv-spacy
 
-# Old files directory
+# Local scratch/archive folders
 old_files/
+papers/
 
-# Python 
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -27,7 +28,6 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-papers
 
 # IDEs
 .vscode/

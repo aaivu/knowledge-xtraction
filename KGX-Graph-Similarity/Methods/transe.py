@@ -1,7 +1,4 @@
-"""
-TransE: Translation-based Knowledge Graph Embedding
-Reference: Bordes et al. "Translating Embeddings for Modeling Multi-relational Data" (NIPS 2013)
-"""
+"""TransE knowledge graph embedding model."""
 
 import torch
 import torch.nn as nn

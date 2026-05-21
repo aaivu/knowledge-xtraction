@@ -1,0 +1,21 @@
+\begin{table}[t]
+    \centering
+    \caption{Mean ContextSim per model across temperatures.}
+    \label{tab:temp_ctx}
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{l l l l l l}
+        \toprule
+        \textbf{Dataset} & \textbf{Model} & \textbf{T = 0.0} & \textbf{T = 0.3} & \textbf{T = 0.7} & \textbf{T = 1.0} \\
+        \midrule
+        MesaQA & Llama-2-7B & 0.7236 & 0.7212 & 0.7248 & 0.7026 \\
+        MesaQA & Gemma-7B & 0.7031 & 0.7217 & 0.7045 & 0.7013 \\
+        MesaQA & Mistral-7B & 0.7356 & 0.7585 & 0.7287 & 0.7223 \\
+        MesaQA & Falcon-7B & 0.6458 & 0.6571 & 0.6122 & 0.5195 \\
+        PubMedQA & Llama-2-7B & 0.6567 & 0.6563 & 0.6594 & 0.6468 \\
+        PubMedQA & Gemma-7B & 0.6401 & 0.6540 & 0.6434 & 0.6319 \\
+        PubMedQA & Mistral-7B & 0.7331 & 0.7352 & 0.7314 & 0.7003 \\
+        PubMedQA & Falcon-7B & 0.5560 & 0.5165 & 0.5120 & 0.4571 \\
+        \bottomrule
+    \end{tabular}%
+    }
+\end{table}

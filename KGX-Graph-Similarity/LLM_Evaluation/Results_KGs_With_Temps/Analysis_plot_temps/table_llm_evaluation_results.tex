@@ -1,0 +1,21 @@
+\begin{table}[t]
+    \centering
+    \caption{LLM evaluation results.}
+    \label{tab:llm}
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{l l l l l}
+        \toprule
+        \textbf{Dataset} & \textbf{Model} & \textbf{GoldSim} & \textbf{CtxSim} & \textbf{CUS} \\
+        \midrule
+        MesaQA & Llama-2-7B & 0.6570 & 0.7236 & 0.6752 \\
+        MesaQA & Gemma-7B & 0.6889 & 0.7031 & 0.6774 \\
+        MesaQA & Mistral-7B & 0.6491 & 0.7356 & 0.6780 \\
+        MesaQA & Falcon-7B & 0.6036 & 0.6458 & 0.6063 \\
+        PubMedQA & Llama-2-7B & 0.5220 & 0.6567 & 0.5651 \\
+        PubMedQA & Gemma-7B & 0.5235 & 0.6401 & 0.5587 \\
+        PubMedQA & Mistral-7B & 0.5138 & 0.7331 & 0.5923 \\
+        PubMedQA & Falcon-7B & 0.4541 & 0.5560 & 0.4800 \\
+        \bottomrule
+    \end{tabular}%
+    }
+\end{table}

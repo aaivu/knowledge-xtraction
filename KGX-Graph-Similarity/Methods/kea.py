@@ -59,14 +59,7 @@ def create_networkx_graph(triple_list):
         G.nodes[obj.lower()]['label'] = obj.lower()
     return G
 
-# def relabel_graph(nx_graph, label_clusters):
-#     for node, data in nx_graph.nodes(data=True):
-#         original_label = data['label']
-#         nx_graph.nodes[node]['label'] = label_clusters[original_label]
 
-#     for u, v, data in nx_graph.edges(data=True):
-#         original_label = data['relation']
-#         nx_graph.edges[u, v]['relation'] = label_clusters[original_label]
 
 def relabel_graph(nx_graph, label_clusters):
     new_graph = nx.Graph()
@@ -159,7 +152,6 @@ def calculate_kea_similarity(kg1_triples, kg2_triples):
                 set(nx.get_edge_attributes(kg2_graph, 'relation').values())
 
     label_clusters = cluster_data(all_labels)
-    #print(f"Label clusters: {label_clusters}")
 
 
     relabelled_kg1 = relabel_graph(kg1_graph, label_clusters)
@@ -188,9 +180,9 @@ def extract_all_labels(triples):
     labels = set()
     for triple in triples:
         if len(triple) == 3:
-            labels.add(triple[0].lower())  # subject
-            labels.add(triple[1].lower())  # predicate
-            labels.add(triple[2].lower())  # object
+            labels.add(triple[0].lower())
+            labels.add(triple[1].lower())
+            labels.add(triple[2].lower())
     return list(labels)
 
 
@@ -208,38 +200,30 @@ def calculate_gaussian_feature_similarity(kg1_triples, kg2_triples, sigma=1.0):
     Returns:
         float: Similarity score (0-1)
     """
-    # Filter valid triples
     kg1_triples = [sublist for sublist in kg1_triples if len(sublist) == 3]
     kg2_triples = [sublist for sublist in kg2_triples if len(sublist) == 3]
 
     if len(kg1_triples) == 0 or len(kg2_triples) == 0:
         return 0.0
 
-    # Extract all labels
     labels1 = extract_all_labels(kg1_triples)
     labels2 = extract_all_labels(kg2_triples)
 
     if not labels1 or not labels2:
         return 0.0
 
-    # Get SBERT embeddings
     embeddings1 = np.array([get_sbert_embedding(label) for label in labels1])
     embeddings2 = np.array([get_sbert_embedding(label) for label in labels2])
 
-    # Compute pairwise Gaussian kernel
-    # For each label in graph1, find best match in graph2
     similarities = []
     for emb1 in embeddings1:
         max_sim = 0
         for emb2 in embeddings2:
-            # Euclidean distance
             dist = np.linalg.norm(emb1 - emb2)
-            # Gaussian kernel
             sim = np.exp(-dist**2 / (2 * sigma**2))
             max_sim = max(max_sim, sim)
         similarities.append(max_sim)
 
-    # Average of best matches
     return float(np.mean(similarities))
 
 
@@ -264,13 +248,10 @@ def calculate_kea_composite_similarity(kg1_triples, kg2_triples, alpha=0.6, sigm
             'semantic': Gaussian kernel score
         }
     """
-    # Structural similarity (existing KEA with WL kernel)
     structural_sim, _, _ = calculate_kea_similarity(kg1_triples, kg2_triples)
 
-    # Semantic similarity (new Gaussian kernel)
     semantic_sim = calculate_gaussian_feature_similarity(kg1_triples, kg2_triples, sigma)
 
-    # Composite
     composite_sim = alpha * structural_sim + (1 - alpha) * semantic_sim
 
     return {
@@ -278,59 +259,3 @@ def calculate_kea_composite_similarity(kg1_triples, kg2_triples, alpha=0.6, sigm
         'structural': float(structural_sim),
         'semantic': float(semantic_sim)
     }
-
-
-# kg1_triples = [['Russian fighter jet', 'intercepted', 'U.S. reconnaissance plane'], ['Pentagon', 'says', 'incident occurred in international airspace north of Poland'], ['Russian jet', 'flew within', '100 feet of RC-135U'], ['RC-135U', 'was intercepted by', 'Russian SU-27 Flanker'], ['United States', 'is complaining about', 'incident']]
-
-# kg2_triples = [['Russian fighter jet', 'intercepted', 'U.S. reconnaissance plane'], ['United States', 'is complaining to', 'Moscow about the incident'], ['U.S. RC-135U', 'was flying over', 'Baltic Sea'], ['U.S. RC-135U', 'was intercepted by', 'Russian SU-27 Flanker'], ['Pentagon', 'said', 'incident occurred in international airspace north of Poland'], ['U.S. crew', 'believed', "Russian pilot's actions were unsafe and unprofessional"], ['Russian jet', 'flew around', 'U.S. plane several times'], ['Pentagon', 'will file', 'appropriate petition through diplomatic channels with Russia'], ['U.S. has complained about', 'incident involving', 'RC-135U and SU-27'], ['Russian jet', 'flew within', '100 feet of RC-135U over Sea of Okhotsk']]
-# print(calculate_similarity(kg1_triples, kg2_triples))
-
-# kg2_triples = [['Donald Sterling', 'nationality', 'American'], ['Donald Sterling', 'occupation', 'Businessman'], ['Donald Sterling', 'spouse', 'Rochelle Sterling'], ['Donald Sterling', 'former companion', 'V. Stiviano'], ['Donald Sterling', 'owned', 'Los Angeles Clippers'], ['V. Stiviano', 'received gifts from', 'Donald Sterling'], ['V. Stiviano', 'ordered to pay back', '$2.6 million'], ['Rochelle Sterling', 'sued', 'V. Stiviano'], ['Rochelle Sterling', 'accused', 'V. Stiviano of targeting wealthy older men'], ['Magic Johnson', 'associated with', 'V. Stiviano'], ['Magic Johnson', 'mentioned in', "Donald Sterling's racist remarks"], ['Adam Silver', 'banned', 'Donald Sterling from the NBA'], ['Adam Silver', 'fined', 'Donald Sterling $2.5 million'], ['Los Angeles Clippers', 'formerly owned by', 'Donald Sterling'], ['Los Angeles Clippers', 'games', 'attended by Magic Johnson'], ['Ferrari', 'owned by', 'V. Stiviano'], ['Bentleys', 'owned by', 'V. Stiviano'], ['Range Rover', 'owned by', 'V. Stiviano'], ['$1.8 million duplex', 'owned by', 'V. Stiviano'], ['$391 Easter bunny costume', 'owned by', 'V. Stiviano'], ['$299 two-speed blender', 'owned by', 'V. Stiviano'], ['$12 lace thong', 'owned by', 'V. Stiviano'], ['Donald Sterling', 'made fortune in', 'real estate'], ['Donald Sterling', 'recorded making racist remarks', 'audio recording'], ['Donald Sterling', 'downfall', 'after audio recording surfaced'], ['V. Stiviano', 'countered', 'that she never took advantage of Donald Sterling'], ['Shelly Sterling', 'thrilled with court decision', 'Tuesday'], ["Pierce O'Donnell", 'represented', 'Shelly Sterling'], ['KABC', 'reported on', 'court decision'], ['TMZ', 
-# 'first posted', "audio recording of Donald Sterling's racist remarks"], ['Los Angeles Times', 'reported on', "V. Stiviano's gifts from Donald Sterling"], ['Dottie Evans', 'contributed to', 'CNN report'], ['CNN', 'reported on', "Donald Sterling's racist remarks and court decision"]]
-# kg1_triples = [['Donald Sterling', 'nationality', 'American'], ['Donald Sterling', 'occupation', 'Businessman'], ['Donald Sterling', 'spouse', 'Rochelle Sterling'], ['Donald Sterling', 'former companion', 'V. Stiviano'], ['Donald Sterling', 'owned', 'Los Angeles Clippers'], ['V. Stiviano', 'received gifts from', 'Donald Sterling'], ['V. Stiviano', 'ordered to pay back', '$2.6 million'], ['Rochelle Sterling', 'sued', 'V. Stiviano'], ['Rochelle Sterling', 'accused', 'V. Stiviano of targeting wealthy older men'], ['Magic Johnson', 'associated with', 'V. Stiviano'], ['Magic Johnson', 'mentioned in', "Donald Sterling's racist remarks"], ['Adam Silver', 'banned', 'Donald Sterling from the NBA'], ['Adam Silver', 'fined', 'Donald Sterling $2.5 million'], ['Los Angeles Clippers', 'formerly owned by', 'Donald Sterling'], ['Los Angeles Clippers', 'games', 'attended by Magic Johnson'], ['Ferrari', 'owned by', 'V. Stiviano'], ['Bentleys', 'owned by', 'V. Stiviano'], ['Range Rover', 'owned by', 'V. Stiviano'], ['$1.8 million duplex', 'owned by', 'V. Stiviano'], ['$391 Easter bunny costume', 'owned by', 'V. Stiviano'], ['$299 two-speed blender', 'owned by', 'V. Stiviano'], ['$12 lace thong', 'owned by', 'V. Stiviano'], ['Donald Sterling', 'made fortune in', 'real estate'], ['Donald Sterling', 'recorded making racist remarks', 'audio recording'], ['Donald Sterling', 'downfall', 'after audio recording surfaced'], ['V. Stiviano', 'countered', 'that she never took advantage of Donald Sterling'], ['Shelly Sterling', 'thrilled with court decision', 'Tuesday'], ["Pierce O'Donnell", 'represented', 'Shelly Sterling'], ['KABC', 'reported on', 'court decision'], ['TMZ', 
-# 'first posted', "audio recording of Donald Sterling's racist remarks"], ['Los Angeles Times', 'reported on', "V. Stiviano's gifts from Donald Sterling"], ['Dottie Evans', 'contributed to', 'CNN report'], ['CNN', 'reported on', "Donald Sterling's racist remarks and court decision"]]
-# print(calculate_similarity(kg1_triples, kg2_triples))
-
-# kg1_triples = [['Alan Dinehart', 'born', '1888'], ['Alan Dinehart', 'died', '1944'], ['Alan Dinehart', 'nationality', 'American'], ['Alan Dinehart', 'occupation', 'actor']]
-# kg2_triples = [['Alan Dinehart', 'nationality', 'American'], ['Alan Dinehart', 'birth year', '1889'], ['Alan Dinehart', 'death year', '1944'], ['Alan Dinehart', 'occupation', 'actor'], ['Alan Dinehart', 'occupation', 'actor'], ['April', 'is', 'fourth month in the Julian and Gregorian calendars'], ['October', 'instance of', 'month'], ['October', 'in', 'Julian calendar'], ['October', 'in', 'Gregorian calendar'], ['actor', 'is', 'person'], ['actor', 'acts in', 'dramatic or comic production'], ['actor', 'works in', 'film'], ['actor', 'works in', 'television'], ['actor', 'works in', 'theatre'], ['actor', 'works in', 'radio'], ['film sequence', 'instance of', 'sequence of images'], ['film sequence', 'give the impression of', 'movement'], ['film sequence', 'stored on', 'film stock'], ['film sequence', 'instance of', 'sequence of images'], ['film sequence', 'give the impression of', 'movement'], ['film sequence', 'stored on', 'film stock'], ['Leading man', 'instance of', 'male lead'], ['Leading man', 'in', 'film or play'], ['Suave', 'represents', 'more than 100 products including shampoo, lotions, soaps and deodorant'], ['New York City', 'most populous city in', 'United States'], ['career', 'instance of', "individual's journey"], ['career', 'related to', 'learning'], ['career', 'related to', 'work'], ['career', 'related to', 'other aspects of life'], ['stagecoach', 'type of', 'covered wagon'], ['film', 'instance of', 'sequence of images that give the impression of movement'], ['film', 'stored on', 'film stock'], ['Leading man', 'instance of', 'male lead'], ['Leading man', 'in', 'film or play'], ['silent film', 'instance of', 'film'], ['silent film', 'characterized by', 'no synchronized recorded dialogue'], ['silent film', 'subclass of', 'film'], ['silent film', 'subclass of', 'film'], ['silent film', 'subclass of', 'film'], ['silent film', 'opposite of', 'sound film'], ['silent film', 'subclass of', 'film'], ['silent film', 'subclass of', 'film'], ['lead chemical element', 'has symbol', 'Pb'], ['lead chemical element', 'has atomic number', '82'], ['star', 'instance of', 'astronomical object'], ['star', 'consists of', 'luminous spheroid of plasma'], ['star', 'held together by', 'its own gravity'], ['Mary Pickford', 'nationality', 'Canada'], ['Mary Pickford', 'occupation', 'actress'], ['Mary Pickford', 'occupation', 'producer'], ['Mary Pickford', 'born', '1892'], ['Mary Pickford', 'died', '1979'], ['Mary Pickford', 'occupation', 'actor'], ['Lillian Gish', 'occupation', 'actor'], ['Lillian Gish', 'place of death', 'New York City'], ['Clara Bow', 'nationality', 'American'], ['Clara Bow', 'birth year', '1905'], ['Clara Bow', 'death year', '1965'], ['Clara Bow', 'occupation', 'actress'], ['Clara Bow', 'occupation', 'actor'], ['number', 'instance of', 'mathematical object'], ['number', 'used to', 'count'], ['number', 'used to', 'label'], ['number', 'used to', 'measure'], ['television', 'instance of', 'western'], ['television', 'instance of', 'television genre'], ['The Covered Wagon', 'instance of', '1923 film'], ['The Covered Wagon', 'directed by', 'James Cruze'], ['The Covered Wagon', 'instance of', 'film'], ['The Covered Wagon', 'instance of', 'film'], ['The Covered Wagon', 'instance of', 'film'], ['The Covered Wagon', 'genre', 'silent film'], ['The Covered Wagon', 'instance of', 'film'], ['The Covered Wagon', 'instance of', 'film'], ['Lou Gehrig', 'instance of', 'American baseball player'], ['1930s decade', 'part of', '20th century'], ['1930s decade', 'feature', 'Great Depression'], ['1930s decade', 'feature', 'World War II'], ['The Invisible Man', 'created by', 'James Whale'], ['The Invisible Man', 'type of', 'film'], ['The Invisible Man', 'instance of', 'film'], ['The Invisible Man', 'instance of', 'film'], ['The Invisible Man', 'instance of', 'film'], ['The Invisible Man', 'instance of', 'film'], ['The Invisible Man', 'instance of', 'film'], ['The Little Minister', 'created by', 'Richard Wallace'], ['The Little Minister', 'type of', 'film'], ['The Little Minister', 'released in', '1934'], ['The Little Minister', 'instance of', 'film'], ['The Little Minister', 'instance of', 'film'], ['The Little Minister', 'instance of', 'film'], ['The Little Minister', 'instance of', 'film'], ['The Little Minister', 'instance of', 'film'], ['sound film', 'instance of', 'motion picture'], ['sound film', 'characterized by', 'synchronized sound'], ['sound film', 'subclass of', 'film'], ['sound film', 'subclass of', 'film'], ['sound film', 'subclass of', 'film'], ['sound film', 'opposite of', 'silent film'], ['sound film', 'subclass of', 'film'], ['sound film', 'subclass of', 'film'], ['number', 'instance of', 'mathematical object'], ['number', 'used to', 'count'], ['number', 'used to', 'label'], ['number', 'used to', 'measure'], ['film sequence', 'instance of', 'sequence of images'], ['film sequence', 'give the impression of', 'movement'], ['film sequence', 'stored on', 'film stock'], ['The Big Broadcast 1932 film', 'created by', 'Frank Tuttle'], ['The Big Broadcast', 'instance of', 'film'], ['The Big Broadcast', 'instance of', 'film'], ['The Big Broadcast', 'instance of', 'film'], ['The Big Broadcast', 'instance of', 'film'], ['The Big Broadcast', 'instance of', 'film'], ['film sequence', 'instance of', 'sequence of images'], ['film sequence', 'give the impression of', 'movement'], ['film sequence', 'stored on', 'film stock'], ['death', 'instance of', 'permanent cessation of vital functions']]
-# print(calculate_similarity(kg1_triples, kg2_triples))
-
-# claim = [
-#     ["Marie Curie", "discovered", "Radium"],
-#     ["Marie Curie", "won", "Nobel Prize in Physics"],
-#     ["Marie Curie", "won", "Nobel Prize in Chemistry"]
-# ]
-
-# Marie Curie found Radium, and was awarded the Nobel Prize in Chemistry and Physics
-# evidence = [
-#     ["Marie Curie", "found", "Radium"],
-#     ["Marie Curie", "received", "Nobel Prize in Physics"],
-#     ["Marie Curie", "was awarded", "Nobel Prize in Chemistry"]
-# ]
-
-# Albert Einstein found Radium. Marie Curie received the Grammy and was also awarded the Emmy.
-# evidence = [
-#     ["Albert Einstein", "found", "Radium"],
-#     ["Marie Curie", "received", "Grammy"],
-#     ["Marie Curie", "was awarded", "Emmy"]
-# ]
-
-
-# similarity_score = calculate_similarity(claim, evidence)
-# print(f"Graph similarity score: {similarity_score}")
-
-
-
-
-
-# claim = [['Malcolm Brogdon', 'born', 'December 11, 1992'], ['Malcolm Brogdon', 'nationality', 'American'], ['Malcolm Brogdon', 'occupation', 'basketball player'], ['Malcolm Brogdon', 'plays for', 'Indiana Pacers'], ['Malcolm Brogdon', 'league', 'National Basketball Association'], ['Malcolm Brogdon', 'played for', 'Virginia Cavaliers'], ['Malcolm Brogdon', 'awards', 'ACC Player of the Year'], ['Malcolm Brogdon', 'awards', 'All-American'], ['Malcolm Brogdon', 'year', '2016'], ['Malcolm Brogdon', 'drafted by', 'Milwaukee Bucks'], ['Malcolm Brogdon', 'pick', '36th overall'], ['Malcolm Brogdon', 'awards', 'Rookie of the Year'], ['Malcolm Brogdon', 'year', '2017'], ['Malcolm Brogdon', 'traded to', 'Indiana Pacers'], ['Malcolm Brogdon', 'NBA All-Star', 'two-time'], ['Malcolm Brogdon', 'named to', 'All-Defensive Second Team'], ['Malcolm Brogdon', 'year', '2019'], ['Malcolm Brogdon', 'skills', 'defensive prowess'], ['Malcolm Brogdon', 'skills', 'long range shooting'], ['Malcolm Brogdon', 'advocacy', 'social justice'], ['Malcolm Brogdon', 'involved in', 'initiatives for racial equality']]
-# evidence = [['Malcolm Moses Adams Brogdon', 'born on', 'December 11, 1992'], ['Malcolm Brogdon', 'is', 'American basketball player'], ['Malcolm Brogdon', 'member of sports team', 'Indiana Pacers'], ['Malcolm Brogdon', 'league', 'National Basketball Association'], ['Malcolm Moses Adams Brogdon', 'played college basketball for', 'the Virginia Cavaliers under Tony Bennett'], ['Malcolm Moses Adams Brogdon', 'was named', 'the Atlantic Coast Conference (ACC) Player of the Year'], ['Malcolm Brogdon', 'family name', 'Brogdon'], ['Malcolm Brogdon', 'drafted by', 'Milwaukee Bucks'], ['Malcolm Moses Adams Brogdon', 'was selected by', 'the Milwaukee Bucks with the 36th overall pick in the 2016 NBA draft'], ['Malcolm Moses Adams Brogdon', 'won', 'the NBA Rookie of the Year Award'], ['Malcolm Moses Adams Brogdon', 'was traded to', 'the Indiana Pacers'], ['Malcolm Moses Adams Brogdon', 'was named', 'a consensus second-team All-American in 2014–15'], ['Malcolm Brogdon', 'sport', 'basketball'], ['shooter', 'must have a rifle with good precision to succeed at long range shooting'], ['Malcolm Moses Adams Brogdon', 'has', 'a Masters Degree in Public Policy from the Batten School of Leadership and Public Policy at the University of Virginia'], ['Malcolm Moses Adams Brogdon', 'founded', 'his own nonprofit, The Brogdon Family Foundation, in 2021']]
-# claim = [sublist for sublist in claim if len(sublist) == 3]
-# evidence = [sublist for sublist in evidence if len(sublist) == 3]
-# similarity_score = calculate_similarity(claim, evidence)
-# print(f"Graph similarity score: {similarity_score}")
-
-
-# claim = [["Apples", "type of", "fruit"], ["Apples", "grow on", "trees"]]
-# evidence = [["Apples", "type of", "fruit"], ["Apples", "grow in", "tree"]]
-# print(calculate_similarity(claim, evidence))

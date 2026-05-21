@@ -1,7 +1,4 @@
-"""
-Pure Weisfeiler-Lehman Kernel
-Reference: Shervashidze et al. "Weisfeiler-Lehman Graph Kernels" (JMLR 2011)
-"""
+"""Pure Weisfeiler-Lehman graph-kernel similarity."""
 
 import networkx as nx
 from grakel import Graph

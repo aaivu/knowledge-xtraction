@@ -1,0 +1,9 @@
+Dataset,Model,Mean GoldSim,Mean CtxSim,Mean CUS
+MesaQA,Llama-2-7B,0.6536,0.7180,0.6717
+MesaQA,Gemma-7B,0.6974,0.7077,0.6825
+MesaQA,Mistral-7B,0.6507,0.7363,0.6789
+MesaQA,Falcon-7B,0.5585,0.6087,0.5692
+PubMedQA,Llama-2-7B,0.5159,0.6548,0.5612
+PubMedQA,Gemma-7B,0.5185,0.6424,0.5571
+PubMedQA,Mistral-7B,0.5092,0.7250,0.5872
+PubMedQA,Falcon-7B,0.4226,0.5104,0.4470
