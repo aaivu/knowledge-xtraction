@@ -21,25 +21,25 @@ class KEAConfig:
     model_name: str = "paraphrase-MiniLM-L6-v2"
 
 
-def _norm(s: str) -> str:
+def normalize_text(s: str) -> str:
+    """Normalize text: lowercase, strip, collapse whitespace."""
     return " ".join(str(s).strip().lower().split())
 
 
-def _cos(a: np.ndarray, b: np.ndarray) -> float:
-    return float(np.dot(a, b))  # embeddings are normalized
+def cosine_similarity_embeddings(a: np.ndarray, b: np.ndarray) -> float:
+    """Compute cosine similarity between normalized embedding vectors."""
+    return float(np.dot(a, b))
 
 
-def _score_triplet(
+def score_triplet_components(
     gh: np.ndarray, gr: np.ndarray, gt: np.ndarray,
     lh: np.ndarray, lr: np.ndarray, lt: np.ndarray,
 ) -> Tuple[float, float, float, float]:
-    """
-    Returns (overall, head_cos, rel_cos, tail_cos).
-    KEA often uses a combined score; here we use a simple average.
-    """
-    head_cos = _cos(gh, lh)
-    rel_cos = _cos(gr, lr)
-    tail_cos = _cos(gt, lt)
+    """Score triplet by averaging cosine similarity of head, relation, tail.
+    Returns (overall_score, head_cos, rel_cos, tail_cos)."""
+    head_cos = cosine_similarity_embeddings(gh, lh)
+    rel_cos = cosine_similarity_embeddings(gr, lr)
+    tail_cos = cosine_similarity_embeddings(gt, lt)
     overall = (head_cos + rel_cos + tail_cos) / 3.0
     return overall, head_cos, rel_cos, tail_cos
 
@@ -86,14 +86,14 @@ def compare_kgs_kea(
 
     model = SentenceTransformer(cfg.model_name)
 
-    # ---- Pre-embed all GT and LLM parts ----
-    g_heads = [_norm(h) for (h, _, _) in gold]
-    g_rels  = [_norm(r) for (_, r, _) in gold]
-    g_tails = [_norm(t) for (_, _, t) in gold]
+    # Pre-encode all triplet components for fast cosine matching
+    g_heads = [normalize_text(h) for (h, _, _) in gold]
+    g_rels  = [normalize_text(r) for (_, r, _) in gold]
+    g_tails = [normalize_text(t) for (_, _, t) in gold]
 
-    l_heads = [_norm(h) for (h, _, _) in llm]
-    l_rels  = [_norm(r) for (_, r, _) in llm]
-    l_tails = [_norm(t) for (_, _, t) in llm]
+    l_heads = [normalize_text(h) for (h, _, _) in llm]
+    l_rels  = [normalize_text(r) for (_, r, _) in llm]
+    l_tails = [normalize_text(t) for (_, _, t) in llm]
 
     gH = model.encode(g_heads, convert_to_numpy=True, normalize_embeddings=True)
     gR = model.encode(g_rels,  convert_to_numpy=True, normalize_embeddings=True)
@@ -112,7 +112,7 @@ def compare_kgs_kea(
         best_parts = (0.0, 0.0, 0.0)
 
         for j in range(len(llm)):
-            overall, hc, rc, tc = _score_triplet(gH[i], gR[i], gT[i], lH[j], lR[j], lT[j])
+            overall, hc, rc, tc = score_triplet_components(gH[i], gR[i], gT[i], lH[j], lR[j], lT[j])
             if overall > best_overall:
                 best_overall = overall
                 best_j = j

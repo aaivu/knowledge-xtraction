@@ -6,12 +6,11 @@ from typing import Any, List, Tuple
 Triplet = Tuple[str, str, str]
 
 
-def _to_str(x: Any) -> str:
+def element_to_string(x: Any) -> str:
+    """Convert element to string; preserve underscores (e.g., White_board)."""
     if x is None:
         return ""
-    s = str(x).strip()
-    # Keep your underscore style as-is (White_board, etc.)
-    return s
+    return str(x).strip()
 
 
 def parse_triplets(cell_value: Any) -> List[Triplet]:
@@ -40,7 +39,7 @@ def parse_triplets(cell_value: Any) -> List[Triplet]:
     for item in obj:
         if isinstance(item, (list, tuple)) and len(item) == 3:
             h, r, t = item
-            triplets.append((_to_str(h), _to_str(r), _to_str(t)))
+            triplets.append((element_to_string(h), element_to_string(r), element_to_string(t)))
 
     return triplets
 

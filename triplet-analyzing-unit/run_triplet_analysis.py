@@ -8,8 +8,8 @@ from kg_compare.parse_utils import parse_triplets
 from kg_compare.compare import compare_kgs_three_class, CompareConfig
 
 
-def _safe_json(obj) -> str:
-    """Store lists/dicts nicely inside Excel cells."""
+def safe_json_for_excel(obj) -> str:
+    """Convert object to JSON string for Excel cell storage."""
     return json.dumps(obj, ensure_ascii=False)
 
 
@@ -66,10 +66,10 @@ def main():
 
         res = compare_kgs_three_class(gold_trips, llm_trips, cfg)
 
-        aligned_col.append(_safe_json(res["aligned"]))
-        rel_diff_col.append(_safe_json(res["relation_different"]))
-        ent_diff_col.append(_safe_json(res["entity_different"]))
-        scored_col.append(_safe_json(res["matches_scored"]))
+        aligned_col.append(safe_json_for_excel(res["aligned"]))
+        rel_diff_col.append(safe_json_for_excel(res["relation_different"]))
+        ent_diff_col.append(safe_json_for_excel(res["entity_different"]))
+        scored_col.append(safe_json_for_excel(res["matches_scored"]))
 
     # Append outputs (same rows as input)
     df["aligned_triplets"] = aligned_col

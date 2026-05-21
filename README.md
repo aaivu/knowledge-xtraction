@@ -49,7 +49,29 @@ See [KGX-Graph-Similarity README](./KGX-Graph-Similarity/README.md) for evaluati
 
 ---
 
-### Step 3: Run Evaluations
+### Step 3: Analyze Triplets
+
+Perform triplet-level analysis and comparison of extracted knowledge graphs.
+
+See [Triplet Analyzing Unit README](./Triplet%20analyzing%20unit/README.md) for:
+- Triplet classification (aligned, entity_different, relation_different)
+- Comparison methods (standard and KEA-style scoring)
+- Agreement analysis across annotators
+- Excel-based output for detailed examination
+
+```bash
+cd "triplet-analyzing-unit"
+
+# Standard triplet analysis
+python run_triplet_analysis.py
+
+# KEA-style (head/relation/tail) scoring
+python run_triplet_analysis_kea.py
+```
+
+---
+
+### Step 4: Run Evaluations
 
 Execute evaluation pipelines on datasets.
 

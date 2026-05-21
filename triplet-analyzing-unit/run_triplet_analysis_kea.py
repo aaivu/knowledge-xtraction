@@ -8,7 +8,8 @@ from kg_compare.parse_utils import parse_triplets
 from kg_compare.compare_kea import compare_kgs_kea, KEAConfig
 
 
-def _safe_json(obj) -> str:
+def safe_json_for_excel(obj) -> str:
+    """Convert object to JSON string for Excel cell storage."""
     return json.dumps(obj, ensure_ascii=False)
 
 
@@ -50,12 +51,12 @@ def main():
 
         res = compare_kgs_kea(gold_trips, llm_trips, cfg)
 
-        aligned_col.append(_safe_json(res["aligned"]))
-        rel_sub_col.append(_safe_json(res["relation_substitution"]))
-        ent_sub_col.append(_safe_json(res["entity_substitution"]))
-        missing_col.append(_safe_json(res["missing"]))
-        extra_col.append(_safe_json(res["extra"]))
-        scored_col.append(_safe_json(res["matches_scored"]))
+        aligned_col.append(safe_json_for_excel(res["aligned"]))
+        rel_sub_col.append(safe_json_for_excel(res["relation_substitution"]))
+        ent_sub_col.append(safe_json_for_excel(res["entity_substitution"]))
+        missing_col.append(safe_json_for_excel(res["missing"]))
+        extra_col.append(safe_json_for_excel(res["extra"]))
+        scored_col.append(safe_json_for_excel(res["matches_scored"]))
 
     df["aligned_triplets"] = aligned_col
     df["relation_substitution_triplets"] = rel_sub_col

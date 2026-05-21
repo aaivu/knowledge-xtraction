@@ -23,21 +23,24 @@ class CompareConfig:
     model_name: str = "paraphrase-MiniLM-L6-v2"
 
 
-def _norm(s: str) -> str:
+def normalize_text(s: str) -> str:
+    """Normalize text: lowercase, strip, collapse whitespace."""
     return " ".join(str(s).strip().lower().split())
 
 
-def _triplet_text(tri: Triplet) -> str:
+def triplet_to_text(tri: Triplet) -> str:
+    """Format triplet as normalized text string for similarity comparison."""
     h, r, t = tri
-    return f"{_norm(h)} | {_norm(r)} | {_norm(t)}"
+    return f"{normalize_text(h)} | {normalize_text(r)} | {normalize_text(t)}"
 
 
-def _similarity(a: str, b: str) -> float:
+def text_similarity(a: str, b: str) -> float:
+    """Compute sequence similarity ratio between two strings."""
     return difflib.SequenceMatcher(None, a, b).ratio()
 
 
-def _cos(a: np.ndarray, b: np.ndarray) -> float:
-    # a, b are normalized embeddings (unit vectors)
+def cosine_similarity_embeddings(a: np.ndarray, b: np.ndarray) -> float:
+    """Compute cosine similarity between normalized embedding vectors."""
     return float(np.dot(a, b))
 
 
@@ -74,26 +77,26 @@ def compare_kgs_three_class(
     if not gold or not llm:
         return result
 
-    # ---------- Stage 1 prep ----------
-    llm_texts = [_triplet_text(x) for x in llm]
+    # Stage 1: Prepare text representations
+    llm_texts = [triplet_to_text(x) for x in llm]
 
-    # ---------- Stage 2 prep (embeddings) ----------
+    # Stage 2: Encode embeddings for cosine similarity
     model = SentenceTransformer(cfg.model_name)
 
-    # Embed all LLM parts once (faster)
-    llm_heads = [_norm(h) for (h, _, _) in llm]
-    llm_rels  = [_norm(r) for (_, r, _) in llm]
-    llm_tails = [_norm(t) for (_, _, t) in llm]
+    # Pre-embed all LLM components
+    llm_heads = [normalize_text(h) for (h, _, _) in llm]
+    llm_rels  = [normalize_text(r) for (_, r, _) in llm]
+    llm_tails = [normalize_text(t) for (_, _, t) in llm]
 
     llm_h_emb = model.encode(llm_heads, convert_to_numpy=True, normalize_embeddings=True)
     llm_r_emb = model.encode(llm_rels,  convert_to_numpy=True, normalize_embeddings=True)
     llm_t_emb = model.encode(llm_tails, convert_to_numpy=True, normalize_embeddings=True)
 
     for gt in gold:
-        gt_text = _triplet_text(gt)
+        gt_text = triplet_to_text(gt)
 
-        # ----- Stage 1: aligned by whole-triplet similarity -----
-        sims = [_similarity(gt_text, lt) for lt in llm_texts]
+        # Stage 1: Find best match by whole-triplet text similarity
+        sims = [text_similarity(gt_text, lt) for lt in llm_texts]
         best_i = int(max(range(len(sims)), key=lambda i: sims[i]))
         best_sim = float(sims[best_i])
         best_llm = llm[best_i]
@@ -108,15 +111,15 @@ def compare_kgs_three_class(
             })
             continue
 
-        # ----- Stage 2: cosine similarity on parts -----
-        gh, gr, gt_tail = map(_norm, gt)
+        # Stage 2: Component-level cosine similarity comparison
+        gh, gr, gt_tail = map(normalize_text, gt)
         gt_h_emb = model.encode([gh], convert_to_numpy=True, normalize_embeddings=True)[0]
         gt_r_emb = model.encode([gr], convert_to_numpy=True, normalize_embeddings=True)[0]
         gt_t_emb = model.encode([gt_tail], convert_to_numpy=True, normalize_embeddings=True)[0]
 
-        h_cos = _cos(gt_h_emb, llm_h_emb[best_i])
-        r_cos = _cos(gt_r_emb, llm_r_emb[best_i])
-        t_cos = _cos(gt_t_emb, llm_t_emb[best_i])
+        h_cos = cosine_similarity_embeddings(gt_h_emb, llm_h_emb[best_i])
+        r_cos = cosine_similarity_embeddings(gt_r_emb, llm_r_emb[best_i])
+        t_cos = cosine_similarity_embeddings(gt_t_emb, llm_t_emb[best_i])
 
         entities_ok = (h_cos >= cfg.entity_cos_th) and (t_cos >= cfg.entity_cos_th)
         relation_ok = (r_cos >= cfg.relation_cos_th)
