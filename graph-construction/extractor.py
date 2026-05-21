@@ -43,6 +43,25 @@ _ISIS_T3 = (
     "against Yazidi communities in the Sinjar region, killing hundreds and enslaving thousands. The attack "
     "prompted international condemnation and led to US airstrikes against ISIS positions in northern Iraq."
 )
+_MARIE_T1 = (
+    "Marie Curie discovered radioactivity in 1896. She was born in Poland in 1867. She worked extensively "
+    "with radioactive elements and won the Nobel Prize twice. Her groundbreaking research contributed significantly "
+    "to physics and chemistry."
+)
+_MARIE_T2 = (
+    "Polish-born physicist and chemist Marie Curie conducted pioneering research on radioactivity in the late 1890s. "
+    "She discovered the elements polonium and radium, working alongside her husband Pierre Curie at the Sorbonne. "
+    "Marie Curie shared the 1903 Nobel Prize in Physics with Pierre Curie and Henri Becquerel for their research. "
+    "In 1911, she won a second Nobel Prize in Chemistry for the discovery of radium, making her the first woman to win "
+    "a Nobel Prize and the first person to win Nobel Prizes in two different scientific fields."
+)
+_MARIE_T3 = (
+    "Marie Curie (1867–1934) was a pioneering scientist who revolutionized the understanding of atomic physics and chemistry. "
+    "Born Maria Skłodowska in Warsaw, Poland, she moved to France to pursue advanced studies at the Sorbonne. There she met "
+    "and married Pierre Curie, and together they conducted revolutionary experiments on radioactivity. Her discoveries of "
+    "polonium and radium opened new fields of research. She established the Curie Institute in Paris for cancer research and "
+    "treatment. Marie Curie died in 1934 from aplastic anemia, likely caused by prolonged exposure to radiation during her research."
+)
 
 _PROMPT = (
     "You are an expert at creating knowledge graphs based on text.\n"
@@ -112,6 +131,54 @@ _PROMPT = (
     '      ["ISIS", "enslaved thousands of", "Yazidis"],\n'
     '      ["attack", "prompted", "international condemnation"],\n'
     '      ["attack", "led to", "US airstrikes against ISIS"]\n'
+    "  ]\n"
+    "}\n\n"
+    "EXAMPLE 3:\n"
+    f"TEXT1 (reference answer):\n{_MARIE_T1}\n\nTEXT2 (model-generated response):\n{_MARIE_T2}\n\nTEXT3 (supporting context):\n{_MARIE_T3}\n\n"
+    "YOUR OUTPUT:\n"
+    "{\n"
+    '  "knowledge_graph1": [\n'
+    '      ["Marie Curie", "discovered", "radioactivity"],\n'
+    '      ["Marie Curie", "discovered in", "1896"],\n'
+    '      ["Marie Curie", "born in", "Poland"],\n'
+    '      ["Marie Curie", "born in", "1867"],\n'
+    '      ["Marie Curie", "worked with", "radioactive elements"],\n'
+    '      ["Marie Curie", "won", "Nobel Prize"],\n'
+    '      ["Marie Curie", "won Nobel Prize", "twice"]\n'
+    "  ],\n"
+    '  "knowledge_graph2": [\n'
+    '      ["Marie Curie", "born in", "Poland"],\n'
+    '      ["Marie Curie", "born in", "1867"],\n'
+    '      ["Marie Curie", "physicist and chemist", "yes"],\n'
+    '      ["Marie Curie", "conducted research on", "radioactivity"],\n'
+    '      ["Marie Curie", "discovered", "polonium"],\n'
+    '      ["Marie Curie", "discovered", "radium"],\n'
+    '      ["Marie Curie", "worked at", "Sorbonne"],\n'
+    '      ["Marie Curie", "worked with", "Pierre Curie"],\n'
+    '      ["Pierre Curie", "was", "husband of Marie Curie"],\n'
+    '      ["Marie Curie", "shared Nobel Prize in Physics", "1903"],\n'
+    '      ["Marie Curie", "shared Nobel Prize with", "Pierre Curie"],\n'
+    '      ["Marie Curie", "shared Nobel Prize with", "Henri Becquerel"],\n'
+    '      ["Marie Curie", "won Nobel Prize in Chemistry", "1911"],\n'
+    '      ["Marie Curie", "first woman to win", "Nobel Prize"],\n'
+    '      ["Marie Curie", "first person to win Nobel Prizes in", "two different scientific fields"]\n'
+    "  ],\n"
+    '  "knowledge_graph3": [\n'
+    '      ["Marie Curie", "full name", "Maria Skłodowska"],\n'
+    '      ["Marie Curie", "born", "1867"],\n'
+    '      ["Marie Curie", "died", "1934"],\n'
+    '      ["Marie Curie", "born in", "Warsaw, Poland"],\n'
+    '      ["Marie Curie", "moved to", "France"],\n'
+    '      ["Marie Curie", "studied at", "Sorbonne"],\n'
+    '      ["Marie Curie", "married", "Pierre Curie"],\n'
+    '      ["Marie Curie", "conducted experiments on", "radioactivity"],\n'
+    '      ["Marie Curie", "discovered", "polonium"],\n'
+    '      ["Marie Curie", "discovered", "radium"],\n'
+    '      ["Marie Curie", "established", "Curie Institute"],\n'
+    '      ["Curie Institute", "located in", "Paris"],\n'
+    '      ["Curie Institute", "focused on", "cancer research and treatment"],\n'
+    '      ["Marie Curie", "died of", "aplastic anemia"],\n'
+    '      ["Marie Curie death", "caused by", "prolonged exposure to radiation"]\n'
     "  ]\n"
     "}\n\n"
 )
