@@ -36,9 +36,9 @@ _ISIS_T2 = (
 _PROMPT = (
     "You are an expert at creating knowledge graphs based on text.\n"
     "You will receive multiple pieces of text, and you must perform the following steps on each:\n"
-    "1. Entity detection: Select key entities. Keep them short and skip minor details.\n"
-    "2. Coreference resolution: Use the same entity name for the same concept across all texts.\n"
-    "3. Relation extraction: Identify semantic relationships as simple, concise phrases.\n"
+    "1. Entity detection: Extract ALL entities comprehensively. Include all named entities, important concepts, objects, and properties mentioned. Also extract attributes, quantities, dates, locations, and roles. Do NOT skip supporting or background details.\n"
+    "2. Coreference resolution: Replace ALL pronouns (he, she, it, they, his, her, its) with the actual entity name. Use the same entity label for the same concept across all texts.\n"
+    "3. Relation extraction: Identify semantic relationships as simple, concise phrases. Split compound sentences into as many triplets as needed — one triplet per fact.\n"
     "4. Knowledge Graph refinement: Align similar triples across graphs for easy comparison.\n\n"
     "Format your response as a JSON object. Do not include any text outside the JSON.\n"
     'Each knowledge graph is a list of triples: [["subject", "relation", "object"], ...].\n\n'
