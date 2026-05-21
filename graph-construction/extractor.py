@@ -185,8 +185,8 @@ _PROMPT = (
 
 
 
-def _validate(triplets: list) -> list:
-    # drop placeholder entries and anything that is not a 3-string list
+def validate_triplets(triplets: list) -> list:
+    """Filter triplets: keep only 3-element lists without placeholder tokens."""
     valid = []
     for t in triplets:
         if isinstance(t, (list, tuple)) and len(t) == 3 and all(isinstance(e, str) for e in t):
@@ -195,13 +195,15 @@ def _validate(triplets: list) -> list:
     return valid
 
 
-def _normalize(label: str) -> str:
+def normalize_label(label: str) -> str:
+    """Convert label to lowercase, replace underscores with spaces, collapse whitespace."""
     s = label.replace("_", " ").lower()
     return re.sub(r" {2,}", " ", s).strip()
 
 
 def extract(paragraphs: list, llm) -> dict:
-    # Single-prompt few-shot extraction. Returns {1: [[s,r,o],...], 2: ...}
+    """Extract N knowledge graphs from N paragraphs in a single LLM call.
+    Returns {1: [[subject, relation, object], ...], 2: [...], ...}"""
     if not paragraphs:
         return {}
 
@@ -217,7 +219,7 @@ def extract(paragraphs: list, llm) -> dict:
 
     data = {}
     for attempt in range(3):
-        raw = llm.get_answer(prompt)
+        raw = llm.query_model(prompt)
         cleaned = re.sub(r"```(?:json)?", "", raw).strip().strip("`")
         try:
             data = json.loads(cleaned)
@@ -230,13 +232,13 @@ def extract(paragraphs: list, llm) -> dict:
                 except json.JSONDecodeError:
                     pass
 
-        graphs = {i + 1: _validate(data.get(f"knowledge_graph{i + 1}", [])) for i in range(len(paragraphs))}
+        graphs = {i + 1: validate_triplets(data.get(f"knowledge_graph{i + 1}", [])) for i in range(len(paragraphs))}
         if any(v for v in graphs.values()):
             break
         log.warning(f"Attempt {attempt + 1}/3 — empty result, retrying...")
         time.sleep(1)
 
-    graphs = {i + 1: _validate(data.get(f"knowledge_graph{i + 1}", [])) for i in range(len(paragraphs))}
+    graphs = {i + 1: validate_triplets(data.get(f"knowledge_graph{i + 1}", [])) for i in range(len(paragraphs))}
     for i, triplets in graphs.items():
         log.info(f"graph_{i}: {len(triplets)} triplets")
-    return {k: [[_normalize(e) for e in t] for t in v] for k, v in graphs.items()}
+    return {k: [[normalize_label(e) for e in t] for t in v] for k, v in graphs.items()}

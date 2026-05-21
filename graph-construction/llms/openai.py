@@ -7,7 +7,9 @@ load_dotenv()
 
 
 class OpenAIFactory:
+    """OpenAI API client for GPT models with retry logic."""
     def __init__(self, model_name: str):
+        """Initialize OpenAI client with API key from environment."""
         logging.info(f"[OpenAI] Loading model: {model_name}")
         self.model_name = model_name
         api_key = os.getenv("OPENAI_API_KEY")
@@ -15,7 +17,8 @@ class OpenAIFactory:
             raise ValueError("OPENAI_API_KEY not found in environment variables")
         self.client = OpenAI(api_key=api_key)
 
-    def get_answer(self, query: str) -> str:
+    def query_model(self, query: str) -> str:
+        """Query the model and return response, with retry logic."""
         for _ in range(3):
             try:
                 response = self.client.chat.completions.create(

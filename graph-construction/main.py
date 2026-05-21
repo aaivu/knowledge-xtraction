@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 
 def load_processed_ids(output_path: Path) -> set:
+    """Retrieve IDs of rows already processed (have non-empty KG outputs)."""
     if not output_path.exists():
         return set()
     with open(output_path, encoding="utf-8") as f:
@@ -24,6 +25,7 @@ def load_processed_ids(output_path: Path) -> set:
 
 
 def get_fieldnames(row: dict) -> list:
+    """Extract CSV column names from input row (id, paragraph_1, kg_1, ..., paragraph_N, kg_N)."""
     fields = ["id"]
     i = 1
     while f"paragraph_{i}" in row:
@@ -33,6 +35,7 @@ def get_fieldnames(row: dict) -> list:
 
 
 def append_row(output_path: Path, row: dict, graphs: dict, fieldnames: list):
+    """Write extracted graphs to output CSV with interleaved paragraphs and KGs."""
     out = {"id": row.get("id", "")}
     i = 1
     while f"paragraph_{i}" in row:

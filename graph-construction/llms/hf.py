@@ -4,13 +4,14 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 
 class HuggingFaceFactory:
+    """Local HuggingFace model factory with 4-bit quantization support."""
     def __init__(self, model_name: str):
+        """Load HuggingFace model with 4-bit quantization, fallback to FP16."""
         logging.info(f"[HF] Loading model: {model_name}")
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
         try:
-            # Attempt 4-bit quantization for efficiency
             bnb_config = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_quant_type="nf4",
@@ -35,7 +36,8 @@ class HuggingFaceFactory:
 
         self.pipeline = pipeline("text-generation", model=self.model, tokenizer=self.tokenizer)
 
-    def get_answer(self, query: str) -> str:
+    def query_model(self, query: str) -> str:
+        """Query local model and return generated text."""
         for _ in range(3):
             try:
                 result = self.pipeline(
@@ -47,6 +49,7 @@ class HuggingFaceFactory:
         raise RuntimeError("HuggingFace: failed after 3 attempts.")
 
     def clear_model(self):
+        """Free GPU memory and clear model objects."""
         del self.model, self.tokenizer, self.pipeline
         torch.cuda.empty_cache()
 

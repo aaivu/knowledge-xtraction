@@ -1,10 +1,10 @@
 class LLMFactorySelector:
-    # Cache to store loaded model instances
+    """Factory selector for LLM providers (Groq, OpenAI, Gemini, HuggingFace)."""
     _model_cache = {}
     
     @staticmethod
     def get_factory(model_name: str):
-        # Check if model is already loaded
+        """Get or create LLM factory instance for the given model name (cached)."""
         if model_name in LLMFactorySelector._model_cache:
             return LLMFactorySelector._model_cache[model_name]
         
@@ -23,7 +23,6 @@ class LLMFactorySelector:
             from llms.hf import HuggingFaceFactory
             instance = HuggingFaceFactory(model_name)
         
-        # Cache the instance
         LLMFactorySelector._model_cache[model_name] = instance
         return instance
     

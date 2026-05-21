@@ -9,7 +9,9 @@ load_dotenv()
 
 
 class GroqFactory:
+    """Groq API client for Llama, Mixtral models with rate-limit handling."""
     def __init__(self, model_name: str):
+        """Initialize Groq client with API key from environment."""
         logging.info(f"[Groq] Loading model: {model_name}")
         self.model_name = model_name
         api_key = os.getenv("GROQ_API_KEY")
@@ -18,14 +20,15 @@ class GroqFactory:
         self.client = Groq(api_key=api_key)
 
     def _parse_retry_time(self, error_msg: str) -> float:
-        # parse "try again in Xm Ys" or "Xs" from rate-limit messages
+        """Extract wait time from rate-limit error message."""
         m = re.search(r"try again in (\d+)m(\d+\.?\d*)s", str(error_msg))
         if m:
             return int(m.group(1)) * 60 + float(m.group(2))
         m = re.search(r"try again in (\d+\.?\d*)s", str(error_msg))
         return float(m.group(1)) if m else 60.0
 
-    def get_answer(self, query: str) -> str:
+    def query_model(self, query: str) -> str:
+        """Query Groq API with exponential backoff on rate limits."""
         for attempt in range(5):
             try:
                 response = self.client.chat.completions.create(
