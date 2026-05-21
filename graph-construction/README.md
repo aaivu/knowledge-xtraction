@@ -4,7 +4,7 @@ Extracts knowledge graphs (KGs) from any number of text paragraphs using a singl
 
 ## How it works
 
-1. **Few-shot prompting** — two worked examples (with known-good KGs) are embedded directly in the prompt so the model understands the expected output format without fine-tuning.
+1. **Few-shot prompting** — three worked examples (with known-good KGs) are embedded directly in the prompt so the model understands the expected output format without fine-tuning.
 2. **Single LLM call per row** — all N paragraphs are sent together; the model returns `knowledge_graph1` … `knowledge_graphN` in one JSON response.
 3. **Validation** — any triplet that is not a 3-string list, or that still contains placeholder tokens (`entity1`, `relation`, etc.), is dropped.
 4. **Normalisation** — every subject, relation, and object is lowercased, underscores are replaced with spaces, and extra whitespace is collapsed.
@@ -79,9 +79,3 @@ The provider is inferred from the model name:
 | `gemini` | Google Gemini |
 | `gpt`, `openai` | OpenAI |
 | anything else | HuggingFace (local) |
-
-## Dependencies
-
-```
-pip install -r requirements.txt
-```
