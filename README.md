@@ -109,7 +109,7 @@ python filter_low_scores.py
 **Output:** Excel/CSV files for detailed triplet-level review.
 
 ```bash
-cd "Triplet analyzing unit"
+cd "triplet-analyzing-unit"
 python run_triplet_analysis.py
 python run_triplet_analysis_kea.py
 ```
