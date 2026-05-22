@@ -1,7 +1,7 @@
 """
 alpha_sweep_eval.py
 ===================
-Evaluates SNEA-BERT at each alpha value (0.0 → 1.0, step 0.1) across all
+Evaluates S3KG at each alpha value (0.0 → 1.0, step 0.1) across all
 datasets. Baselines (ROUGE-L, BERTScore, MiniLM, sentence-T5) are computed
 once per dataset to avoid redundant heavy computation.
 
@@ -154,11 +154,11 @@ def evaluate_dataset(spec):
 
         scores_df = pd.read_csv(score_path)
         merged = base_df[['pair_id', 'label']].merge(
-            scores_df[['pair_id', 'snea_bert_similarity']],
+            scores_df[['pair_id', 's3kg_similarity']],
             on='pair_id', how='inner'
         ).dropna()
 
-        s = merged['snea_bert_similarity'].values
+        s = merged['s3kg_similarity'].values
         l = merged['label'].values
         alpha_results[alpha_val] = {
             'f1':  best_f1(l, s),
@@ -240,7 +240,7 @@ def plot_lines(df, metric_name, filename, all_baselines):
 
     ax.set_xlabel('Alpha (KG weight)', fontsize=12)
     ax.set_ylabel(metric_name, fontsize=12)
-    ax.set_title(f'SNEA-BERT {metric_name} vs Alpha — All Datasets', fontsize=13, fontweight='bold')
+    ax.set_title(f'S3KG {metric_name} vs Alpha — All Datasets', fontsize=13, fontweight='bold')
     ax.set_xticks(ALPHA_FLOAT)
     ax.xaxis.set_major_formatter(mticker.FormatStrFormatter('%.1f'))
     ax.grid(True, alpha=0.3)
@@ -265,7 +265,7 @@ def plot_heatmap(df, metric_name, filename):
     ax.set_yticks(range(len(df)))
     ax.set_yticklabels(df.index.tolist(), fontsize=10)
     ax.set_xlabel('Alpha (KG weight →  BERT weight)', fontsize=11)
-    ax.set_title(f'SNEA-BERT {metric_name} by Alpha and Dataset', fontsize=13, fontweight='bold')
+    ax.set_title(f'S3KG {metric_name} by Alpha and Dataset', fontsize=13, fontweight='bold')
 
     # Annotate cells
     for r in range(data.shape[0]):

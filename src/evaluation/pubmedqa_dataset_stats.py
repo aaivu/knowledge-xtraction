@@ -49,7 +49,7 @@ plt.rcParams.update({'figure.dpi': 130, 'font.size': 11})
 
 _HERE        = Path(__file__).parent
 DATASET_FILE = _HERE / 'datasets/pubmedqa_ranked_faithfulness_400.csv'
-SNEA_FILE    = _HERE / 'datasets/pubmedqa_ranked_faithfulness_400_snea_bert_results.csv'
+SNEA_FILE    = _HERE / 'datasets/pubmedqa_ranked_faithfulness_400_s3kg_results.csv'
 OUTPUT_DIR   = _HERE / 'output/pubmedqa_ranked_faithfulness/dataset_stats'
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -72,11 +72,11 @@ def load_scores() -> pd.DataFrame:
     df = pd.read_csv(DATASET_FILE)
     print(f"Dataset: {len(df)} rows, {df['question_id'].nunique()} questions")
 
-    # SNEA-BERT
+    # S3KG
     snea = pd.read_csv(SNEA_FILE)
     snea = snea.drop_duplicates(subset='id', keep='first')
-    snea = snea.rename(columns={'snea_bert_similarity': 'SNEA-BERT'})
-    df   = df.merge(snea[['id', 'SNEA-BERT']], left_on='pair_id', right_on='id', how='left')
+    snea = snea.rename(columns={'s3kg_similarity': 'S3KG'})
+    df   = df.merge(snea[['id', 'S3KG']], left_on='pair_id', right_on='id', how='left')
     df   = df.drop(columns=['id'], errors='ignore')
 
     # ROUGE-L
@@ -456,7 +456,7 @@ def main():
 
     df = load_scores()
 
-    methods = [m for m in ['SNEA-BERT', 'ROUGE-L', 'BLEU', 'BERTScore', 'Sentence-BERT']
+    methods = [m for m in ['S3KG', 'ROUGE-L', 'BLEU', 'BERTScore', 'Sentence-BERT']
                if m in df.columns and df[m].notna().any()]
     print(f'\nMethods available: {methods}')
 
