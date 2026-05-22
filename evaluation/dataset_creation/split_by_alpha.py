@@ -4,8 +4,8 @@ split_by_alpha.py
 Reads each *_KGs_results.csv file from 'Results_All_Methods 2/' and splits
 it into separate per-alpha result CSVs, one file per alpha value (0.0 → 1.0).
 
-Only SNEA-BERT alpha columns are extracted. Each output file has columns:
-    pair_id, snea_bert_similarity
+Only S3KG alpha columns are extracted. Each output file has columns:
+    pair_id, s3kg_similarity
 
 Output files are written to datasets/:
     <dataset>_snea_alpha_0p0_results.csv
@@ -26,17 +26,17 @@ SOURCE_DIR = HERE.parent / 'Results_All_Methods 2'
 
 # Maps output alpha label → source column name in the combined file
 ALPHA_COLS = {
-    '0p0': 'snea_bert_alpha_0.0',
-    '0p1': 'snea_bert_alpha_0.1',
-    '0p2': 'snea_bert_alpha_0.2',
-    '0p3': 'snea_bert_alpha_0.3',
-    '0p4': 'snea_bert_alpha_0.4',
-    '0p5': 'snea_bert_alpha_0.5',
-    '0p6': 'snea_bert_alpha_0.6',
-    '0p7': 'snea_bert_alpha_0.7',
-    '0p8': 'snea_bert_alpha_0.8',
-    '0p9': 'snea_bert_alpha_0.9',
-    '1p0': 'snea_bert_alpha_1.0_SNEA_alone',
+    '0p0': 's3kg_alpha_0.0',
+    '0p1': 's3kg_alpha_0.1',
+    '0p2': 's3kg_alpha_0.2',
+    '0p3': 's3kg_alpha_0.3',
+    '0p4': 's3kg_alpha_0.4',
+    '0p5': 's3kg_alpha_0.5',
+    '0p6': 's3kg_alpha_0.6',
+    '0p7': 's3kg_alpha_0.7',
+    '0p8': 's3kg_alpha_0.8',
+    '0p9': 's3kg_alpha_0.9',
+    '1p0': 's3kg_alpha_1.0_SNEA_alone',
 }
 
 # Source combined files to process (from Results_All_Methods 2/)
@@ -78,8 +78,8 @@ def split_file(src_path: Path) -> None:
             continue
 
         out_df = df[['pair_id', src_col]].copy()
-        out_df = out_df.rename(columns={src_col: 'snea_bert_similarity'})
-        out_df = out_df.dropna(subset=['snea_bert_similarity'])
+        out_df = out_df.rename(columns={src_col: 's3kg_similarity'})
+        out_df = out_df.dropna(subset=['s3kg_similarity'])
 
         out_name = f'{base}_snea_alpha_{alpha_label}_results.csv'
         out_path = DATASETS_DIR / out_name

@@ -63,7 +63,7 @@ plt.rcParams.update({'figure.dpi': 130, 'font.size': 11})
 
 DATASET_FILE   = 'datasets/pubmedqa_ranked_faithfulness_400.csv'
 AA_KEA_FILE    = 'datasets/pubmedqa_ranked_faithfulness_aa_kea_results.csv'
-SNEA_BERT_FILE = 'datasets/pubmedqa_ranked_faithfulness_400_snea_bert_results.csv'
+S3KG_FILE = 'datasets/pubmedqa_ranked_faithfulness_400_s3kg_results.csv'
 OUTPUT_DIR     = Path('output/pubmedqa_ranked_faithfulness')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -112,26 +112,26 @@ def load_data() -> pd.DataFrame:
     else:
         print(f"⚠ AA-KEA results not found ({AA_KEA_FILE}) — skipping")
 
-    # Merge SNEA-BERT scores if available
-    if Path(SNEA_BERT_FILE).exists():
-        snea = pd.read_csv(SNEA_BERT_FILE)
+    # Merge S3KG scores if available
+    if Path(S3KG_FILE).exists():
+        snea = pd.read_csv(S3KG_FILE)
         # Deduplicate on 'id' — same issue as other datasets
         if snea['id'].duplicated().any():
             n_before = len(snea)
             snea = snea.drop_duplicates(subset='id', keep='first')
-            print(f"  ⚠ Dropped {n_before - len(snea)} duplicate id(s) in SNEA-BERT file")
+            print(f"  ⚠ Dropped {n_before - len(snea)} duplicate id(s) in S3KG file")
         # Cross-key merge: results use 'id', dataset uses 'pair_id'
-        snea = snea.rename(columns={'snea_bert_similarity': 'snea_bert_score'})
-        df = df.merge(snea[['id', 'snea_bert_score']],
+        snea = snea.rename(columns={'s3kg_similarity': 's3kg_score'})
+        df = df.merge(snea[['id', 's3kg_score']],
                       left_on='pair_id', right_on='id', how='left')
         df = df.drop(columns=['id'], errors='ignore')
-        missing = df['snea_bert_score'].isna().sum()
+        missing = df['s3kg_score'].isna().sum()
         if missing:
-            print(f"  ⚠ {missing} SNEA-BERT scores missing → filled with 0")
-            df['snea_bert_score'] = df['snea_bert_score'].fillna(0.0)
-        print(f"✓ SNEA-BERT: scores merged ({len(snea)} unique rows)")
+            print(f"  ⚠ {missing} S3KG scores missing → filled with 0")
+            df['s3kg_score'] = df['s3kg_score'].fillna(0.0)
+        print(f"✓ S3KG: scores merged ({len(snea)} unique rows)")
     else:
-        print(f"⚠ SNEA-BERT results not found ({SNEA_BERT_FILE}) — skipping")
+        print(f"⚠ S3KG results not found ({S3KG_FILE}) — skipping")
 
     return df
 
@@ -232,8 +232,8 @@ def get_methods(df: pd.DataFrame) -> dict[str, str]:
     method_map = {}
     if 'aa_kea_score' in df.columns:
         method_map['AA-KEA'] = 'aa_kea_score'
-    if 'snea_bert_score' in df.columns:
-        method_map['SNEA-BERT'] = 'snea_bert_score'
+    if 's3kg_score' in df.columns:
+        method_map['S3KG'] = 's3kg_score'
     method_map.update({
         'ROUGE-L':       'rougeL_score',
         'BLEU':          'bleu_score',
@@ -349,7 +349,7 @@ def build_summary(
 
 def plot_tau_comparison(summary: pd.DataFrame) -> None:
     fig, ax = plt.subplots(figsize=(9, 5))
-    colors  = ['#2ecc71' if m in ('AA-KEA', 'SNEA-BERT') else '#3498db' for m in summary['Method']]
+    colors  = ['#2ecc71' if m in ('AA-KEA', 'S3KG') else '#3498db' for m in summary['Method']]
     bars    = ax.bar(summary['Method'], summary['Mean Kendall τ'], color=colors,
                      edgecolor='white', linewidth=0.8, zorder=3)
     ax.errorbar(
@@ -445,7 +445,7 @@ def plot_boundary_heatmap(boundary_df: pd.DataFrame) -> None:
 def plot_tau_distribution(rank_results: dict, methods: dict[str, str]) -> None:
     fig, ax = plt.subplots(figsize=(9, 5))
     method_names = list(methods.keys())
-    colors = ['#2ecc71' if m in ('AA-KEA', 'SNEA-BERT') else '#3498db' for m in method_names]
+    colors = ['#2ecc71' if m in ('AA-KEA', 'S3KG') else '#3498db' for m in method_names]
 
     positions = range(1, len(method_names) + 1)
     bp = ax.boxplot(
@@ -540,8 +540,8 @@ def main() -> None:
     print("\n" + "=" * 70)
     print(f"✓ All outputs saved → {OUTPUT_DIR}/")
     print("\nKey finding to check:")
-    our_methods = [m for m in methods if m in ('AA-KEA', 'SNEA-BERT')]
-    baselines   = [m for m in methods if m not in ('AA-KEA', 'SNEA-BERT')]
+    our_methods = [m for m in methods if m in ('AA-KEA', 'S3KG')]
+    baselines   = [m for m in methods if m not in ('AA-KEA', 'S3KG')]
     for our in our_methods:
         our_l32 = boundary_df.query(f"method == '{our}' and boundary == 'L3 > L2'")['accuracy']
         for name in baselines:
