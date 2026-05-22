@@ -3,8 +3,8 @@ plot_combined_roc.py
 ====================
 Generates a multi-panel ROC curve figure showing:
   - AA-KEA          (pure KG structural)
-  - SNEA-BERT       (pure KG + BERT embeddings, α=1.0)
-  - SNEA-BERT α=0.3 (hybrid: 30% KG + 70% sentence-transformer)
+  - S3KG       (pure KG + BERT embeddings, α=1.0)
+  - S3KG α=0.3 (hybrid: 30% KG + 70% sentence-transformer)
   - ROUGE-L, BERTScore, MiniLM, sentence-T5-base  (baselines)
 
 One panel per dataset (3×3 grid), saved to:
@@ -101,9 +101,9 @@ DATASETS = [
                 'csv': HERE / 'datasets/wikipedia_entity_swap_aa_kea_results.csv',
                 'col': 'aa_kea_similarity',
             },
-            'SNEA-BERT': {
-                'csv': HERE / 'datasets/wikipedia_entity_swap_400_snea_bert_results.csv',
-                'col': 'snea_bert_similarity',
+            'S3KG': {
+                'csv': HERE / 'datasets/wikipedia_entity_swap_400_s3kg_results.csv',
+                'col': 's3kg_similarity',
             },
         },
     },
@@ -112,8 +112,8 @@ DATASETS = [
 # ── Colours & styles ─────────────────────────────────────────────────────────
 METHOD_STYLE = {
     'AA-KEA':           {'color': '#1a6e2e', 'lw': 2.5, 'ls': '-',  'zorder': 10},
-    'SNEA-BERT':        {'color': '#2166ac', 'lw': 2.5, 'ls': '-',  'zorder': 9},
-    'SNEA-BERT α=0.3':  {'color': '#e07b00', 'lw': 2.5, 'ls': '--', 'zorder': 8},
+    'S3KG':        {'color': '#2166ac', 'lw': 2.5, 'ls': '-',  'zorder': 9},
+    'S3KG α=0.3':  {'color': '#e07b00', 'lw': 2.5, 'ls': '--', 'zorder': 8},
     'ROUGE-L':          {'color': '#888888', 'lw': 1.2, 'ls': '-',  'zorder': 4},
     'BERTScore':        {'color': '#aaaaaa', 'lw': 1.2, 'ls': '--', 'zorder': 3},
     'MiniLM':           {'color': '#bbbbbb', 'lw': 1.2, 'ls': ':',  'zorder': 2},
@@ -134,8 +134,8 @@ def load_dataset(spec):
 
     merged = base[['pair_id', 'response1', 'response2', 'label']].merge(
         scores[['pair_id', 'aa_kea_similarity',
-                'snea_bert_alpha_1.0_SNEA_alone',
-                'snea_bert_alpha_0.3']],
+                's3kg_alpha_1.0_SNEA_alone',
+                's3kg_alpha_0.3']],
         on='pair_id', how='inner'
     )
     merged = merged.dropna(subset=['label'])
@@ -225,8 +225,8 @@ def compute_scores(df, base_df, spec):
     # ── Our methods ────────────────────────────────────────────────────────
     for method, col, alpha_col in [
         ('AA-KEA',          'aa_kea_similarity',              None),
-        ('SNEA-BERT',       'snea_bert_alpha_1.0_SNEA_alone', None),
-        ('SNEA-BERT α=0.3', None,                             'snea_bert_alpha_0.3'),
+        ('S3KG',       's3kg_alpha_1.0_SNEA_alone', None),
+        ('S3KG α=0.3', None,                             's3kg_alpha_0.3'),
     ]:
         if method in overrides:
             ov = overrides[method]
@@ -333,7 +333,7 @@ def plot_all(all_data):
     )
 
     fig.suptitle(
-        'ROC Curves — AA-KEA · SNEA-BERT · SNEA-BERT α=0.3  vs  Baselines\n'
+        'ROC Curves — AA-KEA · S3KG · S3KG α=0.3  vs  Baselines\n'
         'Across All Benchmark Datasets',
         fontsize=13, fontweight='bold', y=1.01
     )
