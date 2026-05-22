@@ -6,7 +6,7 @@ venv
 # Old files directory
 old_files/
 
-# Python
+# Python 
 __pycache__/
 *.py[cod]
 *$py.class
@@ -27,6 +27,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+papers
 
 # IDEs
 .vscode/

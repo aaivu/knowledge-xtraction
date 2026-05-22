@@ -1,0 +1,6 @@
+pandas
+openpyxl
+numpy
+scikit-learn
+sentence-transformers
+faiss-cpu
