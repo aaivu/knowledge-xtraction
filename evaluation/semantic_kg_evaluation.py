@@ -1444,12 +1444,12 @@ def load_data():
     # Load original dataset
     print(f"\nLoading {Config.DATASET_FILE}...")
     df = pd.read_csv(Config.DATASET_FILE)
-    print(f"✓ Loaded {len(df)} sentence pairs")
+    print(f" Loaded {len(df)} sentence pairs")
 
     # Load AA-KEA results
     print(f"\nLoading {Config.AA_KEA_RESULTS}...")
     aa_kea = pd.read_csv(Config.AA_KEA_RESULTS)
-    print(f"✓ Loaded {len(aa_kea)} AA-KEA results")
+    print(f" Loaded {len(aa_kea)} AA-KEA results")
 
     # Merge on pair_id
     print("\nMerging datasets...")
@@ -1458,11 +1458,11 @@ def load_data():
     # Check for missing values
     missing = df['aa_kea_similarity'].isna().sum()
     if missing > 0:
-        print(f"⚠️  Warning: {missing} pairs missing AA-KEA scores, filling with 0.0")
+        print(f"  Warning: {missing} pairs missing AA-KEA scores, filling with 0.0")
         df['aa_kea_similarity'] = df['aa_kea_similarity'].fillna(0.0)
 
-    print(f"✓ Final dataset: {len(df)} pairs")
-    print(f"  Columns: {df.columns.tolist()}")
+    print(f" Final dataset: {len(df)} pairs")
+    print(f" Columns: {df.columns.tolist()}")
 
     return df
 
@@ -1489,7 +1489,7 @@ def compute_rouge_scores(df):
     for metric in Config.ROUGE_METRICS:
         df[f'{metric}_score'] = rouge_results[metric]
 
-    print("✓ ROUGE scores computed")
+    print(" ROUGE scores computed")
     return df
 
 
@@ -1525,7 +1525,7 @@ def compute_bleu_scores(df):
 
     df['bleu_score'] = bleu_scores
 
-    print("✓ BLEU scores computed")
+    print(" BLEU scores computed")
     return df
 
 
@@ -1554,10 +1554,10 @@ def compute_bertscore(df, batch_size=16):
             all_scores.extend(F1.tolist())
 
         df['bertscore_f1'] = all_scores
-        print("✓ BERTScore computed")
+        print(" BERTScore computed")
 
     except Exception as e:
-        print(f"⚠️  BERTScore failed: {e}")
+        print(f"  BERTScore failed: {e}")
         print("   Skipping BERTScore (will use other metrics)")
         df['bertscore_f1'] = 0.0  # Placeholder
 
@@ -1586,7 +1586,7 @@ def compute_embedding_similarities(df):
         similarities = (np.einsum('ij,ij->i', e1, e2) / norms).tolist()
 
         df[f'{model_name}_similarity'] = similarities
-        print(f"  ✓ {model_name} similarities computed")
+        print(f"   {model_name} similarities computed")
 
     return df
 
@@ -1602,7 +1602,7 @@ def compute_all_baselines(df):
     df = compute_bertscore(df)
     df = compute_embedding_similarities(df)
 
-    print("\n✓ All baseline methods computed")
+    print("\n All baseline methods computed")
     return df
 
 
@@ -2052,7 +2052,7 @@ def plot_complementarity(comp_df, oracle_acc, output_dir):
 
     plt.tight_layout()
     plt.savefig(f'{output_dir}/complementarity_analysis.png', dpi=300, bbox_inches='tight')
-    print(f"✓ Saved: {output_dir}/complementarity_analysis.png")
+    print(f" Saved: {output_dir}/complementarity_analysis.png")
     plt.close()
 
 
@@ -2105,7 +2105,7 @@ def plot_text_length_analysis(length_df, output_dir):
 
     plt.tight_layout()
     plt.savefig(f'{output_dir}/text_length_analysis.png', dpi=300, bbox_inches='tight')
-    print(f"✓ Saved: {output_dir}/text_length_analysis.png")
+    print(f" Saved: {output_dir}/text_length_analysis.png")
     plt.close()
 
 
@@ -2139,7 +2139,7 @@ def plot_domain_transfer(transfer_df, output_dir):
                 fontsize=14, fontweight='bold', y=0.995)
     plt.tight_layout()
     plt.savefig(f'{output_dir}/domain_transfer_analysis.png', dpi=300, bbox_inches='tight')
-    print(f"✓ Saved: {output_dir}/domain_transfer_analysis.png")
+    print(f" Saved: {output_dir}/domain_transfer_analysis.png")
     plt.close()
 
 
@@ -2174,7 +2174,7 @@ def plot_overall_comparison(results_df, output_dir):
     plt.suptitle('Method Comparison on Semantic-KG Dataset', fontsize=16, fontweight='bold', y=0.995)
     plt.tight_layout()
     plt.savefig(f'{output_dir}/overall_comparison.png', dpi=300, bbox_inches='tight')
-    print(f"✓ Saved: {output_dir}/overall_comparison.png")
+    print(f" Saved: {output_dir}/overall_comparison.png")
     plt.close()
 
 
@@ -2206,7 +2206,7 @@ def plot_perturbation_analysis(pert_df, output_dir):
 
     plt.tight_layout()
     plt.savefig(f'{output_dir}/perturbation_analysis.png', dpi=300, bbox_inches='tight')
-    print(f"✓ Saved: {output_dir}/perturbation_analysis.png")
+    print(f" Saved: {output_dir}/perturbation_analysis.png")
     plt.close()
 
 
@@ -2253,7 +2253,7 @@ def plot_roc_curves(df, output_dir, our_method_name='AA-KEA', dataset_title=None
 
     plt.tight_layout()
     plt.savefig(f'{output_dir}/roc_curves.png', dpi=300, bbox_inches='tight')
-    print(f"✓ Saved: {output_dir}/roc_curves.png")
+    print(f" Saved: {output_dir}/roc_curves.png")
     plt.close()
 
 
@@ -2266,10 +2266,10 @@ def save_results(results_df, pert_df, output_dir):
     print("\nSaving results...")
 
     results_df.to_csv(f'{output_dir}/overall_results.csv', index=False)
-    print(f"✓ Saved: {output_dir}/overall_results.csv")
+    print(f" Saved: {output_dir}/overall_results.csv")
 
     pert_df.to_csv(f'{output_dir}/perturbation_results.csv', index=False)
-    print(f"✓ Saved: {output_dir}/perturbation_results.csv")
+    print(f" Saved: {output_dir}/perturbation_results.csv")
 
 
 # ============================================================================
@@ -2284,7 +2284,7 @@ def main():
 
     # Check if AA-KEA results exist
     if not Path(Config.AA_KEA_RESULTS).exists():
-        print(f"\n❌ ERROR: {Config.AA_KEA_RESULTS} not found!")
+        print(f"\n ERROR: {Config.AA_KEA_RESULTS} not found!")
         print("\nPlease provide the AA-KEA results from your colleague first.")
         print("Expected format:")
         print("  - pair_id: integer (matches semantic_kg_for_kg_generation.csv)")
@@ -2332,26 +2332,26 @@ def main():
     comp_df.to_csv(f'{Config.OUTPUT_DIR}/complementarity_results.csv', index=False)
     length_df.to_csv(f'{Config.OUTPUT_DIR}/text_length_results.csv', index=False)
     transfer_df.to_csv(f'{Config.OUTPUT_DIR}/domain_transfer_results.csv', index=False)
-    print(f"✓ Saved: {Config.OUTPUT_DIR}/complementarity_results.csv")
-    print(f"✓ Saved: {Config.OUTPUT_DIR}/text_length_results.csv")
-    print(f"✓ Saved: {Config.OUTPUT_DIR}/domain_transfer_results.csv")
+    print(f" Saved: {Config.OUTPUT_DIR}/complementarity_results.csv")
+    print(f" Saved: {Config.OUTPUT_DIR}/text_length_results.csv")
+    print(f" Saved: {Config.OUTPUT_DIR}/domain_transfer_results.csv")
 
     # Print summary
     print("\n" + "="*80)
     print("EVALUATION COMPLETE")
     print("="*80)
 
-    print("\n📊 Overall Results:")
+    print("\n Overall Results:")
     print(results_df[['method', 'f1', 'precision', 'recall', 'roc_auc']].to_string(index=False))
 
-    print(f"\n📁 All results saved to: {Config.OUTPUT_DIR}/")
+    print(f"\n All results saved to: {Config.OUTPUT_DIR}/")
     print(f"\n  Standard Evaluation:")
     print(f"    - overall_results.csv")
     print(f"    - perturbation_results.csv")
     print(f"    - overall_comparison.png")
     print(f"    - perturbation_analysis.png")
     print(f"    - roc_curves.png")
-    print(f"\n  📈 Novel Analyses:")
+    print(f"\n   Novel Analyses:")
     print(f"    - complementarity_results.csv")
     print(f"    - complementarity_analysis.png")
     print(f"    - text_length_results.csv")
@@ -2394,7 +2394,7 @@ def load_single_dataset(dataset_file: str, aa_kea_file: str,
     Returns None if either file is missing.
     """
     if not Path(dataset_file).exists():
-        print(f"  ⚠  Dataset file not found: {dataset_file}")
+        print(f"    Dataset file not found: {dataset_file}")
         return None
 
     df = pd.read_csv(dataset_file)
@@ -2404,7 +2404,7 @@ def load_single_dataset(dataset_file: str, aa_kea_file: str,
         df = df.rename(columns={text1_col: 'response1', text2_col: 'response2'})
 
     if not Path(aa_kea_file).exists():
-        print(f"  ⚠  AA-KEA results not found: {aa_kea_file}")
+        print(f"    AA-KEA results not found: {aa_kea_file}")
         print(f"     Send '{dataset_file}' to your colleague and ask for '{aa_kea_file}'")
         df['aa_kea_similarity'] = np.nan
     else:
@@ -2438,7 +2438,7 @@ def load_single_dataset(dataset_file: str, aa_kea_file: str,
 
     missing = df['aa_kea_similarity'].isna().sum()
     if missing > 0:
-        print(f"  ⚠  {missing} rows missing AA-KEA score — filling with 0.0")
+        print(f"    {missing} rows missing AA-KEA score — filling with 0.0")
         df['aa_kea_similarity'] = df['aa_kea_similarity'].fillna(0.0)
 
     # Ensure required columns exist
@@ -2447,7 +2447,7 @@ def load_single_dataset(dataset_file: str, aa_kea_file: str,
     if 'dataset_name' not in df.columns:
         df['dataset_name'] = Path(dataset_file).stem
 
-    print(f"  ✓ Loaded {len(df)} pairs | labels: {df['label'].value_counts().to_dict()}")
+    print(f"   Loaded {len(df)} pairs | labels: {df['label'].value_counts().to_dict()}")
     return df
 
 
@@ -2548,7 +2548,7 @@ def plot_cross_dataset_f1(summary_df: pd.DataFrame, output_dir: str = 'output'):
 
     method_cols = [c for c in summary_df.columns if c.startswith('f1_')]
     if not method_cols:
-        print("  ⚠ No F1 columns found — skipping plot.")
+        print("   No F1 columns found — skipping plot.")
         return
 
     # Friendly method names
@@ -2603,7 +2603,7 @@ def plot_cross_dataset_f1(summary_df: pd.DataFrame, output_dir: str = 'output'):
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     out = f'{output_dir}/cross_dataset_f1_comparison.png'
     plt.savefig(out, dpi=300, bbox_inches='tight')
-    print(f"  ✓ Saved: {out}")
+    print(f"   Saved: {out}")
     plt.close()
 
 
@@ -2677,7 +2677,7 @@ def plot_perturbation_cross_dataset(all_pert_results: dict, output_dir: str = 'o
     available = {k: v for k, v in all_pert_results.items() if k in PERT_DATASETS and v is not None}
 
     if len(available) < 2:
-        print("  ⚠ Need ≥2 perturbation-aware datasets — skipping.")
+        print("   Need ≥2 perturbation-aware datasets — skipping.")
         return
 
     fig, axes = plt.subplots(1, len(available), figsize=(7 * len(available), 6), sharey=True)
@@ -2711,7 +2711,7 @@ def plot_perturbation_cross_dataset(all_pert_results: dict, output_dir: str = 'o
     plt.tight_layout()
     out = f'{output_dir}/perturbation_cross_dataset.png'
     plt.savefig(out, dpi=300, bbox_inches='tight')
-    print(f"  ✓ Saved: {out}")
+    print(f"   Saved: {out}")
     plt.close()
 
 
@@ -2753,7 +2753,7 @@ def run_all_datasets(keys_filter=None):
             pert_results[dataset_key] = None
 
     if not summaries:
-        print("\n✗ No datasets evaluated successfully.")
+        print("\n No datasets evaluated successfully.")
         return
 
     summary_df = pd.DataFrame(summaries)
@@ -2764,7 +2764,7 @@ def run_all_datasets(keys_filter=None):
     # Save cross-dataset summary table
     summary_csv = f'{CROSS_DIR}/cross_dataset_summary.csv'
     summary_df.to_csv(summary_csv, index=False)
-    print(f"\n✓ Cross-dataset summary saved: {summary_csv}")
+    print(f"\n Cross-dataset summary saved: {summary_csv}")
 
     # Cross-dataset visualisations
     plot_cross_dataset_f1(summary_df,        output_dir=CROSS_DIR)
@@ -2784,7 +2784,7 @@ def run_all_datasets(keys_filter=None):
 
     print(summary_df[display_cols].to_string(index=False))
 
-    print(f"\n📁 All cross-dataset outputs in: {CROSS_DIR}/")
+    print(f"\n All cross-dataset outputs in: {CROSS_DIR}/")
     print("   - cross_dataset_summary.csv")
     print("   - cross_dataset_f1_comparison.png")
     print("   - text_length_vs_performance.png")

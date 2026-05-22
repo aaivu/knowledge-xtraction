@@ -90,7 +90,7 @@ def load_data() -> pd.DataFrame:
     print("=" * 70)
 
     df = pd.read_csv(DATASET_FILE)
-    print(f"✓ Dataset  : {len(df)} rows, {df['question_id'].nunique()} questions")
+    print(f"Dataset  : {len(df)} rows, {df['question_id'].nunique()} questions")
 
     # Merge AA-KEA scores if available
     if Path(AA_KEA_FILE).exists():
@@ -106,11 +106,11 @@ def load_data() -> pd.DataFrame:
             if missing:
                 print(f"  ⚠ {missing} AA-KEA scores missing → filled with 0")
                 df['aa_kea_score'] = df['aa_kea_score'].fillna(0.0)
-            print(f"✓ AA-KEA   : scores merged ({score_col})")
+            print(f"AA-KEA   : scores merged ({score_col})")
         else:
-            print("⚠ AA-KEA file found but no similarity column detected — skipping")
+            print("AA-KEA file found but no similarity column detected — skipping")
     else:
-        print(f"⚠ AA-KEA results not found ({AA_KEA_FILE}) — skipping")
+        print(f"AA-KEA results not found ({AA_KEA_FILE}) — skipping")
 
     # Merge S3KG scores if available
     if Path(S3KG_FILE).exists():
@@ -129,9 +129,9 @@ def load_data() -> pd.DataFrame:
         if missing:
             print(f"  ⚠ {missing} S3KG scores missing → filled with 0")
             df['s3kg_score'] = df['s3kg_score'].fillna(0.0)
-        print(f"✓ S3KG: scores merged ({len(snea)} unique rows)")
+        print(f"S3KG: scores merged ({len(snea)} unique rows)")
     else:
-        print(f"⚠ S3KG results not found ({S3KG_FILE}) — skipping")
+        print(f"S3KG results not found ({S3KG_FILE}) — skipping")
 
     return df
 
@@ -150,7 +150,7 @@ def compute_rouge(df: pd.DataFrame) -> pd.DataFrame:
         for _, row in tqdm(df.iterrows(), total=len(df), desc='ROUGE-L', leave=False)
     ]
     df['rougeL_score'] = scores
-    print("✓ ROUGE-L done")
+    print("ROUGE-L done")
     return df
 
 
@@ -170,7 +170,7 @@ def compute_bleu(df: pd.DataFrame) -> pd.DataFrame:
         for _, row in tqdm(df.iterrows(), total=len(df), desc='BLEU', leave=False)
     ]
     df['bleu_score'] = scores
-    print("✓ BLEU done")
+    print("BLEU done")
     return df
 
 
@@ -190,9 +190,9 @@ def compute_bertscore(df: pd.DataFrame, batch_size: int = 16) -> pd.DataFrame:
             )
             all_f1.extend(F1.tolist())
         df['bertscore_f1'] = all_f1
-        print("✓ BERTScore done")
+        print("BERTScore done")
     except Exception as e:
-        print(f"⚠ BERTScore failed: {e} — setting to 0")
+        print(f"BERTScore failed: {e} — setting to 0")
         df['bertscore_f1'] = 0.0
     return df
 
@@ -208,7 +208,7 @@ def compute_sbert(df: pd.DataFrame) -> pd.DataFrame:
         e2 = model.encode([row['candidate_answer']])[0]
         scores.append(float(cos_sim([e1], [e2])[0][0]))
     df['sbert_score'] = scores
-    print("✓ SBERT done")
+    print("SBERT done")
     return df
 
 
@@ -369,7 +369,7 @@ def plot_tau_comparison(summary: pd.DataFrame) -> None:
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / 'kendall_tau_comparison.png', bbox_inches='tight')
     plt.close()
-    print("  ✓ kendall_tau_comparison.png")
+    print("kendall_tau_comparison.png")
 
 
 def plot_score_by_level(df: pd.DataFrame, methods: dict[str, str]) -> None:
@@ -411,7 +411,7 @@ def plot_score_by_level(df: pd.DataFrame, methods: dict[str, str]) -> None:
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / 'score_by_level.png', bbox_inches='tight')
     plt.close()
-    print("  ✓ score_by_level.png")
+    print("score_by_level.png")
 
 
 def plot_boundary_heatmap(boundary_df: pd.DataFrame) -> None:
@@ -439,7 +439,7 @@ def plot_boundary_heatmap(boundary_df: pd.DataFrame) -> None:
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / 'boundary_heatmap.png', bbox_inches='tight')
     plt.close()
-    print("  ✓ boundary_heatmap.png")
+    print("boundary_heatmap.png")
 
 
 def plot_tau_distribution(rank_results: dict, methods: dict[str, str]) -> None:
@@ -472,7 +472,7 @@ def plot_tau_distribution(rank_results: dict, methods: dict[str, str]) -> None:
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / 'tau_distribution.png', bbox_inches='tight')
     plt.close()
-    print("  ✓ tau_distribution.png")
+    print("tau_distribution.png")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -538,7 +538,7 @@ def main() -> None:
     pd.DataFrame(per_q_rows).to_csv(OUTPUT_DIR / 'per_question_taus.csv', index=False)
 
     print("\n" + "=" * 70)
-    print(f"✓ All outputs saved → {OUTPUT_DIR}/")
+    print(f"All outputs saved → {OUTPUT_DIR}/")
     print("\nKey finding to check:")
     our_methods = [m for m in methods if m in ('AA-KEA', 'S3KG')]
     baselines   = [m for m in methods if m not in ('AA-KEA', 'S3KG')]
