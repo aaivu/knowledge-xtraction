@@ -6,7 +6,7 @@ A comprehensive system for extracting and analyzing knowledge graphs from text d
 
 ```
 knowledge-xtraction/
-├── graph-construction/      # Step 1: Knowledge graph extraction from text
+├── graph-construction/      # Knowledge graph extraction from text
 ├── KGX-Graph-Similarity/    # Graph similarity evaluation and comparison
 ├── evaluation/              # Evaluation metrics and datasets
 └── Triplet analyzing unit/  # Triplet-level analysis tools
@@ -14,7 +14,7 @@ knowledge-xtraction/
 
 ## Getting Started
 
-### Step 1: Run Graph Construction
+### Run Graph Construction
 
 Extract knowledge graphs from your text data according to the [Graph Construction README](./graph-construction/README.md).
 
